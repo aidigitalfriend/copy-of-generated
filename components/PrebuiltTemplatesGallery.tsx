@@ -103,17 +103,17 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
 
   return (
     <div className="h-full flex flex-col bg-[#1e1e1e] text-white">
-      {/* Header */}
-      <div className="p-4 border-b border-[#333]">
-        <div className="flex items-center justify-between mb-4">
+      {/* Compact Header */}
+      <div className="p-3 border-b border-[#333]">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🎨</span>
-            <h2 className="text-lg font-semibold">Prebuilt Templates</h2>
+            <span className="text-xl">🎨</span>
+            <h2 className="text-sm font-semibold">Prebuilt Templates</h2>
           </div>
           {onClose && (
             <button 
               onClick={onClose}
-              className="p-1 hover:bg-[#333] rounded"
+              className="p-1 hover:bg-[#333] rounded text-xs"
             >
               ✕
             </button>
@@ -127,18 +127,18 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
             placeholder="Search templates..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#2d2d2d] border border-[#444] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-[#0078d4] pl-9"
+            className="w-full bg-[#2d2d2d] border border-[#444] rounded px-3 py-1.5 text-xs focus:outline-none focus:border-[#0078d4] pl-7"
           />
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs">🔍</span>
         </div>
       </div>
 
-      {/* Category Pills */}
-      <div className="p-3 border-b border-[#333] overflow-x-auto">
-        <div className="flex gap-2">
+      {/* Category Pills - Horizontal Scroll */}
+      <div className="px-3 py-2 border-b border-[#333] overflow-x-auto scrollbar-none">
+        <div className="flex gap-1.5">
           <button
             onClick={() => setSelectedCategory('all')}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition ${
+            className={`px-2.5 py-1 rounded-full text-[10px] font-medium whitespace-nowrap transition ${
               selectedCategory === 'all'
                 ? 'bg-[#0078d4] text-white'
                 : 'bg-[#333] text-gray-300 hover:bg-[#444]'
@@ -150,7 +150,7 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition flex items-center gap-1 ${
+              className={`px-2.5 py-1 rounded-full text-[10px] font-medium whitespace-nowrap transition flex items-center gap-1 ${
                 selectedCategory === cat.id
                   ? 'bg-[#0078d4] text-white'
                   : 'bg-[#333] text-gray-300 hover:bg-[#444]'
@@ -163,8 +163,8 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
         </div>
       </div>
 
-      {/* Templates Grid or Preview */}
-      <div className="flex-1 overflow-auto p-4">
+      {/* Templates List or Preview */}
+      <div className="flex-1 overflow-auto p-2">
         {selectedTemplate ? (
           /* Template Preview Mode */
           <div className="h-full flex flex-col">
@@ -226,64 +226,47 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
             </div>
           </div>
         ) : (
-          /* Templates Grid */
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          /* Templates List - Single Column Slim Design */
+          <div className="flex flex-col gap-2">
             {filteredTemplates.map(template => (
               <div
                 key={template.id}
-                className="bg-[#2d2d2d] rounded-xl overflow-hidden border border-[#444] hover:border-[#0078d4] transition group"
+                className="bg-[#2d2d2d] rounded-lg overflow-hidden border border-[#444] hover:border-[#0078d4] transition group"
               >
-                {/* Preview Thumbnail */}
-                <div 
-                  className="h-40 bg-gradient-to-br from-[#1a1a2e] to-[#16213e] flex items-center justify-center cursor-pointer relative"
-                  onClick={() => handlePreview(template)}
-                >
-                  <span className="text-6xl">{template.icon}</span>
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                    <span className="bg-white/20 px-4 py-2 rounded-lg text-sm">👁️ Preview</span>
+                {/* Compact Card Layout */}
+                <div className="p-3">
+                  {/* Header Row */}
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <span className="text-2xl flex-shrink-0">{template.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-sm truncate">{template.name}</h3>
+                      <p className="text-xs text-gray-500 truncate">{template.description}</p>
+                    </div>
                   </div>
-                </div>
-
-                {/* Info */}
-                <div className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold">{template.name}</h3>
-                    <span className="text-xs bg-[#444] px-2 py-1 rounded">{template.category}</span>
-                  </div>
-                  <p className="text-sm text-gray-400 mb-3 line-clamp-2">{template.description}</p>
                   
-                  {/* Features */}
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {template.features.slice(0, 3).map((feature, i) => (
-                      <span key={i} className="text-xs bg-[#333] px-2 py-0.5 rounded text-gray-300">
-                        {feature}
+                  {/* Tech Stack - Inline */}
+                  <div className="flex flex-wrap items-center gap-1 mb-2">
+                    {template.techStack.slice(0, 3).map((tech, i) => (
+                      <span key={i} className="text-[10px] text-[#0078d4] bg-[#0078d4]/10 px-1.5 py-0.5 rounded">
+                        {tech}
                       </span>
                     ))}
-                    {template.features.length > 3 && (
-                      <span className="text-xs text-gray-500">+{template.features.length - 3} more</span>
+                    {template.techStack.length > 3 && (
+                      <span className="text-[10px] text-gray-500">+{template.techStack.length - 3}</span>
                     )}
                   </div>
 
-                  {/* Tech Stack */}
-                  <div className="flex items-center gap-2 mb-4">
-                    {template.techStack.map((tech, i) => (
-                      <span key={i} className="text-xs text-[#0078d4]">
-                        {tech}{i < template.techStack.length - 1 ? ' •' : ''}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex gap-2">
+                  {/* Actions Row */}
+                  <div className="flex gap-1.5">
                     <button
                       onClick={() => handlePreview(template)}
-                      className="flex-1 py-2 border border-[#555] rounded-lg text-sm hover:bg-[#333] transition"
+                      className="flex-1 py-1.5 border border-[#555] rounded text-xs hover:bg-[#333] transition"
                     >
                       Preview
                     </button>
                     <button
                       onClick={() => handleSelectTemplate(template)}
-                      className="flex-1 py-2 bg-[#0078d4] hover:bg-[#0066b8] rounded-lg text-sm font-medium transition"
+                      className="flex-1 py-1.5 bg-[#0078d4] hover:bg-[#0066b8] rounded text-xs font-medium transition"
                     >
                       Use Template
                     </button>

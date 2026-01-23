@@ -9,6 +9,7 @@ import PrebuiltTemplatesGallery from './components/PrebuiltTemplatesGallery';
 import { LivePreview } from './components/LivePreview';
 import { DeployPanel } from './components/DeployPanel';
 import { ExtensionsPanel } from './components/ExtensionsPanel';
+import { SplitPane, Sash } from './components/SplitPane';
 import { FileNode, OpenFile, ProjectTemplate } from './types';
 import { voiceOutput, speechSupport } from './services/speech';
 import { mediaService } from './services/media';
@@ -810,6 +811,11 @@ const App: React.FC = () => {
   const [leftTab, setLeftTab] = useState<LeftTab>('files');
   const [rightTab, setRightTab] = useState<RightTab>('ai');
   const [viewMode, setViewMode] = useState<'code' | 'split' | 'preview'>('code');
+  
+  // Panel widths for resizable sash dividers
+  const [leftPanelWidth, setLeftPanelWidth] = useState(260);
+  const [rightPanelWidth, setRightPanelWidth] = useState(380);
+  const [splitRatio, setSplitRatio] = useState(50); // percentage for code/preview split
 
   // Sync theme on mount
   useEffect(() => {
@@ -974,7 +980,7 @@ const App: React.FC = () => {
         
         {/* Left Panel Content */}
         {leftSidebarOpen && (
-          <div className={`w-64 border-r flex flex-col ${panelClasses}`}>
+          <div className={`relative flex flex-col ${panelClasses}`} style={{ width: leftPanelWidth, minWidth: 180, maxWidth: 500 }}>
             {/* Panel Header */}
             <div className={`h-10 flex items-center justify-between px-4 border-b ${theme === 'dark' ? 'border-slate-700' : 'border-gray-200'}`}>
               <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-gray-600'} uppercase tracking-wider`}>
@@ -1050,6 +1056,14 @@ const App: React.FC = () => {
                 </div>
               </div>
             )}
+            
+            {/* Resizable Sash */}
+            <Sash
+              direction="vertical"
+              position="end"
+              onResize={(delta) => setLeftPanelWidth(Math.max(180, Math.min(500, leftPanelWidth + delta)))}
+              className="z-10"
+            />
           </div>
         )}
       </aside>
@@ -1071,18 +1085,30 @@ const App: React.FC = () => {
 
         {/* Editor + Preview */}
         <div className="flex-1 flex overflow-hidden">
-          {/* Code Editor */}
-          {(viewMode === 'code' || viewMode === 'split') && (
-            <div className={viewMode === 'split' ? 'w-1/2' : 'w-full'}>
+          {viewMode === 'code' && (
+            <div className="w-full h-full">
               <CodeEditor />
             </div>
           )}
           
-          {/* Inline Preview for Split/Preview modes */}
-          {(viewMode === 'split' || viewMode === 'preview') && (
-            <div className={`${viewMode === 'split' ? 'w-1/2 border-l' : 'w-full'} ${theme === 'dark' ? 'border-slate-700' : 'border-gray-200'}`}>
+          {viewMode === 'preview' && (
+            <div className="w-full h-full">
               <LivePreview />
             </div>
+          )}
+          
+          {viewMode === 'split' && (
+            <SplitPane
+              direction="horizontal"
+              defaultSize={splitRatio}
+              minSize={15}
+              maxSize={85}
+              onResize={setSplitRatio}
+              className="w-full h-full"
+            >
+              <CodeEditor />
+              <LivePreview />
+            </SplitPane>
           )}
         </div>
 
@@ -1201,7 +1227,15 @@ const App: React.FC = () => {
         
         {/* Right Panel Content */}
         {rightSidebarOpen && (
-          <div className={`w-96 border-l flex flex-col ${panelClasses}`}>
+          <div className={`relative flex flex-col ${panelClasses}`} style={{ width: rightPanelWidth, minWidth: 280, maxWidth: 600 }}>
+            {/* Resizable Sash on left edge */}
+            <Sash
+              direction="vertical"
+              position="start"
+              onResize={(delta) => setRightPanelWidth(Math.max(280, Math.min(600, rightPanelWidth - delta)))}
+              className="z-10"
+            />
+            
             {/* Panel Header */}
             <div className={`h-10 flex items-center justify-between px-4 border-b ${theme === 'dark' ? 'border-slate-700' : 'border-gray-200'}`}>
               <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-gray-600'} uppercase tracking-wider`}>

@@ -787,7 +787,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
           </div>
         )}
         
-        <div className={`flex items-end gap-2 p-2 rounded-xl ${inputBgClass} border`}>
+        <div className={`flex items-end gap-1.5 p-2 rounded-xl ${inputBgClass} border min-w-0`}>
           {/* Hidden file input - accepts both text and image files */}
           <input
             ref={fileInputRef}
@@ -799,7 +799,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
           />
           
           {/* Agent selector button */}
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <button
               onClick={() => setShowAgentSelector(!showAgentSelector)}
               className={`p-2 rounded-lg transition-colors flex items-center gap-1 text-sm ${
@@ -855,13 +855,13 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
           {/* File upload button */}
           <button
             onClick={handleFileUpload}
-            className={`p-2 rounded-lg transition-colors ${
+            className={`p-1.5 rounded-lg transition-colors flex-shrink-0 ${
               theme === 'dark' ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-gray-100 text-gray-500'
             }`}
             title="Upload files or images"
             disabled={isAiLoading || isStreaming}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
             </svg>
           </button>
@@ -873,22 +873,22 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
             onKeyDown={handleKeyDown}
             placeholder={
               uploadedFiles.length > 0 
-                ? "Add a message about these files..." 
+                ? "Describe these files..." 
                 : selectedAgent === 'orchestrator'
                   ? "Ask me to build something..."
                   : `Ask ${AGENTS.find(a => a.id === selectedAgent)?.name || 'agent'}...`
             }
-            className={`flex-1 resize-none bg-transparent outline-none ${textClass} placeholder:${mutedTextClass}`}
+            className={`flex-1 min-w-0 resize-none bg-transparent outline-none text-sm ${textClass} placeholder:${mutedTextClass}`}
             rows={1}
             style={{ minHeight: '24px', maxHeight: '200px' }}
             disabled={isAiLoading || isStreaming}
           />
           
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 flex-shrink-0">
             {speechSupport.recognition && (
               <button
                 onClick={handleVoiceInput}
-                className={`p-2 rounded-lg transition-colors ${
+                className={`p-1.5 rounded-lg transition-colors text-sm ${
                   isListening 
                     ? 'bg-red-500 text-white' 
                     : theme === 'dark' ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-gray-100 text-gray-500'
@@ -902,16 +902,16 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
             <button
               onClick={handleSend}
               disabled={(!input.trim() && uploadedFiles.length === 0) || isAiLoading || isStreaming}
-              className={`p-2 rounded-lg transition-colors ${
+              className={`p-1.5 rounded-lg transition-colors ${
                 (input.trim() || uploadedFiles.length > 0) && !isAiLoading && !isStreaming
                   ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
                   : theme === 'dark' ? 'bg-slate-700 text-slate-500' : 'bg-gray-200 text-gray-400'
               }`}
             >
               {isAiLoading || isStreaming ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                '➤'
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
               )}
             </button>
           </div>
