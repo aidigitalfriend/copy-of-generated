@@ -166,28 +166,30 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
       {/* Templates List or Preview */}
       <div className="flex-1 overflow-auto p-2">
         {selectedTemplate ? (
-          /* Template Preview Mode */
+          /* Template Preview Mode - Full Height */
           <div className="h-full flex flex-col">
-            <div className="flex items-center justify-between mb-4">
+            {/* Compact Header Bar */}
+            <div className="flex items-center justify-between mb-2 pb-2 border-b border-[#333]">
               <button
                 onClick={() => setSelectedTemplate(null)}
-                className="flex items-center gap-2 text-sm text-gray-400 hover:text-white"
+                className="flex items-center gap-1 text-xs text-gray-400 hover:text-white px-2 py-1 rounded hover:bg-[#333] transition"
               >
-                ← Back to templates
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>
+                Back
               </button>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <button
                   onClick={() => setPreviewMode('preview')}
-                  className={`px-3 py-1.5 rounded text-xs ${
-                    previewMode === 'preview' ? 'bg-[#0078d4]' : 'bg-[#333]'
+                  className={`px-2 py-1 rounded text-[10px] font-medium ${
+                    previewMode === 'preview' ? 'bg-[#0078d4] text-white' : 'bg-[#333] text-gray-300 hover:bg-[#444]'
                   }`}
                 >
                   Preview
                 </button>
                 <button
                   onClick={() => setPreviewMode('code')}
-                  className={`px-3 py-1.5 rounded text-xs ${
-                    previewMode === 'code' ? 'bg-[#0078d4]' : 'bg-[#333]'
+                  className={`px-2 py-1 rounded text-[10px] font-medium ${
+                    previewMode === 'code' ? 'bg-[#0078d4] text-white' : 'bg-[#333] text-gray-300 hover:bg-[#444]'
                   }`}
                 >
                   Code
@@ -195,16 +197,18 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
               </div>
             </div>
 
-            <div className="flex-1 bg-[#2d2d2d] rounded-lg overflow-hidden border border-[#444]">
+            {/* Large Preview Area - Takes most space */}
+            <div className="flex-1 bg-[#1a1a1a] rounded-lg overflow-hidden border border-[#333] min-h-0">
               {previewMode === 'preview' ? (
                 <iframe
                   srcDoc={selectedTemplate.files['index.html']}
                   className="w-full h-full bg-white"
                   title="Template Preview"
                   sandbox="allow-scripts"
+                  style={{ minHeight: '300px' }}
                 />
               ) : (
-                <pre className="p-4 text-sm overflow-auto h-full">
+                <pre className="p-3 text-xs overflow-auto h-full font-mono">
                   <code className="text-green-400">
                     {selectedTemplate.files['index.html']}
                   </code>
@@ -212,16 +216,17 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
               )}
             </div>
 
-            <div className="mt-4 flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold">{selectedTemplate.name}</h3>
-                <p className="text-sm text-gray-400">{selectedTemplate.description}</p>
+            {/* Compact Footer */}
+            <div className="mt-2 pt-2 border-t border-[#333] flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-sm truncate">{selectedTemplate.name}</h3>
+                <p className="text-[10px] text-gray-500 truncate">{selectedTemplate.description}</p>
               </div>
               <button
                 onClick={() => handleSelectTemplate(selectedTemplate)}
-                className="bg-[#0078d4] hover:bg-[#0066b8] px-6 py-2 rounded-lg font-medium transition"
+                className="bg-[#0078d4] hover:bg-[#0066b8] px-4 py-1.5 rounded text-xs font-medium transition flex-shrink-0"
               >
-                Use This Template
+                Use
               </button>
             </div>
           </div>
@@ -256,19 +261,19 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
                     )}
                   </div>
 
-                  {/* Actions Row */}
-                  <div className="flex gap-1.5">
+                  {/* Actions Row - Compact */}
+                  <div className="flex gap-1">
                     <button
                       onClick={() => handlePreview(template)}
-                      className="flex-1 py-1.5 border border-[#555] rounded text-xs hover:bg-[#333] transition"
+                      className="flex-1 py-1 border border-[#444] rounded text-[10px] hover:bg-[#333] hover:border-[#555] transition"
                     >
-                      Preview
+                      View
                     </button>
                     <button
                       onClick={() => handleSelectTemplate(template)}
-                      className="flex-1 py-1.5 bg-[#0078d4] hover:bg-[#0066b8] rounded text-xs font-medium transition"
+                      className="flex-1 py-1 bg-[#0078d4] hover:bg-[#0066b8] rounded text-[10px] font-medium transition"
                     >
-                      Use Template
+                      Use
                     </button>
                   </div>
                 </div>
