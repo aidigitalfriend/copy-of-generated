@@ -1,10 +1,14 @@
 import React from 'react';
 import { TEMPLATES } from '../data/templates';
 import { useStore } from '../store/useStore';
-import { FileNode, ProjectTemplate } from '../types';
+import { FileNode, ProjectTemplate, OpenFile } from '../types';
 
-export const TemplateGallery: React.FC = () => {
-  const { createProject, setSidebarTab, theme } = useStore();
+interface TemplateGalleryProps {
+  onTemplateSelect?: (template: ProjectTemplate, files: FileNode[]) => void;
+}
+
+export const TemplateGallery: React.FC<TemplateGalleryProps> = ({ onTemplateSelect }) => {
+  const { createProject, setSidebarTab, theme, openFile } = useStore();
 
   const handleSelectTemplate = (template: ProjectTemplate) => {
     // Convert template files to FileNode structure
@@ -91,6 +95,26 @@ export const TemplateGallery: React.FC = () => {
 
     createProject(template.name, template.id, rootFiles);
     setSidebarTab('files');
+    
+    // Open the main file automatically
+    const mainFile = files.find(f => 
+      f.type === 'file' && (f.name === 'index.html' || f.name === 'App.tsx' || f.name === 'main.tsx')
+    );
+    if (mainFile) {
+      openFile({
+        id: mainFile.id || crypto.randomUUID(),
+        name: mainFile.name,
+        path: mainFile.path,
+        content: mainFile.content || '',
+        language: mainFile.language || 'plaintext',
+        isDirty: false,
+      });
+    }
+    
+    // Call the callback if provided
+    if (onTemplateSelect) {
+      onTemplateSelect(template, rootFiles);
+    }
   };
 
   const categories = [

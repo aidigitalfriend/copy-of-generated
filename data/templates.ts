@@ -1,167 +1,226 @@
 import { ProjectTemplate } from '../types';
 
 export const TEMPLATES: ProjectTemplate[] = [
+  // ==================== PYTHON ====================
   {
-    id: 'react-vite',
-    name: 'React + Vite',
-    description: 'Modern React app with Vite, TypeScript, and Tailwind CSS',
-    icon: '⚛️',
+    id: 'python-basic',
+    name: 'Python',
+    description: 'Basic Python starter file',
+    icon: '🐍',
+    category: 'backend',
+    files: {
+      'main.py': `# Python Basic Starter
+# Run: python main.py
+
+def main():
+    print("Hello, Python! 🐍")
+    
+    # Variables
+    name = "World"
+    age = 25
+    
+    # String formatting
+    print(f"Hello, {name}! You are {age} years old.")
+    
+    # List example
+    fruits = ["apple", "banana", "cherry"]
+    for fruit in fruits:
+        print(f"I like {fruit}")
+    
+    # Dictionary example
+    person = {
+        "name": "John",
+        "age": 30,
+        "city": "New York"
+    }
+    print(f"Person: {person}")
+
+if __name__ == "__main__":
+    main()
+`,
+      'README.md': `# Python Project
+
+## Getting Started
+
+\`\`\`bash
+python main.py
+\`\`\`
+
+## Requirements
+- Python 3.8+
+`,
+    },
+  },
+
+  // ==================== JAVASCRIPT ====================
+  {
+    id: 'javascript-basic',
+    name: 'JavaScript',
+    description: 'Basic JavaScript starter file',
+    icon: '💛',
     category: 'frontend',
-    dependencies: {
-      'react': '^18.2.0',
-      'react-dom': '^18.2.0',
-    },
-    devDependencies: {
-      '@vitejs/plugin-react': '^4.0.0',
-      'vite': '^5.0.0',
-      'typescript': '^5.0.0',
-      'tailwindcss': '^3.4.0',
-    },
-    scripts: {
-      'dev': 'vite',
-      'build': 'vite build',
-      'preview': 'vite preview',
-    },
     files: {
       'index.html': `<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>React App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript Starter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #1a1a2e;
+      color: #eee;
+    }
+    .output {
+      background: #16213e;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>JavaScript Starter 💛</h1>
+  <div class="output" id="output"></div>
+  <script src="script.js"></script>
+</body>
 </html>`,
-      'src/main.tsx': `import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './index.css'
+      'script.js': `// JavaScript Basic Starter
+console.log("Hello, JavaScript! 💛");
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)`,
-      'src/App.tsx': `import { useState } from 'react'
+// Variables
+const name = "World";
+let count = 0;
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-      <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Hello, React! 👋
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Count: <span className="font-bold text-purple-600">{count}</span>
-        </p>
-        <button
-          onClick={() => setCount(c => c + 1)}
-          className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
-        >
-          Increment
-        </button>
-      </div>
-    </div>
-  )
+// Function
+function greet(name) {
+  return \`Hello, \${name}!\`;
 }
 
-export default App`,
-      'src/index.css': `@tailwind base;
-@tailwind components;
-@tailwind utilities;`,
-      'vite.config.ts': `import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+// Array
+const fruits = ["apple", "banana", "cherry"];
+fruits.forEach(fruit => {
+  console.log(\`I like \${fruit}\`);
+});
 
-export default defineConfig({
-  plugins: [react()],
-})`,
-      'tailwind.config.js': `/** @type {import('tailwindcss').Config} */
-export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-  theme: { extend: {} },
-  plugins: [],
-}`,
-      'package.json': '', // Will be generated
+// Object
+const person = {
+  name: "John",
+  age: 30,
+  greet() {
+    return \`Hi, I'm \${this.name}\`;
+  }
+};
+
+// DOM manipulation
+const output = document.getElementById("output");
+output.innerHTML = \`
+  <p>\${greet(name)}</p>
+  <p>Fruits: \${fruits.join(", ")}</p>
+  <p>\${person.greet()}</p>
+\`;
+
+console.log("Check the browser console for more output!");
+`,
     },
   },
+
+  // ==================== TYPESCRIPT ====================
   {
-    id: 'nextjs',
-    name: 'Next.js',
-    description: 'Full-stack React framework with App Router',
-    icon: '▲',
-    category: 'fullstack',
-    dependencies: {
-      'next': '^14.0.0',
-      'react': '^18.2.0',
-      'react-dom': '^18.2.0',
-    },
-    devDependencies: {
-      'typescript': '^5.0.0',
-      '@types/react': '^18.2.0',
-      'tailwindcss': '^3.4.0',
-    },
-    scripts: {
-      'dev': 'next dev',
-      'build': 'next build',
-      'start': 'next start',
-    },
+    id: 'typescript-basic',
+    name: 'TypeScript',
+    description: 'Basic TypeScript starter file',
+    icon: '💙',
+    category: 'frontend',
     files: {
-      'app/page.tsx': `export default function Home() {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-black text-white">
-      <div className="text-center">
-        <h1 className="text-5xl font-bold mb-4">
-          Welcome to <span className="text-blue-500">Next.js</span>
-        </h1>
-        <p className="text-gray-400">
-          Get started by editing <code className="bg-gray-800 px-2 py-1 rounded">app/page.tsx</code>
-        </p>
-      </div>
-    </main>
-  )
-}`,
-      'app/layout.tsx': `import './globals.css'
+      'index.ts': `// TypeScript Basic Starter
+console.log("Hello, TypeScript! 💙");
 
-export const metadata = {
-  title: 'Next.js App',
-  description: 'Created with AI Digital Friend Zone',
+// Type annotations
+const name: string = "World";
+const age: number = 25;
+const isActive: boolean = true;
+
+// Interface
+interface Person {
+  name: string;
+  age: number;
+  email?: string; // optional
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  )
+// Function with types
+function greet(person: Person): string {
+  return \`Hello, \${person.name}! You are \${person.age} years old.\`;
+}
+
+// Array with type
+const fruits: string[] = ["apple", "banana", "cherry"];
+
+// Object
+const user: Person = {
+  name: "John",
+  age: 30,
+};
+
+// Generic function
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+// Class
+class Animal {
+  constructor(public name: string) {}
+  
+  speak(): void {
+    console.log(\`\${this.name} makes a sound.\`);
+  }
+}
+
+// Usage
+console.log(greet(user));
+console.log(identity<number>(42));
+
+const dog = new Animal("Dog");
+dog.speak();
+`,
+      'tsconfig.json': `{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist"
+  },
+  "include": ["*.ts"]
 }`,
-      'app/globals.css': `@tailwind base;
-@tailwind components;
-@tailwind utilities;`,
-      'tailwind.config.js': `/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ['./app/**/*.{js,ts,jsx,tsx}'],
-  theme: { extend: {} },
-  plugins: [],
-}`,
-      'next.config.js': `/** @type {import('next').NextConfig} */
-const nextConfig = {}
-module.exports = nextConfig`,
-      'package.json': '',
+      'README.md': `# TypeScript Project
+
+## Getting Started
+
+\`\`\`bash
+# Install TypeScript
+npm install -g typescript
+
+# Compile
+tsc
+
+# Run
+node dist/index.js
+\`\`\`
+`,
     },
   },
+
+  // ==================== HTML/CSS ====================
   {
-    id: 'vanilla-html',
-    name: 'HTML/CSS/JS',
-    description: 'Simple static website with vanilla JavaScript',
+    id: 'html-css-basic',
+    name: 'HTML + CSS',
+    description: 'Basic HTML and CSS starter',
     icon: '🌐',
     category: 'static',
     files: {
@@ -170,295 +229,983 @@ module.exports = nextConfig`,
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Website</title>
+  <title>HTML + CSS Starter</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Hello, World! 🌍</h1>
-    <p>Welcome to my website.</p>
-    <button id="btn">Click Me</button>
-    <p id="output"></p>
-  </div>
-  <script src="script.js"></script>
+  <header>
+    <nav>
+      <h1>🌐 My Website</h1>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Welcome to My Website</h2>
+      <p>This is a basic HTML + CSS starter template.</p>
+      <button>Get Started</button>
+    </section>
+
+    <section class="features">
+      <div class="card">
+        <h3>Feature 1</h3>
+        <p>Description of feature 1</p>
+      </div>
+      <div class="card">
+        <h3>Feature 2</h3>
+        <p>Description of feature 2</p>
+      </div>
+      <div class="card">
+        <h3>Feature 3</h3>
+        <p>Description of feature 3</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 My Website. All rights reserved.</p>
+  </footer>
 </body>
 </html>`,
-      'style.css': `* {
+      'style.css': `/* CSS Basic Starter */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.container {
-  background: white;
-  padding: 3rem;
-  border-radius: 1rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  text-align: center;
-}
-
-h1 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
   color: #333;
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #2c3e50;
+  color: white;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: #3498db;
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.hero h2 {
+  font-size: 2.5rem;
   margin-bottom: 1rem;
 }
 
-p {
-  color: #666;
-  margin-bottom: 1.5rem;
-}
-
-button {
-  background: #667eea;
-  color: white;
-  border: none;
+.hero button {
   padding: 0.75rem 2rem;
-  border-radius: 0.5rem;
   font-size: 1rem;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-}
-
-#output {
-  margin-top: 1rem;
-  font-weight: bold;
+  background: white;
   color: #667eea;
-}`,
-      'script.js': `let count = 0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
 
-document.getElementById('btn').addEventListener('click', () => {
-  count++;
-  document.getElementById('output').textContent = \`Clicked \${count} time\${count === 1 ? '' : 's'}!\`;
-});
+/* Features */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-console.log('Hello from JavaScript! 🚀');`,
+.card {
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 2rem;
+  background: #2c3e50;
+  color: white;
+}
+`,
     },
   },
+
+  // ==================== JAVA ====================
   {
-    id: 'python-fastapi',
-    name: 'Python FastAPI',
-    description: 'Modern Python API with FastAPI',
-    icon: '🐍',
-    category: 'api',
-    files: {
-      'main.py': `from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List
-
-app = FastAPI(title="My API", version="1.0.0")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-class Item(BaseModel):
-    id: int
-    name: str
-    description: str = ""
-
-items: List[Item] = []
-
-@app.get("/")
-def read_root():
-    return {"message": "Hello, World! 🐍", "docs": "/docs"}
-
-@app.get("/items", response_model=List[Item])
-def get_items():
-    return items
-
-@app.post("/items", response_model=Item)
-def create_item(item: Item):
-    items.append(item)
-    return item
-
-@app.get("/items/{item_id}")
-def get_item(item_id: int):
-    for item in items:
-        if item.id == item_id:
-            return item
-    return {"error": "Item not found"}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)`,
-      'requirements.txt': `fastapi==0.104.1
-uvicorn==0.24.0
-pydantic==2.5.0`,
-      'README.md': `# Python FastAPI
-
-## Run locally
-\`\`\`bash
-pip install -r requirements.txt
-python main.py
-\`\`\`
-
-Visit http://localhost:8000/docs for API documentation.`,
-    },
-  },
-  {
-    id: 'node-express',
-    name: 'Node.js Express',
-    description: 'Express.js REST API server',
-    icon: '🟢',
+    id: 'java-basic',
+    name: 'Java',
+    description: 'Basic Java starter file',
+    icon: '☕',
     category: 'backend',
-    dependencies: {
-      'express': '^4.18.0',
-      'cors': '^2.8.5',
-    },
-    devDependencies: {
-      'nodemon': '^3.0.0',
-    },
-    scripts: {
-      'start': 'node server.js',
-      'dev': 'nodemon server.js',
-    },
     files: {
-      'server.js': `const express = require('express');
-const cors = require('cors');
+      'Main.java': `// Java Basic Starter
+// Compile: javac Main.java
+// Run: java Main
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, Java! ☕");
+        
+        // Variables
+        String name = "World";
+        int age = 25;
+        double price = 19.99;
+        boolean isActive = true;
+        
+        // String formatting
+        System.out.printf("Hello, %s! You are %d years old.%n", name, age);
+        
+        // Array
+        String[] fruits = {"apple", "banana", "cherry"};
+        for (String fruit : fruits) {
+            System.out.println("I like " + fruit);
+        }
+        
+        // Class usage
+        Person person = new Person("John", 30);
+        person.greet();
+    }
+}
 
-app.use(cors());
-app.use(express.json());
+class Person {
+    private String name;
+    private int age;
+    
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    public void greet() {
+        System.out.println("Hi, I'm " + name + " and I'm " + age + " years old.");
+    }
+}
+`,
+      'README.md': `# Java Project
 
-let items = [];
+## Getting Started
 
-// Routes
-app.get('/', (req, res) => {
-  res.json({ message: 'Hello, World! 🟢', endpoints: ['/api/items'] });
-});
-
-app.get('/api/items', (req, res) => {
-  res.json(items);
-});
-
-app.post('/api/items', (req, res) => {
-  const item = { id: Date.now(), ...req.body };
-  items.push(item);
-  res.status(201).json(item);
-});
-
-app.get('/api/items/:id', (req, res) => {
-  const item = items.find(i => i.id === parseInt(req.params.id));
-  if (!item) return res.status(404).json({ error: 'Not found' });
-  res.json(item);
-});
-
-app.delete('/api/items/:id', (req, res) => {
-  items = items.filter(i => i.id !== parseInt(req.params.id));
-  res.status(204).send();
-});
-
-app.listen(PORT, () => {
-  console.log(\`🚀 Server running on http://localhost:\${PORT}\`);
-});`,
-      'package.json': '',
+\`\`\`bash
+javac Main.java
+java Main
+\`\`\`
+`,
     },
   },
+
+  // ==================== C++ ====================
   {
-    id: 'vue-vite',
-    name: 'Vue 3 + Vite',
-    description: 'Vue 3 with Composition API and Vite',
-    icon: '💚',
+    id: 'cpp-basic',
+    name: 'C++',
+    description: 'Basic C++ starter file',
+    icon: '⚡',
+    category: 'backend',
+    files: {
+      'main.cpp': `// C++ Basic Starter
+// Compile: g++ -o main main.cpp
+// Run: ./main
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+// Function declaration
+void greet(const string& name);
+
+// Class
+class Person {
+private:
+    string name;
+    int age;
+    
+public:
+    Person(string n, int a) : name(n), age(a) {}
+    
+    void introduce() {
+        cout << "Hi, I'm " << name << " and I'm " << age << " years old." << endl;
+    }
+};
+
+int main() {
+    cout << "Hello, C++! ⚡" << endl;
+    
+    // Variables
+    string name = "World";
+    int age = 25;
+    double price = 19.99;
+    
+    // Function call
+    greet(name);
+    
+    // Vector (dynamic array)
+    vector<string> fruits = {"apple", "banana", "cherry"};
+    for (const auto& fruit : fruits) {
+        cout << "I like " << fruit << endl;
+    }
+    
+    // Class usage
+    Person person("John", 30);
+    person.introduce();
+    
+    return 0;
+}
+
+void greet(const string& name) {
+    cout << "Hello, " << name << "!" << endl;
+}
+`,
+      'README.md': `# C++ Project
+
+## Getting Started
+
+\`\`\`bash
+g++ -o main main.cpp
+./main
+\`\`\`
+`,
+    },
+  },
+
+  // ==================== C ====================
+  {
+    id: 'c-basic',
+    name: 'C',
+    description: 'Basic C starter file',
+    icon: '🔧',
+    category: 'backend',
+    files: {
+      'main.c': `// C Basic Starter
+// Compile: gcc -o main main.c
+// Run: ./main
+
+#include <stdio.h>
+#include <string.h>
+
+// Function declaration
+void greet(const char* name);
+
+// Struct
+struct Person {
+    char name[50];
+    int age;
+};
+
+int main() {
+    printf("Hello, C! 🔧\\n");
+    
+    // Variables
+    char name[] = "World";
+    int age = 25;
+    float price = 19.99;
+    
+    // Function call
+    greet(name);
+    
+    // Array
+    char* fruits[] = {"apple", "banana", "cherry"};
+    int numFruits = 3;
+    
+    for (int i = 0; i < numFruits; i++) {
+        printf("I like %s\\n", fruits[i]);
+    }
+    
+    // Struct usage
+    struct Person person;
+    strcpy(person.name, "John");
+    person.age = 30;
+    
+    printf("Hi, I'm %s and I'm %d years old.\\n", person.name, person.age);
+    
+    return 0;
+}
+
+void greet(const char* name) {
+    printf("Hello, %s!\\n", name);
+}
+`,
+      'README.md': `# C Project
+
+## Getting Started
+
+\`\`\`bash
+gcc -o main main.c
+./main
+\`\`\`
+`,
+    },
+  },
+
+  // ==================== GO ====================
+  {
+    id: 'go-basic',
+    name: 'Go',
+    description: 'Basic Go starter file',
+    icon: '🐹',
+    category: 'backend',
+    files: {
+      'main.go': `// Go Basic Starter
+// Run: go run main.go
+
+package main
+
+import "fmt"
+
+// Struct
+type Person struct {
+    Name string
+    Age  int
+}
+
+// Method
+func (p Person) Greet() {
+    fmt.Printf("Hi, I'm %s and I'm %d years old.\\n", p.Name, p.Age)
+}
+
+// Function
+func greet(name string) string {
+    return fmt.Sprintf("Hello, %s!", name)
+}
+
+func main() {
+    fmt.Println("Hello, Go! 🐹")
+    
+    // Variables
+    name := "World"
+    age := 25
+    
+    fmt.Println(greet(name))
+    fmt.Printf("Age: %d\\n", age)
+    
+    // Slice
+    fruits := []string{"apple", "banana", "cherry"}
+    for _, fruit := range fruits {
+        fmt.Println("I like", fruit)
+    }
+    
+    // Struct usage
+    person := Person{Name: "John", Age: 30}
+    person.Greet()
+}
+`,
+      'go.mod': `module myproject
+
+go 1.21
+`,
+      'README.md': `# Go Project
+
+## Getting Started
+
+\`\`\`bash
+go run main.go
+\`\`\`
+`,
+    },
+  },
+
+  // ==================== RUST ====================
+  {
+    id: 'rust-basic',
+    name: 'Rust',
+    description: 'Basic Rust starter file',
+    icon: '🦀',
+    category: 'backend',
+    files: {
+      'main.rs': `// Rust Basic Starter
+// Run: rustc main.rs && ./main
+
+fn main() {
+    println!("Hello, Rust! 🦀");
+    
+    // Variables
+    let name = "World";
+    let age: i32 = 25;
+    let mut count = 0;
+    count += 1;
+    
+    println!("Hello, {}! Age: {}, Count: {}", name, age, count);
+    
+    // Vector
+    let fruits = vec!["apple", "banana", "cherry"];
+    for fruit in &fruits {
+        println!("I like {}", fruit);
+    }
+    
+    // Struct
+    let person = Person {
+        name: String::from("John"),
+        age: 30,
+    };
+    person.greet();
+}
+
+struct Person {
+    name: String,
+    age: i32,
+}
+
+impl Person {
+    fn greet(&self) {
+        println!("Hi, I'm {} and I'm {} years old.", self.name, self.age);
+    }
+}
+`,
+      'README.md': `# Rust Project
+
+## Getting Started
+
+\`\`\`bash
+rustc main.rs
+./main
+\`\`\`
+`,
+    },
+  },
+
+  // ==================== PHP ====================
+  {
+    id: 'php-basic',
+    name: 'PHP',
+    description: 'Basic PHP starter file',
+    icon: '🐘',
+    category: 'backend',
+    files: {
+      'index.php': `<?php
+// PHP Basic Starter
+// Run: php index.php
+
+echo "Hello, PHP! 🐘\\n";
+
+// Variables
+$name = "World";
+$age = 25;
+
+echo "Hello, $name! You are $age years old.\\n";
+
+// Array
+$fruits = ["apple", "banana", "cherry"];
+foreach ($fruits as $fruit) {
+    echo "I like $fruit\\n";
+}
+
+// Function
+function greet($name) {
+    return "Hello, $name!";
+}
+echo greet("PHP Developer") . "\\n";
+
+// Class
+class Person {
+    public $name;
+    public $age;
+    
+    public function __construct($name, $age) {
+        $this->name = $name;
+        $this->age = $age;
+    }
+    
+    public function introduce() {
+        echo "Hi, I'm {$this->name} and I'm {$this->age} years old.\\n";
+    }
+}
+
+$john = new Person("John", 30);
+$john->introduce();
+?>
+`,
+      'README.md': `# PHP Project
+
+## Getting Started
+
+\`\`\`bash
+php index.php
+\`\`\`
+`,
+    },
+  },
+
+  // ==================== RUBY ====================
+  {
+    id: 'ruby-basic',
+    name: 'Ruby',
+    description: 'Basic Ruby starter file',
+    icon: '💎',
+    category: 'backend',
+    files: {
+      'main.rb': `# Ruby Basic Starter
+# Run: ruby main.rb
+
+puts "Hello, Ruby! 💎"
+
+# Variables
+name = "World"
+age = 25
+
+puts "Hello, #{name}! You are #{age} years old."
+
+# Array
+fruits = ["apple", "banana", "cherry"]
+fruits.each do |fruit|
+  puts "I like #{fruit}"
+end
+
+# Method
+def greet(name)
+  "Hello, #{name}!"
+end
+puts greet("Ruby Developer")
+
+# Class
+class Person
+  attr_accessor :name, :age
+  
+  def initialize(name, age)
+    @name = name
+    @age = age
+  end
+  
+  def introduce
+    puts "Hi, I'm #{@name} and I'm #{@age} years old."
+  end
+end
+
+john = Person.new("John", 30)
+john.introduce
+`,
+      'README.md': `# Ruby Project
+
+## Getting Started
+
+\`\`\`bash
+ruby main.rb
+\`\`\`
+`,
+    },
+  },
+
+  // ==================== SWIFT ====================
+  {
+    id: 'swift-basic',
+    name: 'Swift',
+    description: 'Basic Swift starter file',
+    icon: '🍎',
+    category: 'backend',
+    files: {
+      'main.swift': `// Swift Basic Starter
+// Run: swift main.swift
+
+import Foundation
+
+print("Hello, Swift! 🍎")
+
+// Variables
+let name = "World"
+var age = 25
+
+print("Hello, \\(name)! You are \\(age) years old.")
+
+// Array
+let fruits = ["apple", "banana", "cherry"]
+for fruit in fruits {
+    print("I like \\(fruit)")
+}
+
+// Function
+func greet(name: String) -> String {
+    return "Hello, \\(name)!"
+}
+print(greet(name: "Swift Developer"))
+
+// Class
+class Person {
+    var name: String
+    var age: Int
+    
+    init(name: String, age: Int) {
+        self.name = name
+        self.age = age
+    }
+    
+    func introduce() {
+        print("Hi, I'm \\(name) and I'm \\(age) years old.")
+    }
+}
+
+let john = Person(name: "John", age: 30)
+john.introduce()
+`,
+      'README.md': `# Swift Project
+
+## Getting Started
+
+\`\`\`bash
+swift main.swift
+\`\`\`
+`,
+    },
+  },
+
+  // ==================== KOTLIN ====================
+  {
+    id: 'kotlin-basic',
+    name: 'Kotlin',
+    description: 'Basic Kotlin starter file',
+    icon: '🎯',
+    category: 'backend',
+    files: {
+      'Main.kt': `// Kotlin Basic Starter
+// Run: kotlinc Main.kt -include-runtime -d Main.jar && java -jar Main.jar
+
+fun main() {
+    println("Hello, Kotlin! 🎯")
+    
+    // Variables
+    val name = "World"
+    var age = 25
+    
+    println("Hello, $name! You are $age years old.")
+    
+    // List
+    val fruits = listOf("apple", "banana", "cherry")
+    for (fruit in fruits) {
+        println("I like $fruit")
+    }
+    
+    // Function call
+    println(greet("Kotlin Developer"))
+    
+    // Class usage
+    val john = Person("John", 30)
+    john.introduce()
+}
+
+fun greet(name: String): String {
+    return "Hello, $name!"
+}
+
+class Person(val name: String, val age: Int) {
+    fun introduce() {
+        println("Hi, I'm $name and I'm $age years old.")
+    }
+}
+`,
+      'README.md': `# Kotlin Project
+
+## Getting Started
+
+\`\`\`bash
+kotlinc Main.kt -include-runtime -d Main.jar
+java -jar Main.jar
+\`\`\`
+`,
+    },
+  },
+
+  // ==================== SQL ====================
+  {
+    id: 'sql-basic',
+    name: 'SQL',
+    description: 'Basic SQL starter file',
+    icon: '🗄️',
+    category: 'backend',
+    files: {
+      'schema.sql': `-- SQL Basic Starter
+
+-- Create users table
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create posts table
+CREATE TABLE posts (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    title VARCHAR(200) NOT NULL,
+    content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert sample data
+INSERT INTO users (username, email) VALUES
+    ('john_doe', 'john@example.com'),
+    ('jane_doe', 'jane@example.com');
+
+INSERT INTO posts (user_id, title, content) VALUES
+    (1, 'My First Post', 'Hello World!'),
+    (2, 'Hello', 'Nice to meet you!');
+
+-- Basic queries
+SELECT * FROM users;
+SELECT * FROM posts WHERE user_id = 1;
+
+-- Join query
+SELECT p.title, u.username 
+FROM posts p 
+JOIN users u ON p.user_id = u.id;
+`,
+      'README.md': `# SQL Project
+
+## Getting Started
+
+Use with PostgreSQL, MySQL, or SQLite.
+`,
+    },
+  },
+
+  // ==================== BASH ====================
+  {
+    id: 'bash-basic',
+    name: 'Bash',
+    description: 'Basic Bash shell script',
+    icon: '🐚',
+    category: 'backend',
+    files: {
+      'script.sh': `#!/bin/bash
+# Bash Basic Starter
+# Run: chmod +x script.sh && ./script.sh
+
+echo "Hello, Bash! 🐚"
+
+# Variables
+NAME="World"
+AGE=25
+
+echo "Hello, $NAME! You are $AGE years old."
+
+# Array
+FRUITS=("apple" "banana" "cherry")
+for fruit in "\${FRUITS[@]}"; do
+    echo "I like $fruit"
+done
+
+# Function
+greet() {
+    echo "Hello, $1!"
+}
+greet "Bash Developer"
+
+# Conditional
+if [ $AGE -ge 18 ]; then
+    echo "You are an adult"
+fi
+
+echo "Script completed!"
+`,
+      'README.md': `# Bash Project
+
+## Getting Started
+
+\`\`\`bash
+chmod +x script.sh
+./script.sh
+\`\`\`
+`,
+    },
+  },
+
+  // ==================== REACT ====================
+  {
+    id: 'react-basic',
+    name: 'React',
+    description: 'Basic React component',
+    icon: '⚛️',
     category: 'frontend',
-    dependencies: {
-      'vue': '^3.4.0',
-    },
-    devDependencies: {
-      '@vitejs/plugin-vue': '^5.0.0',
-      'vite': '^5.0.0',
-      'typescript': '^5.0.0',
-    },
-    scripts: {
-      'dev': 'vite',
-      'build': 'vite build',
-      'preview': 'vite preview',
-    },
     files: {
       'index.html': `<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vue App</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React App</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { font-family: sans-serif; background: #1a1a2e; color: #eee; padding: 40px; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      const [count, setCount] = useState(0);
+
+      return (
+        <div>
+          <h1>⚛️ React Starter</h1>
+          <h2>Count: {count}</h2>
+          <button onClick={() => setCount(c => c - 1)}>-</button>
+          <button onClick={() => setCount(0)}>Reset</button>
+          <button onClick={() => setCount(c => c + 1)}>+</button>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
 </html>`,
-      'src/main.ts': `import { createApp } from 'vue'
-import App from './App.vue'
-import './style.css'
+      'README.md': `# React Starter
 
-createApp(App).mount('#app')`,
-      'src/App.vue': `<script setup lang="ts">
-import { ref } from 'vue'
+Open index.html in browser.
+`,
+    },
+  },
 
-const count = ref(0)
-</script>
-
-<template>
-  <div class="container">
-    <h1>Hello, Vue! 💚</h1>
-    <p>Count: {{ count }}</p>
-    <button @click="count++">Increment</button>
+  // ==================== VUE ====================
+  {
+    id: 'vue-basic',
+    name: 'Vue.js',
+    description: 'Basic Vue.js component',
+    icon: '💚',
+    category: 'frontend',
+    files: {
+      'index.html': `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js App</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body { font-family: sans-serif; background: #1a1a2e; color: #eee; padding: 40px; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>💚 Vue.js Starter</h1>
+    <h2>Count: {{ count }}</h2>
+    <button @click="count--">-</button>
+    <button @click="count = 0">Reset</button>
+    <button @click="count++">+</button>
   </div>
-</template>
 
-<style scoped>
-.container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #42b883, #35495e);
-  color: white;
+  <script>
+    const { createApp, ref } = Vue;
+
+    createApp({
+      setup() {
+        const count = ref(0);
+        return { count };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>`,
+      'README.md': `# Vue.js Starter
+
+Open index.html in browser.
+`,
+    },
+  },
+
+  // ==================== JSON ====================
+  {
+    id: 'json-basic',
+    name: 'JSON',
+    description: 'Basic JSON data file',
+    icon: '📋',
+    category: 'static',
+    files: {
+      'data.json': `{
+  "name": "My Project",
+  "version": "1.0.0",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "items": [
+    { "id": 1, "name": "Item 1" },
+    { "id": 2, "name": "Item 2" }
+  ],
+  "settings": {
+    "theme": "dark",
+    "language": "en"
+  }
 }
+`,
+      'README.md': `# JSON Data File
 
-button {
-  background: white;
-  color: #42b883;
-  border: none;
-  padding: 0.75rem 2rem;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 1rem;
-}
-</style>`,
-      'src/style.css': `* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}`,
-      'vite.config.ts': `import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+Basic JSON structure example.
+`,
+    },
+  },
 
-export default defineConfig({
-  plugins: [vue()],
-})`,
-      'package.json': '',
+  // ==================== MARKDOWN ====================
+  {
+    id: 'markdown-basic',
+    name: 'Markdown',
+    description: 'Basic Markdown documentation',
+    icon: '📝',
+    category: 'static',
+    files: {
+      'README.md': `# Project Title
+
+A brief description of the project.
+
+## Installation
+
+\`\`\`bash
+npm install
+\`\`\`
+
+## Usage
+
+\`\`\`javascript
+const example = "Hello";
+\`\`\`
+
+## Features
+
+- Feature 1
+- Feature 2
+- Feature 3
+
+## License
+
+MIT
+`,
     },
   },
 ];

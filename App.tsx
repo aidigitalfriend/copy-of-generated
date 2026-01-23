@@ -5,14 +5,15 @@ import { CodeEditor } from './components/CodeEditor';
 import { AIChat } from './components/AIChat';
 import { AgenticAIChat } from './components/AgenticAIChat';
 import { TemplateGallery } from './components/TemplateGallery';
+import PrebuiltTemplatesGallery from './components/PrebuiltTemplatesGallery';
 import { LivePreview } from './components/LivePreview';
 import { DeployPanel } from './components/DeployPanel';
 import { ExtensionsPanel } from './components/ExtensionsPanel';
-import { FileNode, OpenFile } from './types';
+import { FileNode, OpenFile, ProjectTemplate } from './types';
 import { voiceOutput, speechSupport } from './services/speech';
 import { mediaService } from './services/media';
 
-type LeftTab = 'files' | 'templates' | 'extensions' | 'search' | 'history';
+type LeftTab = 'files' | 'templates' | 'prebuilt' | 'extensions' | 'search' | 'history';
 type RightTab = 'ai' | 'deploy' | 'settings';
 
 // AI Provider Models Configuration
@@ -838,6 +839,7 @@ const App: React.FC = () => {
     { id: 'files' as LeftTab, icon: '📁', label: 'Explorer', tooltip: 'File Explorer (Ctrl+Shift+E)' },
     { id: 'search' as LeftTab, icon: '🔍', label: 'Search', tooltip: 'Search (Ctrl+Shift+F)' },
     { id: 'templates' as LeftTab, icon: '📋', label: 'Templates', tooltip: 'Project Templates' },
+    { id: 'prebuilt' as LeftTab, icon: '🎨', label: 'Prebuilt', tooltip: 'Prebuilt App Templates' },
     { id: 'extensions' as LeftTab, icon: '🧩', label: 'Extensions', tooltip: 'Extensions (Ctrl+Shift+X)' },
     { id: 'history' as LeftTab, icon: '📜', label: 'History', tooltip: 'Project History (Ctrl+H)' },
   ];
@@ -993,6 +995,33 @@ const App: React.FC = () => {
             <div className="flex-1 overflow-hidden">
               {leftTab === 'files' && <FileExplorer files={files} onFileSelect={handleFileSelect} />}
               {leftTab === 'templates' && <TemplateGallery />}
+              {leftTab === 'prebuilt' && (
+                <PrebuiltTemplatesGallery 
+                  onSelectTemplate={(template: ProjectTemplate, templateFiles: FileNode[]) => {
+                    // Create project with template files
+                    const { createProject, setSidebarTab, setFiles, openFile } = useStore.getState();
+                    createProject(template.name, template.id, templateFiles);
+                    setSidebarTab('files');
+                    setLeftTab('files');
+                    
+                    // Open the main file (index.html) in the editor
+                    const mainFile = templateFiles.find(f => f.name === 'index.html' || f.name === 'App.tsx');
+                    if (mainFile && mainFile.type === 'file') {
+                      openFile({
+                        id: mainFile.id || crypto.randomUUID(),
+                        name: mainFile.name,
+                        path: mainFile.path,
+                        content: mainFile.content || '',
+                        language: mainFile.language || 'html',
+                        isDirty: false,
+                      });
+                    }
+                    
+                    // Switch to split view to show preview
+                    setViewMode('split');
+                  }}
+                />
+              )}
               {leftTab === 'extensions' && <ExtensionsPanel />}
               {leftTab === 'history' && <HistoryPanel />}
               {leftTab === 'search' && (

@@ -209,6 +209,23 @@ build_and_start() {
         echo '🔨 Building server...'
         npm run build
         
+        # Copy proto files to dist
+        echo '📋 Copying proto files...'
+        mkdir -p dist/nest-src/grpc/protos
+        cp -r grpc/protos/* dist/nest-src/grpc/protos/ 2>/dev/null || true
+        
+        # Start PostgreSQL Docker container if not running
+        echo '🐘 Starting PostgreSQL...'
+        docker ps | grep -q ai-friend-db || docker run -d --name ai-friend-db --restart unless-stopped -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres123 -e POSTGRES_DB=ai_friend_zone -p 5432:5432 -v pgdata:/var/lib/postgresql/data pgvector/pgvector:pg16
+        sleep 3
+        
+        # Update DATABASE_URL to use local PostgreSQL
+        sed -i 's|DATABASE_URL=.*|DATABASE_URL=\"postgresql://postgres:postgres123@localhost:5432/ai_friend_zone\"|' .env
+        
+        # Run database migrations
+        echo '🗃️ Running Prisma migrations...'
+        npx prisma db push --accept-data-loss
+        
         # Start with PM2
         echo '🚀 Starting services with PM2...'
         cd $APP_DIR
@@ -219,9 +236,9 @@ build_and_start() {
         # Start frontend (serve static files)
         pm2 serve dist 3000 --name frontend --spa
         
-        # Start backend
+        # Start backend (NestJS output is in dist/nest-src/)
         cd server
-        pm2 start dist/main.js --name backend
+        pm2 start dist/nest-src/main.js --name backend
         
         # Save PM2 config
         pm2 save
