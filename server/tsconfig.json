@@ -22,5 +22,5 @@
     "strictBindCallApply": false
   },
   "include": ["nest-src/**/*"],
-  "exclude": ["node_modules", "dist", "src"]
+  "exclude": ["node_modules", "dist", "src", "**/*.full.ts"]
 }
