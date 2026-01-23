@@ -3329,9 +3329,9 @@ export default {
     updateCountdown();
   </script>
 </body>
-</html>\`,
-      'style.css': \`html { scroll-behavior: smooth; }\`,
-      'script.js': \`console.log('🎫 TechConf 2024');\`,
+</html>`,
+      'style.css': `html { scroll-behavior: smooth; }`,
+      'script.js': `console.log('🎫 TechConf 2024');`,
     },
   },
 
@@ -3345,7 +3345,7 @@ export default {
     features: ['Lineup', 'Schedule', 'Tickets', 'Gallery'],
     techStack: ['HTML', 'Tailwind CSS', 'JavaScript'],
     files: {
-      'index.html': \`<!DOCTYPE html>
+      'index.html': `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -3425,8 +3425,8 @@ export default {
     <p>© 2024 SoundWave Festival. All rights reserved.</p>
   </footer>
 </body>
-</html>\`,
-      'style.css': \`/* Custom styles */\`,
+</html>`,
+      'style.css': `/* Custom styles */`,
     },
   },
 
@@ -3440,7 +3440,7 @@ export default {
     features: ['Couple Story', 'Event Details', 'RSVP', 'Gallery'],
     techStack: ['HTML', 'Tailwind CSS', 'JavaScript'],
     files: {
-      'index.html': \`<!DOCTYPE html>
+      'index.html': `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -3515,8 +3515,8 @@ export default {
     <p class="text-amber-600 text-sm mt-2">September 15, 2024</p>
   </footer>
 </body>
-</html>\`,
-      'style.css': \`/* Custom styles */\`,
+</html>`,
+      'style.css': `/* Custom styles */`,
     },
   },
 
@@ -3530,7 +3530,7 @@ export default {
     features: ['Agenda', 'Speakers', 'Sponsors', 'Registration'],
     techStack: ['HTML', 'Tailwind CSS', 'JavaScript'],
     files: {
-      'index.html': \`<!DOCTYPE html>
+      'index.html': `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -3613,8 +3613,8 @@ export default {
     <p>© 2024 Summit Conference. All rights reserved.</p>
   </footer>
 </body>
-</html>\`,
-      'style.css': \`/* Custom styles */\`,
+</html>`,
+      'style.css': `/* Custom styles */`,
     },
   },
 
@@ -3628,7 +3628,7 @@ export default {
     features: ['Registration Form', 'Speaker Bio', 'Topics', 'Countdown'],
     techStack: ['HTML', 'Tailwind CSS', 'JavaScript'],
     files: {
-      'index.html': \`<!DOCTYPE html>
+      'index.html': `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -3705,8 +3705,8 @@ export default {
     <p>© 2024 GrowthCo. All rights reserved.</p>
   </footer>
 </body>
-</html>\`,
-      'style.css': \`/* Custom styles */\`,
+</html>`,
+      'style.css': `/* Custom styles */`,
     },
   },
 
