@@ -36,27 +36,27 @@ export const RealTerminal: React.FC<RealTerminalProps> = ({ className = '' }) =>
       fontSize: 13,
       lineHeight: 1.4,
       theme: {
-        background: isDark ? '#0f172a' : '#ffffff',
-        foreground: isDark ? '#e2e8f0' : '#1e293b',
-        cursor: isDark ? '#60a5fa' : '#3b82f6',
-        cursorAccent: isDark ? '#0f172a' : '#ffffff',
-        selectionBackground: isDark ? 'rgba(96, 165, 250, 0.3)' : 'rgba(59, 130, 246, 0.3)',
-        black: isDark ? '#1e293b' : '#0f172a',
-        red: '#ef4444',
-        green: '#22c55e',
-        yellow: '#eab308',
-        blue: '#3b82f6',
-        magenta: '#a855f7',
-        cyan: '#06b6d4',
-        white: isDark ? '#f1f5f9' : '#334155',
-        brightBlack: isDark ? '#475569' : '#64748b',
-        brightRed: '#f87171',
-        brightGreen: '#4ade80',
-        brightYellow: '#facc15',
-        brightBlue: '#60a5fa',
-        brightMagenta: '#c084fc',
-        brightCyan: '#22d3ee',
-        brightWhite: isDark ? '#ffffff' : '#0f172a',
+        background: isDark ? '#1e1e1e' : '#ffffff',
+        foreground: isDark ? '#d4d4d4' : '#1e293b',
+        cursor: isDark ? '#aeafad' : '#3b82f6',
+        cursorAccent: isDark ? '#1e1e1e' : '#ffffff',
+        selectionBackground: isDark ? '#264f78' : 'rgba(59, 130, 246, 0.3)',
+        black: '#000000',
+        red: '#cd3131',
+        green: '#0dbc79',
+        yellow: '#e5e510',
+        blue: '#2472c8',
+        magenta: '#bc3fbc',
+        cyan: '#11a8cd',
+        white: '#e5e5e5',
+        brightBlack: '#666666',
+        brightRed: '#f14c4c',
+        brightGreen: '#23d18b',
+        brightYellow: '#f5f543',
+        brightBlue: '#3b8eea',
+        brightMagenta: '#d670d6',
+        brightCyan: '#29b8db',
+        brightWhite: '#ffffff',
       },
       allowProposedApi: true,
     });
@@ -199,16 +199,16 @@ export const RealTerminal: React.FC<RealTerminalProps> = ({ className = '' }) =>
     if (xtermRef.current) {
       const isDark = theme === 'dark';
       xtermRef.current.options.theme = {
-        background: isDark ? '#0f172a' : '#ffffff',
-        foreground: isDark ? '#e2e8f0' : '#1e293b',
-        cursor: isDark ? '#60a5fa' : '#3b82f6',
-        cursorAccent: isDark ? '#0f172a' : '#ffffff',
-        selectionBackground: isDark ? 'rgba(96, 165, 250, 0.3)' : 'rgba(59, 130, 246, 0.3)',
+        background: isDark ? '#1e1e1e' : '#ffffff',
+        foreground: isDark ? '#d4d4d4' : '#1e293b',
+        cursor: isDark ? '#aeafad' : '#3b82f6',
+        cursorAccent: isDark ? '#1e1e1e' : '#ffffff',
+        selectionBackground: isDark ? '#264f78' : 'rgba(59, 130, 246, 0.3)',
       };
     }
   }, [theme]);
 
-  const bgColor = theme === 'dark' ? 'bg-slate-900' : 'bg-white';
+  const bgColor = theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white';
   const borderColor = theme === 'dark' ? 'border-slate-700' : 'border-gray-200';
   const textColor = theme === 'dark' ? 'text-slate-300' : 'text-gray-600';
 

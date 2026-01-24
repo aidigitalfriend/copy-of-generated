@@ -273,28 +273,28 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
   useEffect(() => {
     if (!terminalRef.current || xtermRef.current) return;
 
-    // VS Code terminal theme
+    // VS Code terminal theme - high visibility
     const terminalTheme = {
-      background: '#0a0a0a',
-      foreground: '#ffff00',
-      cursor: '#ffff00',
-      cursorAccent: '#0a0a0a',
-      selectionBackground: '#ffff0040',
-      black: '#1a1a1a',
-      red: '#ff3333',
-      green: '#00ff00',
-      yellow: '#ffff00',
-      blue: '#00aaff',
-      magenta: '#ff00ff',
-      cyan: '#00ffff',
-      white: '#ffffff',
+      background: '#1e1e1e',
+      foreground: '#d4d4d4',
+      cursor: '#aeafad',
+      cursorAccent: '#1e1e1e',
+      selectionBackground: '#264f78',
+      black: '#000000',
+      red: '#cd3131',
+      green: '#0dbc79',
+      yellow: '#e5e510',
+      blue: '#2472c8',
+      magenta: '#bc3fbc',
+      cyan: '#11a8cd',
+      white: '#e5e5e5',
       brightBlack: '#666666',
-      brightRed: '#ff6666',
-      brightGreen: '#66ff66',
-      brightYellow: '#ffff66',
-      brightBlue: '#66bbff',
-      brightMagenta: '#ff66ff',
-      brightCyan: '#66ffff',
+      brightRed: '#f14c4c',
+      brightGreen: '#23d18b',
+      brightYellow: '#f5f543',
+      brightBlue: '#3b8eea',
+      brightMagenta: '#d670d6',
+      brightCyan: '#29b8db',
       brightWhite: '#ffffff',
     };
 
@@ -305,6 +305,8 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
       lineHeight: 1.4,
       cursorBlink: true,
       cursorStyle: 'block',
+      allowProposedApi: true,
+      allowTransparency: true,
     });
 
     const fitAddon = new FitAddon();
@@ -312,17 +314,20 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
     
     terminal.open(terminalRef.current);
     fitAddon.fit();
+    
+    // Focus terminal immediately
+    terminal.focus();
 
     xtermRef.current = terminal;
     fitAddonRef.current = fitAddon;
 
     // Welcome message
     terminal.writeln('\x1b[1;36m╔════════════════════════════════════════════════════════╗\x1b[0m');
-    terminal.writeln('\x1b[1;36m║\x1b[0m   \x1b[1;37m◉ AI Digital Friend Zone // Terminal\x1b[0m                \x1b[1;36m║\x1b[0m');
+    terminal.writeln('\x1b[1;36m║\x1b[0m   \x1b[1;33m⚡ AI Digital Friend Zone // Terminal\x1b[0m                \x1b[1;36m║\x1b[0m');
     terminal.writeln('\x1b[1;36m╚════════════════════════════════════════════════════════╝\x1b[0m');
     terminal.writeln('');
-    terminal.writeln('\x1b[90mSystem ready. Node.js and Python support enabled.\x1b[0m');
-    terminal.writeln('\x1b[90mType \x1b[36mhelp\x1b[90m for available commands.\x1b[0m');
+    terminal.writeln('\x1b[37mSystem ready. Node.js and Python support enabled.\x1b[0m');
+    terminal.writeln('\x1b[37mType \x1b[1;32mhelp\x1b[0;37m for available commands.\x1b[0m');
     terminal.writeln('');
     writePrompt(terminal);
 
@@ -373,42 +378,50 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
       }
     });
 
-    // Handle resize
+    // Handle resize with ResizeObserver for better panel resizing
     const handleResize = () => {
-      fitAddon.fit();
+      setTimeout(() => fitAddon.fit(), 0);
     };
+    
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(terminalRef.current);
     window.addEventListener('resize', handleResize);
 
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
       terminal.dispose();
     };
   }, [handleCommand, writePrompt, clearCurrentLine]);
 
+  // Focus terminal on click
+  const handleTerminalClick = useCallback(() => {
+    if (xtermRef.current) {
+      xtermRef.current.focus();
+    }
+  }, []);
+
+  // Auto-focus when component mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (xtermRef.current) {
+        xtermRef.current.focus();
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className={`h-full bg-vscode-bg font-mono ${className}`}>
-      {/* Terminal Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-vscode-sidebar border-b border-vscode-border">
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1.5">
-            <div className="w-3 h-3 bg-vscode-error rounded-full" />
-            <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-            <div className="w-3 h-3 bg-vscode-success rounded-full" />
-          </div>
-          <span className="text-xs text-vscode-textMuted ml-2 font-medium">Terminal</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <button className="p-0.5 text-vscode-textMuted hover:text-white hover:bg-white/5 transition rounded" title="New Terminal">
-            <span className="text-[10px]">+</span>
-          </button>
-          <button className="p-0.5 text-vscode-textMuted hover:text-white hover:bg-white/5 transition rounded" title="Clear">
-            <span className="text-[10px]">⌫</span>
-          </button>
-        </div>
-      </div>
-      
-      {/* Terminal Content */}
-      <div ref={terminalRef} className="h-[calc(100%-40px)] p-2" />
+    <div 
+      className={`h-full bg-[#1e1e1e] font-mono cursor-text ${className}`}
+      onClick={handleTerminalClick}
+    >
+      {/* Terminal Content - no header, App.tsx provides it */}
+      <div 
+        ref={terminalRef} 
+        className="h-full w-full"
+        style={{ outline: 'none' }}
+      />
     </div>
   );
 };

@@ -1249,11 +1249,11 @@ const App: React.FC = () => {
         {/* Terminal Panel */}
         {terminalOpen && (
           <div 
-            className={`border-t ${theme === 'dark' ? 'border-vscode-border bg-vscode-bg' : 'border-gray-200 bg-gray-900'}`}
+            className={`flex flex-col border-t ${theme === 'dark' ? 'border-vscode-border bg-[#1e1e1e]' : 'border-gray-200 bg-gray-900'}`}
             style={{ height: terminalHeight, minHeight: 100, maxHeight: 500 }}
           >
             {/* Terminal Header with Sash */}
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               {/* Resizable Sash at top */}
               <Sash
                 direction="horizontal"
@@ -1264,7 +1264,7 @@ const App: React.FC = () => {
               {/* Terminal Tab Bar */}
               <div className={`h-7 flex items-center justify-between px-2 border-b ${theme === 'dark' ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-700 bg-gray-800'}`}>
                 <div className="flex items-center gap-2">
-                  <div className={`flex items-center gap-1.5 px-2 py-0.5 text-[10px] ${theme === 'dark' ? 'bg-vscode-bg text-white' : 'bg-gray-900 text-white'} rounded-t border-t-2 border-t-vscode-accent`}>
+                  <div className={`flex items-center gap-1.5 px-2 py-0.5 text-[10px] ${theme === 'dark' ? 'bg-[#1e1e1e] text-white' : 'bg-gray-900 text-white'} rounded-t border-t-2 border-t-vscode-accent`}>
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -1285,7 +1285,7 @@ const App: React.FC = () => {
               </div>
             </div>
             {/* Terminal Content */}
-            <div className="h-[calc(100%-28px)]">
+            <div className="flex-1 min-h-0">
               <Terminal />
             </div>
           </div>
