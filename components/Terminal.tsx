@@ -24,7 +24,8 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
   const { files, theme } = useStore();
 
   const writePrompt = useCallback((terminal: XTerminal) => {
-    terminal.write('\x1b[1;32m❯\x1b[0m ');
+    // Real terminal style prompt: user@workspace project-name %
+    terminal.write('\x1b[1;32muser\x1b[0m@\x1b[1;34mworkspace\x1b[0m \x1b[1;36mproject\x1b[0m \x1b[1;35m%\x1b[0m ');
   }, []);
 
   const clearCurrentLine = useCallback((terminal: XTerminal, length: number) => {
@@ -323,14 +324,7 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
     xtermRef.current = terminal;
     fitAddonRef.current = fitAddon;
 
-    // Welcome message
-    terminal.writeln('\x1b[1;36m╔════════════════════════════════════════════════════════╗\x1b[0m');
-    terminal.writeln('\x1b[1;36m║\x1b[0m   \x1b[1;33m⚡ AI Digital Friend Zone // Terminal\x1b[0m                \x1b[1;36m║\x1b[0m');
-    terminal.writeln('\x1b[1;36m╚════════════════════════════════════════════════════════╝\x1b[0m');
-    terminal.writeln('');
-    terminal.writeln('\x1b[37mSystem ready. Node.js and Python support enabled.\x1b[0m');
-    terminal.writeln('\x1b[37mType \x1b[1;32mhelp\x1b[0;37m for available commands.\x1b[0m');
-    terminal.writeln('');
+    // Simple prompt - like real terminal
     writePrompt(terminal);
 
     terminal.onKey(async ({ key, domEvent }) => {

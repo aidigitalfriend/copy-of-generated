@@ -70,24 +70,15 @@ export const RealTerminal: React.FC<RealTerminalProps> = ({ className = '' }) =>
     xtermRef.current = terminal;
     fitAddonRef.current = fitAddon;
 
-    // Write welcome message
-    terminal.writeln('\x1b[1;36m╔══════════════════════════════════════════╗\x1b[0m');
-    terminal.writeln('\x1b[1;36m║\x1b[0m   \x1b[1;33m⚡ AI Digital Friend Zone Terminal\x1b[0m    \x1b[1;36m║\x1b[0m');
-    terminal.writeln('\x1b[1;36m║\x1b[0m      \x1b[90mReal-time Server Connection\x1b[0m        \x1b[1;36m║\x1b[0m');
-    terminal.writeln('\x1b[1;36m╚══════════════════════════════════════════╝\x1b[0m');
-    terminal.writeln('');
-
     // Connect function
     const connectToBackend = async () => {
       if (isConnectingRef.current || terminalIdRef.current) return;
       
       isConnectingRef.current = true;
       setConnectionStatus('connecting');
-      terminal.writeln('\x1b[33m⏳ Connecting to server...\x1b[0m');
 
       try {
         await socketService.connect();
-        terminal.writeln('\x1b[32m✓ Socket connected\x1b[0m');
 
         const termId = await socketService.createTerminal({
           cols: terminal.cols,
@@ -95,8 +86,6 @@ export const RealTerminal: React.FC<RealTerminalProps> = ({ className = '' }) =>
         });
         
         terminalIdRef.current = termId;
-        terminal.writeln('\x1b[32m✓ Terminal session created\x1b[0m');
-        terminal.writeln('');
         
         setConnectionStatus('connected');
         isConnectingRef.current = false;
@@ -209,31 +198,13 @@ export const RealTerminal: React.FC<RealTerminalProps> = ({ className = '' }) =>
   }, [theme]);
 
   const bgColor = theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white';
-  const borderColor = theme === 'dark' ? 'border-slate-700' : 'border-gray-200';
-  const textColor = theme === 'dark' ? 'text-slate-300' : 'text-gray-600';
 
   return (
-    <div className={`flex flex-col h-full ${bgColor} ${className}`}>
-      {/* Terminal Header */}
-      <div className={`flex items-center justify-between px-3 py-1.5 border-b ${borderColor}`}>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">Terminal</span>
-          <span className={`text-xs px-2 py-0.5 rounded-full ${
-            connectionStatus === 'connected'
-              ? 'bg-green-500/20 text-green-400' 
-              : connectionStatus === 'connecting'
-                ? 'bg-yellow-500/20 text-yellow-400' 
-                : 'bg-red-500/20 text-red-400'
-          }`}>
-            {connectionStatus === 'connected' ? '● Connected' : connectionStatus === 'connecting' ? '○ Connecting...' : '○ Disconnected'}
-          </span>
-        </div>
-      </div>
-
-      {/* Terminal Container */}
+    <div className={`h-full w-full ${bgColor} ${className}`}>
+      {/* Terminal Container - no header, App.tsx provides it */}
       <div 
         ref={terminalRef}
-        className="flex-1 min-h-0 p-2"
+        className="h-full w-full p-1"
         style={{ overflow: 'hidden' }}
       />
     </div>

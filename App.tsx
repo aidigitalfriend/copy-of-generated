@@ -3,6 +3,7 @@ import { useStore } from './store/useStore';
 import { FileExplorer } from './components/FileExplorer';
 import { CodeEditor } from './components/CodeEditor';
 import { Terminal } from './components/Terminal';
+import { RealTerminal } from './components/RealTerminal';
 import { AIChat } from './components/AIChat';
 import { AgenticAIChat } from './components/AgenticAIChat';
 import { TemplateGallery } from './components/TemplateGallery';
@@ -611,6 +612,7 @@ const App: React.FC = () => {
   // Terminal panel state - open by default
   const [terminalOpen, setTerminalOpen] = useState(true);
   const [terminalHeight, setTerminalHeight] = useState(200);
+  const [useRealTerminal, setUseRealTerminal] = useState(true); // Use real terminal by default
   
   // Split editor state
   const [splitEditorOpen, setSplitEditorOpen] = useState(false);
@@ -1274,9 +1276,20 @@ const App: React.FC = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <span>Terminal</span>
+                    <span className={`text-[9px] px-1 rounded ${useRealTerminal ? 'bg-green-500/30 text-green-400' : 'bg-yellow-500/30 text-yellow-400'}`}>
+                      {useRealTerminal ? 'Real' : 'Emulated'}
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
+                  {/* Toggle Real/Emulated Terminal */}
+                  <button
+                    onClick={() => setUseRealTerminal(!useRealTerminal)}
+                    className={`p-0.5 px-1.5 text-[9px] ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'} transition-colors rounded`}
+                    title={useRealTerminal ? 'Switch to Emulated Terminal' : 'Switch to Real Terminal'}
+                  >
+                    {useRealTerminal ? '🔌 Real' : '🌐 Emulated'}
+                  </button>
                   <button
                     onClick={() => setTerminalOpen(false)}
                     className={`p-0.5 ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
@@ -1291,7 +1304,7 @@ const App: React.FC = () => {
             </div>
             {/* Terminal Content */}
             <div className="flex-1 min-h-0">
-              <Terminal />
+              {useRealTerminal ? <RealTerminal /> : <Terminal />}
             </div>
           </div>
         )}

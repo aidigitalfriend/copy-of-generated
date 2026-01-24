@@ -10,13 +10,21 @@ class SocketService {
   
   // Connection URL - use backend API URL
   private getSocketUrl(): string {
-    // In production, connect to the API server
-    // In development, use localhost:4000
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      
+      // GitHub Codespaces - convert port 3000 to port 4000
+      if (hostname.includes('.app.github.dev')) {
+        // Replace -3000 with -4000 in the URL
+        return window.location.origin.replace('-3000.', '-4000.');
+      }
+      
       // Production: use api subdomain
-      return 'https://api.maula.dev';
+      if (hostname !== 'localhost' && !hostname.includes('127.0.0.1')) {
+        return 'https://api.maula.dev';
+      }
     }
-    // Development
+    // Development localhost
     return 'http://localhost:4000';
   }
 
