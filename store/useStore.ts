@@ -1419,15 +1419,102 @@ export const useStore = create<StoreState>()(
       // UI Actions
       setTheme: (theme) => {
         set({ theme });
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
-          document.documentElement.classList.remove('high-contrast');
-        } else if (theme === 'high-contrast') {
-          document.documentElement.classList.add('dark');
-          document.documentElement.classList.add('high-contrast');
-        } else {
-          document.documentElement.classList.remove('dark');
-          document.documentElement.classList.remove('high-contrast');
+        const root = document.documentElement;
+        
+        // Remove all theme classes first
+        root.classList.remove('dark', 'high-contrast', 'theme-github-dark', 'theme-dracula', 'theme-nord', 'theme-monokai', 'theme-solarized-dark', 'theme-one-dark');
+        
+        // Apply theme-specific classes and CSS variables
+        switch (theme) {
+          case 'dark':
+            root.classList.add('dark');
+            root.style.setProperty('--bg-primary', '#1e1e1e');
+            root.style.setProperty('--bg-secondary', '#252526');
+            root.style.setProperty('--bg-sidebar', '#252526');
+            root.style.setProperty('--text-primary', '#cccccc');
+            root.style.setProperty('--text-muted', '#808080');
+            root.style.setProperty('--accent', '#0078d4');
+            root.style.setProperty('--border', '#3c3c3c');
+            break;
+          case 'light':
+            root.style.setProperty('--bg-primary', '#ffffff');
+            root.style.setProperty('--bg-secondary', '#f3f3f3');
+            root.style.setProperty('--bg-sidebar', '#f3f3f3');
+            root.style.setProperty('--text-primary', '#333333');
+            root.style.setProperty('--text-muted', '#666666');
+            root.style.setProperty('--accent', '#0078d4');
+            root.style.setProperty('--border', '#e0e0e0');
+            break;
+          case 'high-contrast':
+            root.classList.add('dark', 'high-contrast');
+            root.style.setProperty('--bg-primary', '#000000');
+            root.style.setProperty('--bg-secondary', '#000000');
+            root.style.setProperty('--bg-sidebar', '#000000');
+            root.style.setProperty('--text-primary', '#ffffff');
+            root.style.setProperty('--text-muted', '#ffffff');
+            root.style.setProperty('--accent', '#ffff00');
+            root.style.setProperty('--border', '#ffffff');
+            break;
+          case 'github-dark':
+            root.classList.add('dark', 'theme-github-dark');
+            root.style.setProperty('--bg-primary', '#0d1117');
+            root.style.setProperty('--bg-secondary', '#161b22');
+            root.style.setProperty('--bg-sidebar', '#161b22');
+            root.style.setProperty('--text-primary', '#c9d1d9');
+            root.style.setProperty('--text-muted', '#8b949e');
+            root.style.setProperty('--accent', '#58a6ff');
+            root.style.setProperty('--border', '#30363d');
+            break;
+          case 'dracula':
+            root.classList.add('dark', 'theme-dracula');
+            root.style.setProperty('--bg-primary', '#282a36');
+            root.style.setProperty('--bg-secondary', '#21222c');
+            root.style.setProperty('--bg-sidebar', '#21222c');
+            root.style.setProperty('--text-primary', '#f8f8f2');
+            root.style.setProperty('--text-muted', '#6272a4');
+            root.style.setProperty('--accent', '#bd93f9');
+            root.style.setProperty('--border', '#44475a');
+            break;
+          case 'nord':
+            root.classList.add('dark', 'theme-nord');
+            root.style.setProperty('--bg-primary', '#2e3440');
+            root.style.setProperty('--bg-secondary', '#3b4252');
+            root.style.setProperty('--bg-sidebar', '#3b4252');
+            root.style.setProperty('--text-primary', '#eceff4');
+            root.style.setProperty('--text-muted', '#d8dee9');
+            root.style.setProperty('--accent', '#88c0d0');
+            root.style.setProperty('--border', '#4c566a');
+            break;
+          case 'monokai':
+            root.classList.add('dark', 'theme-monokai');
+            root.style.setProperty('--bg-primary', '#272822');
+            root.style.setProperty('--bg-secondary', '#1e1f1c');
+            root.style.setProperty('--bg-sidebar', '#1e1f1c');
+            root.style.setProperty('--text-primary', '#f8f8f2');
+            root.style.setProperty('--text-muted', '#75715e');
+            root.style.setProperty('--accent', '#a6e22e');
+            root.style.setProperty('--border', '#49483e');
+            break;
+          case 'solarized-dark':
+            root.classList.add('dark', 'theme-solarized-dark');
+            root.style.setProperty('--bg-primary', '#002b36');
+            root.style.setProperty('--bg-secondary', '#073642');
+            root.style.setProperty('--bg-sidebar', '#073642');
+            root.style.setProperty('--text-primary', '#839496');
+            root.style.setProperty('--text-muted', '#657b83');
+            root.style.setProperty('--accent', '#268bd2');
+            root.style.setProperty('--border', '#094959');
+            break;
+          case 'one-dark':
+            root.classList.add('dark', 'theme-one-dark');
+            root.style.setProperty('--bg-primary', '#282c34');
+            root.style.setProperty('--bg-secondary', '#21252b');
+            root.style.setProperty('--bg-sidebar', '#21252b');
+            root.style.setProperty('--text-primary', '#abb2bf');
+            root.style.setProperty('--text-muted', '#5c6370');
+            root.style.setProperty('--accent', '#61afef');
+            root.style.setProperty('--border', '#3e4451');
+            break;
         }
       },
       

@@ -73,10 +73,17 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
   const textMuted = theme === 'dark' ? 'text-vscode-textMuted' : theme === 'high-contrast' ? 'text-gray-300' : 'text-gray-500';
   const borderColor = theme === 'dark' ? 'border-vscode-border' : theme === 'high-contrast' ? 'border-white' : 'border-gray-200';
   const inputBg = theme === 'dark' 
-    ? 'bg-vscode-input border border-vscode-border text-white rounded' 
+    ? 'bg-[#3c3c3c] border border-[#5c5c5c] text-white rounded' 
     : theme === 'high-contrast' 
       ? 'bg-black border-2 border-white text-white rounded' 
       : 'bg-white border border-gray-300 text-gray-900 rounded';
+  
+  // Select/dropdown specific styling with solid background
+  const selectBg = theme === 'dark'
+    ? 'bg-[#3c3c3c] border border-[#5c5c5c] text-white rounded [&>option]:bg-[#252526] [&>option]:text-white'
+    : theme === 'high-contrast'
+      ? 'bg-black border-2 border-white text-white rounded [&>option]:bg-black [&>option]:text-white'
+      : 'bg-white border border-gray-300 text-gray-900 rounded [&>option]:bg-white [&>option]:text-gray-900';
 
   const currentProvider = AI_PROVIDERS[aiConfig.provider as AIProviderKey] || AI_PROVIDERS.openai;
   
@@ -121,9 +128,15 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   <label className={`text-sm ${textSecondary} block mb-2`}>Application Theme</label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
-                      { value: 'dark', label: '🌙 Dark', desc: 'Dark theme' },
-                      { value: 'light', label: '☀️ Light', desc: 'Light theme' },
-                      { value: 'high-contrast', label: '🔲 High Contrast', desc: 'Maximum contrast' }
+                      { value: 'dark', label: '🌙 Dark', desc: 'VS Code Dark' },
+                      { value: 'light', label: '☀️ Light', desc: 'VS Code Light' },
+                      { value: 'high-contrast', label: '🔲 High Contrast', desc: 'Maximum visibility' },
+                      { value: 'github-dark', label: '🐙 GitHub Dark', desc: 'GitHub style' },
+                      { value: 'dracula', label: '🧛 Dracula', desc: 'Purple dark theme' },
+                      { value: 'nord', label: '❄️ Nord', desc: 'Arctic blue theme' },
+                      { value: 'monokai', label: '🎨 Monokai', desc: 'Classic colorful' },
+                      { value: 'solarized-dark', label: '🌅 Solarized', desc: 'Warm dark theme' },
+                      { value: 'one-dark', label: '💜 One Dark', desc: 'Atom inspired' },
                     ].map(t => (
                       <button
                         key={t.value}
@@ -146,7 +159,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   <select
                     value={editorSettings.iconTheme || 'material'}
                     onChange={(e) => setEditorSettings({ iconTheme: e.target.value as any })}
-                    className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                    className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                   >
                     <option value="default">📁 Default</option>
                     <option value="material">🎨 Material Icons</option>
@@ -166,7 +179,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   <select
                     value={editorSettings.theme}
                     onChange={(e) => setEditorSettings({ theme: e.target.value as any })}
-                    className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                    className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                   >
                     <option value="vs-dark">VS Dark</option>
                     <option value="vs-light">VS Light</option>
@@ -195,7 +208,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                 <select
                   value={editorSettings.fontFamily}
                   onChange={(e) => setEditorSettings({ fontFamily: e.target.value })}
-                  className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-accent font-mono`}
+                  className={`w-full ${selectBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-accent font-mono`}
                 >
                   {fontOptions.map(font => (
                     <option key={font} value={font}>{font.split("'")[1]}</option>
@@ -209,7 +222,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                 <select
                   value={editorSettings.fontSize}
                   onChange={(e) => setEditorSettings({ fontSize: Number(e.target.value) })}
-                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                 >
                   {[10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 28, 32].map(size => (
                     <option key={size} value={size}>{size}px</option>
@@ -222,7 +235,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                 <select
                   value={editorSettings.lineHeight || 1.6}
                   onChange={(e) => setEditorSettings({ lineHeight: Number(e.target.value) })}
-                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                 >
                   {[1.2, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2].map(height => (
                     <option key={height} value={height}>{height}</option>
@@ -235,7 +248,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                 <select
                   value={editorSettings.letterSpacing || 0}
                   onChange={(e) => setEditorSettings({ letterSpacing: Number(e.target.value) })}
-                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                 >
                   {[-0.5, 0, 0.5, 1, 1.5, 2].map(spacing => (
                     <option key={spacing} value={spacing}>{spacing}px</option>
@@ -280,7 +293,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   onChange={(e) => setEditorSettings({ 
                     terminal: { ...editorSettings.terminal, defaultShell: e.target.value as ShellType } 
                   })}
-                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                 >
                   <option value="bash">🐚 Bash</option>
                   <option value="zsh">⚡ Zsh</option>
@@ -298,7 +311,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   onChange={(e) => setEditorSettings({ 
                     terminal: { ...editorSettings.terminal, fontSize: Number(e.target.value) } 
                   })}
-                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                 >
                   {[10, 11, 12, 13, 14, 15, 16, 18, 20].map(size => (
                     <option key={size} value={size}>{size}px</option>
@@ -313,7 +326,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   onChange={(e) => setEditorSettings({ 
                     terminal: { ...editorSettings.terminal, cursorStyle: e.target.value as 'block' | 'underline' | 'bar' } 
                   })}
-                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                 >
                   <option value="bar">▏ Bar</option>
                   <option value="block">█ Block</option>
@@ -347,7 +360,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   onChange={(e) => setEditorSettings({ 
                     terminal: { ...editorSettings.terminal, lineHeight: Number(e.target.value) } 
                   })}
-                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                 >
                   {[1.0, 1.2, 1.4, 1.5, 1.6, 1.8, 2.0].map(height => (
                     <option key={height} value={height}>{height}</option>
@@ -365,7 +378,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   onChange={(e) => setEditorSettings({ 
                     terminal: { ...editorSettings.terminal, scrollback: Number(e.target.value) } 
                   })}
-                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                 >
                   <option value={1000}>1,000</option>
                   <option value={5000}>5,000</option>
@@ -471,7 +484,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                 <select
                   value={uiLayout?.sidebarPosition || 'left'}
                   onChange={(e) => setUILayout({ sidebarPosition: e.target.value as any })}
-                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                 >
                   <option value="left">← Left</option>
                   <option value="right">Right →</option>
@@ -486,7 +499,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                 <select
                   value={uiLayout?.panelPosition || 'bottom'}
                   onChange={(e) => setUILayout({ panelPosition: e.target.value as any })}
-                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                 >
                   <option value="bottom">↓ Bottom</option>
                   <option value="right">Right →</option>
@@ -523,7 +536,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                 <select
                   value={editorSettings.tabSize}
                   onChange={(e) => setEditorSettings({ tabSize: Number(e.target.value) })}
-                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
                 >
                   <option value={2}>2 spaces</option>
                   <option value={4}>4 spaces</option>
@@ -621,7 +634,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                       model: models[0] || '' 
                     });
                   }}
-                  className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-accent`}
+                  className={`w-full ${selectBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-accent`}
                 >
                   {Object.entries(AI_PROVIDERS).map(([key, provider]) => (
                     <option key={key} value={key}>
@@ -636,7 +649,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                 <select
                   value={aiConfig.model}
                   onChange={(e) => setAiConfig({ model: e.target.value })}
-                  className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-accent font-mono`}
+                  className={`w-full ${selectBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-accent font-mono`}
                 >
                   {currentProvider.models.map((model) => (
                     <option key={model} value={model}>
