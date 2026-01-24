@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { useStore } from './store/useStore';
 import { FileExplorer } from './components/FileExplorer';
 import { CodeEditor } from './components/CodeEditor';
+import { Terminal } from './components/Terminal';
 import { AIChat } from './components/AIChat';
 import { AgenticAIChat } from './components/AgenticAIChat';
 import { TemplateGallery } from './components/TemplateGallery';
@@ -597,6 +598,27 @@ const App: React.FC = () => {
   } = useStore();
 
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
+  const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
+  const [leftTab, setLeftTab] = useState<LeftTab>('files');
+  const [rightTab, setRightTab] = useState<RightTab>('ai');
+  const [viewMode, setViewMode] = useState<'code' | 'split' | 'preview'>('code');
+  
+  // Panel widths for resizable sash dividers
+  const [leftPanelWidth, setLeftPanelWidth] = useState(260);
+  const [rightPanelWidth, setRightPanelWidth] = useState(380);
+  const [splitRatio, setSplitRatio] = useState(50); // percentage for code/preview split
+  
+  // Terminal panel state
+  const [terminalOpen, setTerminalOpen] = useState(false);
+  const [terminalHeight, setTerminalHeight] = useState(200);
+  
+  // Split editor state
+  const [splitEditorOpen, setSplitEditorOpen] = useState(false);
+  
+  // Command Palette state
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [commandSearch, setCommandSearch] = useState('');
+  const commandInputRef = useRef<HTMLInputElement>(null);
   
   // Voice, Screenshot, Camera state
   const [voiceEnabled, setVoiceEnabled] = useState(false);
@@ -807,15 +829,100 @@ const App: React.FC = () => {
       }
     };
   }, [cameraStream]);
-  const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
-  const [leftTab, setLeftTab] = useState<LeftTab>('files');
-  const [rightTab, setRightTab] = useState<RightTab>('ai');
-  const [viewMode, setViewMode] = useState<'code' | 'split' | 'preview'>('code');
-  
-  // Panel widths for resizable sash dividers
-  const [leftPanelWidth, setLeftPanelWidth] = useState(260);
-  const [rightPanelWidth, setRightPanelWidth] = useState(380);
-  const [splitRatio, setSplitRatio] = useState(50); // percentage for code/preview split
+
+  // Command Palette commands
+  const commands = useMemo(() => [
+    { id: 'file.new', label: 'File: New File', shortcut: 'Ctrl+N', action: () => { /* TODO */ } },
+    { id: 'file.save', label: 'File: Save', shortcut: 'Ctrl+S', action: () => { /* TODO */ } },
+    { id: 'view.terminal', label: 'View: Toggle Terminal', shortcut: 'Ctrl+`', action: () => setTerminalOpen(!terminalOpen) },
+    { id: 'view.sidebar.left', label: 'View: Toggle Left Sidebar', shortcut: 'Ctrl+B', action: () => setLeftSidebarOpen(!leftSidebarOpen) },
+    { id: 'view.sidebar.right', label: 'View: Toggle Right Sidebar', shortcut: 'Ctrl+Shift+B', action: () => setRightSidebarOpen(!rightSidebarOpen) },
+    { id: 'view.split', label: 'View: Toggle Split Editor', shortcut: 'Ctrl+\\', action: () => setSplitEditorOpen(!splitEditorOpen) },
+    { id: 'view.code', label: 'View: Code Only', action: () => setViewMode('code') },
+    { id: 'view.preview', label: 'View: Preview Only', action: () => setViewMode('preview') },
+    { id: 'view.splitView', label: 'View: Split Code/Preview', action: () => setViewMode('split') },
+    { id: 'explorer.focus', label: 'Explorer: Focus on Files', shortcut: 'Ctrl+Shift+E', action: () => { setLeftTab('files'); setLeftSidebarOpen(true); } },
+    { id: 'search.focus', label: 'Search: Focus on Search', shortcut: 'Ctrl+Shift+F', action: () => { setLeftTab('search'); setLeftSidebarOpen(true); } },
+    { id: 'ai.focus', label: 'AI: Focus on AI Chat', shortcut: 'Ctrl+Shift+A', action: () => { setRightTab('ai'); setRightSidebarOpen(true); } },
+    { id: 'settings.open', label: 'Preferences: Open Settings', shortcut: 'Ctrl+,', action: () => { setRightTab('settings'); setRightSidebarOpen(true); } },
+    { id: 'theme.toggle', label: 'Theme: Toggle Dark/Light', action: () => setTheme(theme === 'dark' ? 'light' : 'dark') },
+  ], [terminalOpen, leftSidebarOpen, rightSidebarOpen, splitEditorOpen, theme, setTheme]);
+
+  const filteredCommands = useMemo(() => {
+    if (!commandSearch) return commands;
+    const search = commandSearch.toLowerCase();
+    return commands.filter(cmd => cmd.label.toLowerCase().includes(search));
+  }, [commands, commandSearch]);
+
+  // Keyboard shortcuts handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Command Palette: Ctrl+Shift+P or F1
+      if ((e.ctrlKey && e.shiftKey && e.key === 'P') || e.key === 'F1') {
+        e.preventDefault();
+        setCommandPaletteOpen(true);
+        setCommandSearch('');
+      }
+      // Terminal: Ctrl+`
+      if (e.ctrlKey && e.key === '`') {
+        e.preventDefault();
+        setTerminalOpen(!terminalOpen);
+      }
+      // Left Sidebar: Ctrl+B
+      if (e.ctrlKey && !e.shiftKey && e.key === 'b') {
+        e.preventDefault();
+        setLeftSidebarOpen(!leftSidebarOpen);
+      }
+      // Right Sidebar: Ctrl+Shift+B
+      if (e.ctrlKey && e.shiftKey && e.key === 'B') {
+        e.preventDefault();
+        setRightSidebarOpen(!rightSidebarOpen);
+      }
+      // Split Editor: Ctrl+\
+      if (e.ctrlKey && e.key === '\\') {
+        e.preventDefault();
+        setSplitEditorOpen(!splitEditorOpen);
+      }
+      // Explorer: Ctrl+Shift+E
+      if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+        e.preventDefault();
+        setLeftTab('files');
+        setLeftSidebarOpen(true);
+      }
+      // Search: Ctrl+Shift+F
+      if (e.ctrlKey && e.shiftKey && e.key === 'F') {
+        e.preventDefault();
+        setLeftTab('search');
+        setLeftSidebarOpen(true);
+      }
+      // AI Chat: Ctrl+Shift+A
+      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        e.preventDefault();
+        setRightTab('ai');
+        setRightSidebarOpen(true);
+      }
+      // Settings: Ctrl+,
+      if (e.ctrlKey && e.key === ',') {
+        e.preventDefault();
+        setRightTab('settings');
+        setRightSidebarOpen(true);
+      }
+      // Escape to close command palette
+      if (e.key === 'Escape' && commandPaletteOpen) {
+        setCommandPaletteOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [terminalOpen, leftSidebarOpen, rightSidebarOpen, splitEditorOpen, commandPaletteOpen]);
+
+  // Focus command input when palette opens
+  useEffect(() => {
+    if (commandPaletteOpen && commandInputRef.current) {
+      commandInputRef.current.focus();
+    }
+  }, [commandPaletteOpen]);
 
   // Sync theme on mount
   useEffect(() => {
@@ -1126,15 +1233,77 @@ const App: React.FC = () => {
               onResize={setSplitRatio}
               className="w-full h-full"
             >
-              <CodeEditor />
+              {splitEditorOpen ? (
+                <SplitPane direction="horizontal" defaultSize={50} minSize={20} maxSize={80}>
+                  <CodeEditor />
+                  <CodeEditor />
+                </SplitPane>
+              ) : (
+                <CodeEditor />
+              )}
               <LivePreview />
             </SplitPane>
           )}
         </div>
 
+        {/* Terminal Panel */}
+        {terminalOpen && (
+          <div 
+            className={`border-t ${theme === 'dark' ? 'border-vscode-border bg-vscode-bg' : 'border-gray-200 bg-gray-900'}`}
+            style={{ height: terminalHeight, minHeight: 100, maxHeight: 500 }}
+          >
+            {/* Terminal Header with Sash */}
+            <div className="relative">
+              {/* Resizable Sash at top */}
+              <Sash
+                direction="horizontal"
+                position="start"
+                onResize={(delta) => setTerminalHeight(Math.max(100, Math.min(500, terminalHeight - delta)))}
+                className="z-20"
+              />
+              {/* Terminal Tab Bar */}
+              <div className={`h-7 flex items-center justify-between px-2 border-b ${theme === 'dark' ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-700 bg-gray-800'}`}>
+                <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-1.5 px-2 py-0.5 text-[10px] ${theme === 'dark' ? 'bg-vscode-bg text-white' : 'bg-gray-900 text-white'} rounded-t border-t-2 border-t-vscode-accent`}>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>Terminal</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setTerminalOpen(false)}
+                    className={`p-0.5 ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
+                    title="Close Terminal"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            {/* Terminal Content */}
+            <div className="h-[calc(100%-28px)]">
+              <Terminal />
+            </div>
+          </div>
+        )}
+
         {/* Status Bar */}
         <footer className={`h-6 border-t flex items-center justify-between px-3 text-xs ${theme === 'dark' ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'}`}>
           <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setTerminalOpen(!terminalOpen)}
+              className="flex items-center gap-1 hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"
+              title="Toggle Terminal (Ctrl+`)"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Terminal
+            </button>
             <span className="flex items-center gap-1">
               <div className="w-2 h-2 rounded-full bg-green-400" />
               Ready
@@ -1142,6 +1311,13 @@ const App: React.FC = () => {
             {currentProject && <span>{currentProject.template}</span>}
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setCommandPaletteOpen(true)}
+              className="hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"
+              title="Command Palette (Ctrl+Shift+P)"
+            >
+              <kbd className="text-[10px]">Ctrl+Shift+P</kbd>
+            </button>
             <span>TypeScript</span>
             <span>UTF-8</span>
             <span>Spaces: 2</span>
@@ -1331,6 +1507,81 @@ const App: React.FC = () => {
                 </svg>
                 Stop
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Command Palette Modal */}
+      {commandPaletteOpen && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh]"
+          onClick={() => setCommandPaletteOpen(false)}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          
+          {/* Palette */}
+          <div 
+            className={`relative w-full max-w-xl mx-4 ${theme === 'dark' ? 'bg-vscode-sidebar border-vscode-border' : 'bg-white border-gray-200'} border rounded-lg shadow-2xl overflow-hidden`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Search Input */}
+            <div className={`flex items-center gap-2 px-3 py-2 border-b ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
+              <svg className={`w-4 h-4 ${theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+              <input
+                ref={commandInputRef}
+                type="text"
+                value={commandSearch}
+                onChange={(e) => setCommandSearch(e.target.value)}
+                placeholder="Type a command or search..."
+                className={`flex-1 bg-transparent border-none outline-none text-sm ${theme === 'dark' ? 'text-white placeholder-vscode-textMuted' : 'text-gray-900 placeholder-gray-400'}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && filteredCommands.length > 0) {
+                    filteredCommands[0].action();
+                    setCommandPaletteOpen(false);
+                  }
+                }}
+              />
+              <kbd className={`px-1.5 py-0.5 text-[10px] rounded ${theme === 'dark' ? 'bg-vscode-bg text-vscode-textMuted' : 'bg-gray-100 text-gray-500'}`}>ESC</kbd>
+            </div>
+            
+            {/* Command List */}
+            <div className="max-h-80 overflow-y-auto">
+              {filteredCommands.length === 0 ? (
+                <div className={`px-4 py-8 text-center ${theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500'}`}>
+                  <p className="text-sm">No commands found</p>
+                </div>
+              ) : (
+                filteredCommands.map((cmd, index) => (
+                  <button
+                    key={cmd.id}
+                    onClick={() => {
+                      cmd.action();
+                      setCommandPaletteOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-left transition-colors
+                      ${index === 0 
+                        ? theme === 'dark' ? 'bg-vscode-selection' : 'bg-blue-50' 
+                        : theme === 'dark' ? 'hover:bg-vscode-hover' : 'hover:bg-gray-50'
+                      }`}
+                  >
+                    <span className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{cmd.label}</span>
+                    {cmd.shortcut && (
+                      <kbd className={`px-1.5 py-0.5 text-[10px] rounded ${theme === 'dark' ? 'bg-vscode-bg text-vscode-textMuted' : 'bg-gray-100 text-gray-500'}`}>
+                        {cmd.shortcut}
+                      </kbd>
+                    )}
+                  </button>
+                ))
+              )}
+            </div>
+            
+            {/* Footer hint */}
+            <div className={`px-3 py-2 border-t text-[10px] ${theme === 'dark' ? 'border-vscode-border text-vscode-textMuted bg-vscode-bg/50' : 'border-gray-200 text-gray-500 bg-gray-50'}`}>
+              <span>↑↓ to navigate • Enter to select • Esc to close</span>
             </div>
           </div>
         </div>
