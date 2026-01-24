@@ -33,13 +33,14 @@ import { TaskRunnerPanel } from './components/TaskRunnerPanel';
 import { PackagingPanel } from './components/PackagingPanel';
 import { AnalyticsPanel } from './components/AnalyticsPanel';
 import { RemoteDevelopmentPanel } from './components/RemoteDevelopmentPanel';
+import { TechStackPanel } from './components/TechStackPanel';
 import { FileNode, OpenFile, ProjectTemplate } from './types';
 import { voiceOutput, speechSupport } from './services/speech';
 import { mediaService } from './services/media';
 import { Diagnostic } from './services/codeIntelligence';
 
 type LeftTab = 'files' | 'templates' | 'prebuilt' | 'extensions' | 'search' | 'history' | 'git';
-type RightTab = 'ai' | 'ai-tools' | 'collab' | 'debug' | 'tasks' | 'package' | 'remote' | 'analytics' | 'deploy' | 'settings';
+type RightTab = 'ai' | 'ai-tools' | 'collab' | 'debug' | 'tasks' | 'package' | 'remote' | 'analytics' | 'techstack' | 'deploy' | 'settings';
 
 // AI Provider Models Configuration
 const AI_PROVIDERS = {
@@ -774,6 +775,7 @@ const App: React.FC = () => {
     { id: 'package' as RightTab, label: 'Package', tooltip: 'Packaging & Distribution' },
     { id: 'remote' as RightTab, label: 'Remote', tooltip: 'Remote Development (SSH, WSL, Docker)' },
     { id: 'analytics' as RightTab, label: 'Analytics', tooltip: 'Analytics & Telemetry' },
+    { id: 'techstack' as RightTab, label: 'Tech Stack', tooltip: 'Electron, WASM, LSP, CLI Tools' },
     { id: 'deploy' as RightTab, label: 'Deploy', tooltip: 'Deploy to Cloud' },
     { id: 'settings' as RightTab, label: 'Settings', tooltip: 'Settings (Ctrl+,)' },
   ];
@@ -821,6 +823,8 @@ const App: React.FC = () => {
         return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7m0 0a3 3 0 01-3 3m0 3h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008zm-3 6h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008z" /></svg>;
       case 'analytics':
         return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>;
+      case 'techstack':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" /></svg>;
       case 'deploy':
         return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" /></svg>;
       case 'settings':
@@ -1346,6 +1350,7 @@ const App: React.FC = () => {
               {rightTab === 'package' && <PackagingPanel />}
               {rightTab === 'remote' && <RemoteDevelopmentPanel />}
               {rightTab === 'analytics' && <AnalyticsPanel />}
+              {rightTab === 'techstack' && <TechStackPanel />}
               {rightTab === 'deploy' && <EnhancedDeployPanel />}
               {rightTab === 'settings' && <SettingsPanel theme={theme} setTheme={setTheme} />}
             </div>
