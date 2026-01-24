@@ -23,9 +23,11 @@ import { WorkspaceManager } from './components/WorkspaceManager';
 import { GitPanel } from './components/GitPanel';
 import { GitIntegrationAdvanced } from './components/GitIntegrationAdvanced';
 import { SplitPane, Sash } from './components/SplitPane';
+import { CodeIntelligencePanel } from './components/CodeIntelligencePanel';
 import { FileNode, OpenFile, ProjectTemplate } from './types';
 import { voiceOutput, speechSupport } from './services/speech';
 import { mediaService } from './services/media';
+import { Diagnostic } from './services/codeIntelligence';
 
 type LeftTab = 'files' | 'templates' | 'prebuilt' | 'extensions' | 'search' | 'history' | 'git';
 type RightTab = 'ai' | 'deploy' | 'settings';
@@ -371,6 +373,11 @@ const App: React.FC = () => {
   const [terminalHeight, setTerminalHeight] = useState(250);
   const [terminalMaximized, setTerminalMaximized] = useState(false);
   const [useRealTerminal, setUseRealTerminal] = useState(true); // Use real terminal by default
+  
+  // Code Intelligence panel state
+  const [problemsPanelOpen, setProblemsPanelOpen] = useState(false);
+  const [currentDiagnostics, setCurrentDiagnostics] = useState<Diagnostic[]>([]);
+  const [bottomPanelTab, setBottomPanelTab] = useState<'terminal' | 'problems'>('terminal');
   
   // Split editor state
   const [splitEditorOpen, setSplitEditorOpen] = useState(false);
@@ -994,7 +1001,7 @@ const App: React.FC = () => {
         <div className="flex-1 flex overflow-hidden">
           {viewMode === 'code' && (
             <div className="w-full h-full">
-              <CodeEditor />
+              <CodeEditor onDiagnosticsChange={setCurrentDiagnostics} />
             </div>
           )}
           
@@ -1015,33 +1022,111 @@ const App: React.FC = () => {
             >
               {splitEditorOpen ? (
                 <SplitPane direction="horizontal" defaultSize={50} minSize={20} maxSize={80}>
-                  <CodeEditor />
+                  <CodeEditor onDiagnosticsChange={setCurrentDiagnostics} />
                   <CodeEditor />
                 </SplitPane>
               ) : (
-                <CodeEditor />
+                <CodeEditor onDiagnosticsChange={setCurrentDiagnostics} />
               )}
               <LivePreview />
             </SplitPane>
           )}
         </div>
 
-        {/* Terminal Panel - Using IntegratedTerminalAdvanced with multi-tab, split, and shell support */}
-        {terminalOpen && (
-          <IntegratedTerminalAdvanced
-            defaultHeight={terminalHeight}
-            onHeightChange={setTerminalHeight}
-            onMinimize={() => setTerminalOpen(false)}
-            onMaximize={() => setTerminalMaximized(!terminalMaximized)}
-            isMaximized={terminalMaximized}
-          />
+        {/* Bottom Panel - Terminal & Problems */}
+        {(terminalOpen || problemsPanelOpen) && (
+          <div 
+            className={`flex flex-col border-t ${theme === 'dark' ? 'border-vscode-border bg-vscode-panel' : 'border-gray-200 bg-white'}`}
+            style={{ height: terminalMaximized ? 'calc(100vh - 100px)' : terminalHeight }}
+          >
+            {/* Bottom Panel Tabs */}
+            <div className={`flex items-center gap-0 border-b ${theme === 'dark' ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-200 bg-gray-50'}`}>
+              <button
+                onClick={() => { setBottomPanelTab('problems'); setProblemsPanelOpen(true); }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
+                  bottomPanelTab === 'problems' && problemsPanelOpen
+                    ? theme === 'dark' ? 'text-white border-b-2 border-vscode-accent bg-vscode-panel' : 'text-blue-600 border-b-2 border-blue-500 bg-white'
+                    : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                Problems
+                {currentDiagnostics.length > 0 && (
+                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+                    currentDiagnostics.some(d => d.severity === 'error')
+                      ? 'bg-red-500 text-white'
+                      : currentDiagnostics.some(d => d.severity === 'warning')
+                        ? 'bg-yellow-500 text-black'
+                        : theme === 'dark' ? 'bg-vscode-hover text-vscode-text' : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    {currentDiagnostics.length}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => { setBottomPanelTab('terminal'); setTerminalOpen(true); }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
+                  bottomPanelTab === 'terminal' && terminalOpen
+                    ? theme === 'dark' ? 'text-white border-b-2 border-vscode-accent bg-vscode-panel' : 'text-blue-600 border-b-2 border-blue-500 bg-white'
+                    : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Terminal
+              </button>
+              <div className="flex-1" />
+              <button
+                onClick={() => setTerminalMaximized(!terminalMaximized)}
+                className={`p-1.5 ${theme === 'dark' ? 'hover:bg-vscode-hover text-vscode-textMuted hover:text-white' : 'hover:bg-gray-200 text-gray-500 hover:text-gray-700'}`}
+                title={terminalMaximized ? 'Restore Panel' : 'Maximize Panel'}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  {terminalMaximized ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                  )}
+                </svg>
+              </button>
+              <button
+                onClick={() => { setTerminalOpen(false); setProblemsPanelOpen(false); }}
+                className={`p-1.5 ${theme === 'dark' ? 'hover:bg-vscode-hover text-vscode-textMuted hover:text-white' : 'hover:bg-gray-200 text-gray-500 hover:text-gray-700'}`}
+                title="Close Panel"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            {/* Panel Content */}
+            <div className="flex-1 overflow-hidden">
+              {bottomPanelTab === 'terminal' && terminalOpen && (
+                <IntegratedTerminalAdvanced
+                  defaultHeight={terminalHeight - 32}
+                  onHeightChange={setTerminalHeight}
+                  onMinimize={() => setTerminalOpen(false)}
+                  onMaximize={() => setTerminalMaximized(!terminalMaximized)}
+                  isMaximized={terminalMaximized}
+                  hideHeader={true}
+                />
+              )}
+              {bottomPanelTab === 'problems' && problemsPanelOpen && (
+                <CodeIntelligencePanel className="h-full" />
+              )}
+            </div>
+          </div>
         )}
 
         {/* Status Bar */}
         <footer className={`h-6 border-t flex items-center justify-between px-3 text-xs ${theme === 'dark' ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'}`}>
           <div className="flex items-center gap-3">
             <button 
-              onClick={() => setTerminalOpen(!terminalOpen)}
+              onClick={() => { setTerminalOpen(!terminalOpen); setBottomPanelTab('terminal'); }}
               className="flex items-center gap-1 hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"
               title="Toggle Terminal (Ctrl+`)"
             >
@@ -1049,6 +1134,30 @@ const App: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               Terminal
+            </button>
+            <button 
+              onClick={() => { setProblemsPanelOpen(!problemsPanelOpen); setBottomPanelTab('problems'); }}
+              className="flex items-center gap-1 hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"
+              title="Toggle Problems Panel"
+            >
+              {currentDiagnostics.filter(d => d.severity === 'error').length > 0 && (
+                <span className="flex items-center gap-1">
+                  <span className="text-red-300">⨉</span>
+                  {currentDiagnostics.filter(d => d.severity === 'error').length}
+                </span>
+              )}
+              {currentDiagnostics.filter(d => d.severity === 'warning').length > 0 && (
+                <span className="flex items-center gap-1 ml-1">
+                  <span className="text-yellow-300">⚠</span>
+                  {currentDiagnostics.filter(d => d.severity === 'warning').length}
+                </span>
+              )}
+              {currentDiagnostics.length === 0 && (
+                <span className="flex items-center gap-1">
+                  <span className="text-green-300">✓</span>
+                  No problems
+                </span>
+              )}
             </button>
             <span className="flex items-center gap-1">
               <div className="w-2 h-2 rounded-full bg-green-400" />

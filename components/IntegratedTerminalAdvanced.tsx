@@ -55,6 +55,7 @@ interface IntegratedTerminalProps {
   onMinimize?: () => void;
   onMaximize?: () => void;
   isMaximized?: boolean;
+  hideHeader?: boolean;
 }
 
 // ============================================================================
@@ -162,6 +163,7 @@ export const IntegratedTerminalAdvanced: React.FC<IntegratedTerminalProps> = ({
   onMinimize,
   onMaximize,
   isMaximized = false,
+  hideHeader = false,
 }) => {
   const { theme, editorSettings } = useStore();
   
@@ -1021,7 +1023,7 @@ export const IntegratedTerminalAdvanced: React.FC<IntegratedTerminalProps> = ({
       style={{ height: isMaximized ? '100%' : `${height}px` }}
     >
       {/* Resize Handle */}
-      {!isMaximized && (
+      {!isMaximized && !hideHeader && (
         <div 
           className={`h-1 cursor-ns-resize transition-colors ${
             isResizing ? accentColor : isDark ? 'hover:bg-blue-600' : 'hover:bg-blue-500'
@@ -1031,6 +1033,7 @@ export const IntegratedTerminalAdvanced: React.FC<IntegratedTerminalProps> = ({
       )}
       
       {/* Header */}
+      {!hideHeader && (
       <div className={`flex items-center justify-between px-2 py-1 border-b ${borderColor} ${headerBg}`}>
         {/* Tabs */}
         <div className="flex items-center gap-1 flex-1 overflow-x-auto scrollbar-thin">
@@ -1252,9 +1255,10 @@ export const IntegratedTerminalAdvanced: React.FC<IntegratedTerminalProps> = ({
           )}
         </div>
       </div>
+      )}
       
       {/* Search Bar */}
-      {showSearch && (
+      {showSearch && !hideHeader && (
         <div className={`flex items-center gap-2 px-3 py-2 border-b ${borderColor} ${headerBg}`}>
           <svg className={`w-4 h-4 ${textMuted}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

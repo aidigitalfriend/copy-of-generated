@@ -15,12 +15,23 @@
 
 import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react';
 import Editor, { OnMount, OnChange, Monaco } from '@monaco-editor/react';
-import type { editor } from 'monaco-editor';
+import type { editor, languages, IDisposable, MarkerSeverity } from 'monaco-editor';
 import { useStore } from '../store/useStore';
 import { EditorTheme } from '../types';
+import { 
+  codeIntelligence, 
+  Diagnostic, 
+  CompletionItem, 
+  HoverInfo, 
+  DefinitionResult,
+  SignatureHelp,
+  getLanguageFromFilename 
+} from '../services/codeIntelligence';
 
 interface CodeEditorProps {
   className?: string;
+  onDiagnosticsChange?: (diagnostics: Diagnostic[]) => void;
+  onNavigateToLine?: (line: number, column: number) => void;
 }
 
 // Custom themes registry
@@ -200,7 +211,11 @@ const FILE_ICONS: Record<string, { icon: string; color: string }> = {
   svelte: { icon: 'S', color: '#ff3e00' },
 };
 
-export const CodeEditor: React.FC<CodeEditorProps> = ({ className = '' }) => {
+export const CodeEditor: React.FC<CodeEditorProps> = ({ 
+  className = '',
+  onDiagnosticsChange,
+  onNavigateToLine,
+}) => {
   const { 
     openFiles, 
     activeFileId, 
@@ -212,9 +227,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ className = '' }) => {
   
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
+  const disposablesRef = useRef<IDisposable[]>([]);
   const [cursorPosition, setCursorPosition] = useState({ line: 1, column: 1 });
   const [selectionInfo, setSelectionInfo] = useState<string>('');
-
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const analysisTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeFile = openFiles.find(f => f.id === activeFileId);
 
   // Get file icon and color
@@ -333,6 +350,405 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ className = '' }) => {
       editor.trigger('keyboard', 'editor.action.formatDocument', null);
     });
 
+    // ============================================================================
+    // Code Intelligence Integration
+    // ============================================================================
+
+    // Convert Diagnostic severity to Monaco severity
+    const getSeverity = (severity: string): MarkerSeverity => {
+      const MarkerSeverity = monaco.MarkerSeverity;
+      switch (severity) {
+        case 'error': return MarkerSeverity.Error;
+        case 'warning': return MarkerSeverity.Warning;
+        case 'info': return MarkerSeverity.Info;
+        case 'hint': return MarkerSeverity.Hint;
+        default: return MarkerSeverity.Info;
+      }
+    };
+
+    // Register LSP-powered Completion Provider
+    const completionDisposable = monaco.languages.registerCompletionItemProvider(['typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'python', 'css', 'scss', 'html', 'json'], {
+      triggerCharacters: ['.', '(', '<', '/', '@', '#', ' '],
+      provideCompletionItems: async (model, position, context) => {
+        const word = model.getWordUntilPosition(position);
+        const range = {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: word.startColumn,
+          endColumn: word.endColumn,
+        };
+
+        try {
+          const language = model.getLanguageId();
+          const uri = model.uri.toString();
+          const content = model.getValue();
+          
+          const completions = await codeIntelligence.getCompletions(
+            uri,
+            content,
+            language,
+            { line: position.lineNumber - 1, column: position.column - 1 }
+          );
+
+          return {
+            suggestions: completions.map(item => ({
+              label: item.label,
+              kind: getMonacoCompletionKind(monaco, item.kind),
+              detail: item.detail || '',
+              documentation: item.documentation,
+              insertText: item.insertText || item.label,
+              insertTextRules: item.insertText?.includes('$') 
+                ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet 
+                : undefined,
+              sortText: item.sortText,
+              filterText: item.filterText,
+              range,
+            })),
+          };
+        } catch (error) {
+          console.error('Completion error:', error);
+          return { suggestions: [] };
+        }
+      },
+    });
+    disposablesRef.current.push(completionDisposable);
+
+    // Register Hover Provider
+    const hoverDisposable = monaco.languages.registerHoverProvider(['typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'python', 'css', 'scss', 'html'], {
+      provideHover: async (model, position) => {
+        try {
+          const language = model.getLanguageId();
+          const uri = model.uri.toString();
+          const content = model.getValue();
+          
+          const hover = await codeIntelligence.getHoverInfo(
+            uri,
+            content,
+            language,
+            { line: position.lineNumber - 1, column: position.column - 1 }
+          );
+
+          if (!hover || hover.contents.length === 0) {
+            return null;
+          }
+
+          return {
+            contents: hover.contents.map(c => ({
+              value: typeof c === 'string' ? c : c.value,
+              isTrusted: true,
+            })),
+            range: hover.range ? {
+              startLineNumber: hover.range.start.line + 1,
+              startColumn: hover.range.start.column + 1,
+              endLineNumber: hover.range.end.line + 1,
+              endColumn: hover.range.end.column + 1,
+            } : undefined,
+          };
+        } catch (error) {
+          console.error('Hover error:', error);
+          return null;
+        }
+      },
+    });
+    disposablesRef.current.push(hoverDisposable);
+
+    // Register Definition Provider
+    const definitionDisposable = monaco.languages.registerDefinitionProvider(['typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'python'], {
+      provideDefinition: async (model, position) => {
+        try {
+          const language = model.getLanguageId();
+          const uri = model.uri.toString();
+          const content = model.getValue();
+          
+          const definition = await codeIntelligence.getDefinition(
+            uri,
+            content,
+            language,
+            { line: position.lineNumber - 1, column: position.column - 1 }
+          );
+
+          if (!definition) {
+            return null;
+          }
+
+          return {
+            uri: model.uri,
+            range: {
+              startLineNumber: definition.range.start.line + 1,
+              startColumn: definition.range.start.column + 1,
+              endLineNumber: definition.range.end.line + 1,
+              endColumn: definition.range.end.column + 1,
+            },
+          };
+        } catch (error) {
+          console.error('Definition error:', error);
+          return null;
+        }
+      },
+    });
+    disposablesRef.current.push(definitionDisposable);
+
+    // Register Reference Provider
+    const referenceDisposable = monaco.languages.registerReferenceProvider(['typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'python'], {
+      provideReferences: async (model, position, context) => {
+        try {
+          const language = model.getLanguageId();
+          const uri = model.uri.toString();
+          const content = model.getValue();
+          
+          const references = await codeIntelligence.findReferences(
+            uri,
+            content,
+            language,
+            { line: position.lineNumber - 1, column: position.column - 1 }
+          );
+
+          return references.map(ref => ({
+            uri: model.uri,
+            range: {
+              startLineNumber: ref.range.start.line + 1,
+              startColumn: ref.range.start.column + 1,
+              endLineNumber: ref.range.end.line + 1,
+              endColumn: ref.range.end.column + 1,
+            },
+          }));
+        } catch (error) {
+          console.error('References error:', error);
+          return [];
+        }
+      },
+    });
+    disposablesRef.current.push(referenceDisposable);
+
+    // Register Signature Help Provider
+    const signatureDisposable = monaco.languages.registerSignatureHelpProvider(['typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'python'], {
+      signatureHelpTriggerCharacters: ['(', ','],
+      signatureHelpRetriggerCharacters: [','],
+      provideSignatureHelp: async (model, position, token, context) => {
+        try {
+          const language = model.getLanguageId();
+          const uri = model.uri.toString();
+          const content = model.getValue();
+          
+          const signatureHelp = await codeIntelligence.getSignatureHelp(
+            uri,
+            content,
+            language,
+            { line: position.lineNumber - 1, column: position.column - 1 }
+          );
+
+          if (!signatureHelp || signatureHelp.signatures.length === 0) {
+            return null;
+          }
+
+          return {
+            value: {
+              signatures: signatureHelp.signatures.map(sig => ({
+                label: sig.label,
+                documentation: sig.documentation,
+                parameters: sig.parameters?.map(p => ({
+                  label: p.label,
+                  documentation: p.documentation,
+                })) || [],
+              })),
+              activeSignature: signatureHelp.activeSignature || 0,
+              activeParameter: signatureHelp.activeParameter || 0,
+            },
+            dispose: () => {},
+          };
+        } catch (error) {
+          console.error('Signature help error:', error);
+          return null;
+        }
+      },
+    });
+    disposablesRef.current.push(signatureDisposable);
+
+    // Register Document Formatting Provider
+    const formatDisposable = monaco.languages.registerDocumentFormattingEditProvider(['typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'python', 'css', 'scss', 'html', 'json'], {
+      provideDocumentFormattingEdits: async (model) => {
+        try {
+          const language = model.getLanguageId();
+          const uri = model.uri.toString();
+          const content = model.getValue();
+          
+          const formatted = await codeIntelligence.formatDocument(uri, content, language);
+          
+          if (formatted === content) {
+            return [];
+          }
+
+          return [{
+            range: model.getFullModelRange(),
+            text: formatted,
+          }];
+        } catch (error) {
+          console.error('Format error:', error);
+          return [];
+        }
+      },
+    });
+    disposablesRef.current.push(formatDisposable);
+
+    // Register Code Action Provider (Quick Fixes, Refactoring)
+    const codeActionDisposable = monaco.languages.registerCodeActionProvider(['typescript', 'javascript', 'typescriptreact', 'javascriptreact'], {
+      provideCodeActions: async (model, range, context) => {
+        try {
+          const language = model.getLanguageId();
+          const uri = model.uri.toString();
+          const content = model.getValue();
+          
+          const refactorActions = await codeIntelligence.getRefactorActions(
+            uri,
+            content,
+            language,
+            {
+              start: { line: range.startLineNumber - 1, column: range.startColumn - 1 },
+              end: { line: range.endLineNumber - 1, column: range.endColumn - 1 },
+            }
+          );
+
+          const actions = refactorActions.map(action => ({
+            title: action.title,
+            kind: action.kind || 'refactor',
+            diagnostics: [],
+            edit: action.edit ? {
+              edits: Object.entries(action.edit.changes).flatMap(([fileUri, edits]) => 
+                edits.map(edit => ({
+                  resource: model.uri,
+                  textEdit: {
+                    range: {
+                      startLineNumber: edit.range.start.line + 1,
+                      startColumn: edit.range.start.column + 1,
+                      endLineNumber: edit.range.end.line + 1,
+                      endColumn: edit.range.end.column + 1,
+                    },
+                    text: edit.newText,
+                  },
+                  versionId: model.getVersionId(),
+                }))
+              ),
+            } : undefined,
+          }));
+
+          return { actions, dispose: () => {} };
+        } catch (error) {
+          console.error('Code action error:', error);
+          return { actions: [], dispose: () => {} };
+        }
+      },
+    });
+    disposablesRef.current.push(codeActionDisposable);
+
+  }, []);
+
+  // Helper to convert completion kind to Monaco kind
+  const getMonacoCompletionKind = useCallback((monaco: Monaco, kind?: string): number => {
+    const kinds: Record<string, number> = {
+      'Text': monaco.languages.CompletionItemKind.Text,
+      'Method': monaco.languages.CompletionItemKind.Method,
+      'Function': monaco.languages.CompletionItemKind.Function,
+      'Constructor': monaco.languages.CompletionItemKind.Constructor,
+      'Field': monaco.languages.CompletionItemKind.Field,
+      'Variable': monaco.languages.CompletionItemKind.Variable,
+      'Class': monaco.languages.CompletionItemKind.Class,
+      'Interface': monaco.languages.CompletionItemKind.Interface,
+      'Module': monaco.languages.CompletionItemKind.Module,
+      'Property': monaco.languages.CompletionItemKind.Property,
+      'Unit': monaco.languages.CompletionItemKind.Unit,
+      'Value': monaco.languages.CompletionItemKind.Value,
+      'Enum': monaco.languages.CompletionItemKind.Enum,
+      'Keyword': monaco.languages.CompletionItemKind.Keyword,
+      'Snippet': monaco.languages.CompletionItemKind.Snippet,
+      'Color': monaco.languages.CompletionItemKind.Color,
+      'File': monaco.languages.CompletionItemKind.File,
+      'Reference': monaco.languages.CompletionItemKind.Reference,
+      'Folder': monaco.languages.CompletionItemKind.Folder,
+      'EnumMember': monaco.languages.CompletionItemKind.EnumMember,
+      'Constant': monaco.languages.CompletionItemKind.Constant,
+      'Struct': monaco.languages.CompletionItemKind.Struct,
+      'Event': monaco.languages.CompletionItemKind.Event,
+      'Operator': monaco.languages.CompletionItemKind.Operator,
+      'TypeParameter': monaco.languages.CompletionItemKind.TypeParameter,
+    };
+    return kinds[kind || 'Text'] || monaco.languages.CompletionItemKind.Text;
+  }, []);
+
+  // Run diagnostics analysis when file content changes
+  useEffect(() => {
+    if (!activeFile || !monacoRef.current || !editorRef.current) {
+      return;
+    }
+
+    // Clear previous timeout
+    if (analysisTimeoutRef.current) {
+      clearTimeout(analysisTimeoutRef.current);
+    }
+
+    // Debounced analysis
+    analysisTimeoutRef.current = setTimeout(async () => {
+      const monaco = monacoRef.current!;
+      const editor = editorRef.current!;
+      const model = editor.getModel();
+      
+      if (!model) return;
+
+      setIsAnalyzing(true);
+      
+      try {
+        const language = getLanguageFromFilename(activeFile.name);
+        const uri = activeFile.path;
+        
+        const diagnostics = await codeIntelligence.analyzeDiagnostics(
+          uri,
+          activeFile.content,
+          language
+        );
+
+        // Convert to Monaco markers
+        const markers = diagnostics.map(d => ({
+          severity: ({
+            'error': monaco.MarkerSeverity.Error,
+            'warning': monaco.MarkerSeverity.Warning,
+            'info': monaco.MarkerSeverity.Info,
+            'hint': monaco.MarkerSeverity.Hint,
+          })[d.severity] || monaco.MarkerSeverity.Info,
+          message: d.message,
+          startLineNumber: d.range.start.line + 1,
+          startColumn: d.range.start.column + 1,
+          endLineNumber: d.range.end.line + 1,
+          endColumn: d.range.end.column + 1,
+          source: d.source || 'Code Intelligence',
+          code: d.code,
+        }));
+
+        // Set markers on the model
+        monaco.editor.setModelMarkers(model, 'code-intelligence', markers);
+
+        // Notify parent component
+        if (onDiagnosticsChange) {
+          onDiagnosticsChange(diagnostics);
+        }
+      } catch (error) {
+        console.error('Diagnostics analysis error:', error);
+      } finally {
+        setIsAnalyzing(false);
+      }
+    }, 500);
+
+    return () => {
+      if (analysisTimeoutRef.current) {
+        clearTimeout(analysisTimeoutRef.current);
+      }
+    };
+  }, [activeFile?.id, activeFile?.content, onDiagnosticsChange]);
+
+  // Cleanup disposables on unmount
+  useEffect(() => {
+    return () => {
+      disposablesRef.current.forEach(d => d.dispose());
+      disposablesRef.current = [];
+    };
   }, []);
 
   // Handle content changes
@@ -584,6 +1000,12 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ className = '' }) => {
             <>
               <span>Ln {cursorPosition.line}, Col {cursorPosition.column}</span>
               {selectionInfo && <span className="text-vscode-accent">{selectionInfo}</span>}
+              {isAnalyzing && (
+                <span className="flex items-center gap-1 text-vscode-accent">
+                  <span className="w-2 h-2 border border-vscode-accent border-t-transparent rounded-full animate-spin" />
+                  Analyzing...
+                </span>
+              )}
             </>
           )}
         </div>
@@ -593,6 +1015,12 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ className = '' }) => {
               <span className="hover:text-white cursor-pointer">{activeFile.language}</span>
               <span>UTF-8</span>
               <span>Spaces: {editorSettings.tabSize}</span>
+              <span className="flex items-center gap-1 text-green-400" title="Code Intelligence Active">
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                LSP
+              </span>
             </>
           )}
         </div>
