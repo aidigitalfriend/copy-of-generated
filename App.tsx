@@ -22,6 +22,7 @@ import { QuickOpenAdvanced } from './components/QuickOpenAdvanced';
 import { WorkspaceManager } from './components/WorkspaceManager';
 import { GitPanel } from './components/GitPanel';
 import { GitIntegrationAdvanced } from './components/GitIntegrationAdvanced';
+import { VersionControlPanel } from './components/VersionControlPanel';
 import { SplitPane, Sash } from './components/SplitPane';
 import { CodeIntelligencePanel } from './components/CodeIntelligencePanel';
 import { FileNode, OpenFile, ProjectTemplate } from './types';
@@ -971,7 +972,7 @@ const App: React.FC = () => {
               {leftTab === 'extensions' && <ExtensionMarketplacePanel />}
               {leftTab === 'history' && <HistoryPanel />}
               {leftTab === 'search' && <SearchReplaceAdvanced onFileSelect={handleFileSelect} />}
-              {leftTab === 'git' && <GitIntegrationAdvanced />}
+              {leftTab === 'git' && <VersionControlPanel onFileSelect={handleFileSelect} />}
             </div>
             
             {/* Project Info */}
