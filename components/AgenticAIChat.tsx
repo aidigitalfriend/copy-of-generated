@@ -9,6 +9,37 @@ import { socketService } from '../services/socket';
 import { StreamingParser, StreamingFileOperation, StreamingCommand } from '../services/streamingParser';
 import { webContainerService } from '../services/webcontainer';
 
+// Icons
+const HistoryIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+
+const PlusIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+  </svg>
+);
+
+const TrashIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+  </svg>
+);
+
+const ChatIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+  </svg>
+);
+
 interface AgenticAIChatProps {
   voiceEnabled?: boolean;
   onFileOperation?: (operation: FileOperation) => void;
@@ -38,6 +69,13 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
     currentProject,
     createProject,
     setCurrentProject,
+    // Chat sessions
+    chatSessions,
+    activeChatSessionId,
+    createChatSession,
+    deleteChatSession,
+    switchChatSession,
+    renameChatSession,
   } = useStore();
   
   const [input, setInput] = useState('');
@@ -53,6 +91,9 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   const [selectedAgent, setSelectedAgent] = useState<string>('orchestrator');
   const [showAgentSelector, setShowAgentSelector] = useState(false);
   const [agentStatus, setAgentStatus] = useState<{status: string; agent: string; message?: string} | null>(null);
+  const [showChatHistory, setShowChatHistory] = useState(false);
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState('');
   
   // Available agents
   const AGENTS = [
@@ -634,6 +675,198 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
 
   return (
     <div className={`flex flex-col h-full ${bgClass} font-mono`}>
+      {/* Header */}
+      <div className={`flex items-center justify-between px-3 py-2 border-b ${theme === 'dark' ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-200 bg-gray-50'}`}>
+        <div className="flex items-center gap-2">
+          <span className="text-vscode-accent">⚡</span>
+          <span className={`font-semibold text-sm ${textClass}`}>AI CHAT</span>
+          {activeChatSessionId && chatSessions.find(s => s.id === activeChatSessionId) && (
+            <span className={`text-xs ${mutedTextClass} max-w-32 truncate`}>
+              - {chatSessions.find(s => s.id === activeChatSessionId)?.name}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-1">
+          {/* Chat History Button */}
+          <button
+            onClick={() => setShowChatHistory(!showChatHistory)}
+            className={`p-1.5 rounded transition-colors ${
+              showChatHistory 
+                ? 'bg-vscode-accent text-white' 
+                : theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+            }`}
+            title="Chat History"
+          >
+            <HistoryIcon />
+          </button>
+          
+          {/* New Chat Button */}
+          <button
+            onClick={() => {
+              createChatSession();
+            }}
+            className={`p-1.5 rounded transition-colors ${
+              theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+            }`}
+            title="New Chat"
+          >
+            <PlusIcon />
+          </button>
+          
+          {/* Delete Current Chat Button */}
+          {activeChatSessionId && (
+            <button
+              onClick={() => {
+                if (activeChatSessionId && confirm('Delete this chat?')) {
+                  deleteChatSession(activeChatSessionId);
+                }
+              }}
+              className={`p-1.5 rounded transition-colors ${
+                theme === 'dark' ? 'text-vscode-textMuted hover:text-red-400 hover:bg-red-500/10' : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+              }`}
+              title="Delete Chat"
+            >
+              <TrashIcon />
+            </button>
+          )}
+          
+          {/* Clear Chat Button (when no session) */}
+          {!activeChatSessionId && chatHistory.length > 0 && (
+            <button
+              onClick={() => {
+                if (confirm('Clear this chat?')) {
+                  clearChat();
+                }
+              }}
+              className={`p-1.5 rounded transition-colors ${
+                theme === 'dark' ? 'text-vscode-textMuted hover:text-red-400 hover:bg-red-500/10' : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+              }`}
+              title="Clear Chat"
+            >
+              <TrashIcon />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Chat History Sidebar */}
+      {showChatHistory && (
+        <div className={`border-b ${theme === 'dark' ? 'border-vscode-border bg-vscode-bg' : 'border-gray-200 bg-white'} max-h-64 overflow-y-auto`}>
+          <div className={`px-3 py-2 text-xs font-semibold ${mutedTextClass} sticky top-0 ${theme === 'dark' ? 'bg-vscode-bg' : 'bg-white'} border-b ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-100'}`}>
+            CHAT HISTORY ({chatSessions.length})
+          </div>
+          
+          {chatSessions.length === 0 ? (
+            <div className={`px-3 py-4 text-center text-sm ${mutedTextClass}`}>
+              No chat history yet
+            </div>
+          ) : (
+            <div className="py-1">
+              {chatSessions.map((session) => (
+                <div
+                  key={session.id}
+                  className={`group flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors ${
+                    session.id === activeChatSessionId
+                      ? theme === 'dark' ? 'bg-vscode-accent/20 border-l-2 border-vscode-accent' : 'bg-blue-50 border-l-2 border-blue-500'
+                      : theme === 'dark' ? 'hover:bg-white/5' : 'hover:bg-gray-50'
+                  }`}
+                  onClick={() => {
+                    if (editingSessionId !== session.id) {
+                      switchChatSession(session.id);
+                      setShowChatHistory(false);
+                    }
+                  }}
+                >
+                  <ChatIcon />
+                  <div className="flex-1 min-w-0">
+                    {editingSessionId === session.id ? (
+                      <input
+                        type="text"
+                        value={editingName}
+                        onChange={(e) => setEditingName(e.target.value)}
+                        onBlur={() => {
+                          if (editingName.trim()) {
+                            renameChatSession(session.id, editingName.trim());
+                          }
+                          setEditingSessionId(null);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            if (editingName.trim()) {
+                              renameChatSession(session.id, editingName.trim());
+                            }
+                            setEditingSessionId(null);
+                          } else if (e.key === 'Escape') {
+                            setEditingSessionId(null);
+                          }
+                        }}
+                        className={`w-full px-1 py-0.5 text-sm rounded ${theme === 'dark' ? 'bg-vscode-input border-vscode-border text-white' : 'bg-white border-gray-300'} border outline-none focus:border-vscode-accent`}
+                        autoFocus
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    ) : (
+                      <>
+                        <div className={`text-sm truncate ${textClass}`}>{session.name}</div>
+                        <div className={`text-xs ${mutedTextClass}`}>
+                          {session.messages.length} messages • {new Date(session.updatedAt).toLocaleDateString()}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  
+                  {/* Actions */}
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingSessionId(session.id);
+                        setEditingName(session.name);
+                      }}
+                      className={`p-1 rounded ${theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-gray-200'}`}
+                      title="Rename"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm('Delete this chat?')) {
+                          deleteChatSession(session.id);
+                        }
+                      }}
+                      className={`p-1 rounded ${theme === 'dark' ? 'hover:bg-red-500/20 text-red-400' : 'hover:bg-red-50 text-red-500'}`}
+                      title="Delete"
+                    >
+                      <TrashIcon />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* New Chat at Bottom */}
+          <div className={`px-3 py-2 border-t ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-100'}`}>
+            <button
+              onClick={() => {
+                createChatSession();
+                setShowChatHistory(false);
+              }}
+              className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors ${
+                theme === 'dark' 
+                  ? 'bg-vscode-accent/20 text-vscode-accent hover:bg-vscode-accent/30' 
+                  : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+              }`}
+            >
+              <PlusIcon />
+              New Chat
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
         {chatHistory.length === 0 && !isStreaming && (

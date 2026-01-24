@@ -47,6 +47,8 @@ interface StoreState {
   // AI
   aiConfig: AIConfig;
   chatHistory: ChatMessage[];
+  chatSessions: Array<{ id: string; name: string; messages: ChatMessage[]; createdAt: number; updatedAt: number }>;
+  activeChatSessionId: string | null;
   isAiLoading: boolean;
   
   // Extensions
@@ -99,6 +101,10 @@ interface StoreState {
   addMessage: (message: ChatMessage) => void;
   clearChat: () => void;
   setAiLoading: (loading: boolean) => void;
+  createChatSession: (name?: string) => string;
+  deleteChatSession: (sessionId: string) => void;
+  switchChatSession: (sessionId: string) => void;
+  renameChatSession: (sessionId: string, newName: string) => void;
   
   // Actions - Extensions
   toggleExtension: (extensionId: string) => void;
@@ -1137,6 +1143,8 @@ export const useStore = create<StoreState>()(
       editorSettings: DEFAULT_EDITOR_SETTINGS,
       aiConfig: DEFAULT_AI_CONFIG,
       chatHistory: [],
+      chatSessions: [],
+      activeChatSessionId: null,
       isAiLoading: false,
       extensions: DEFAULT_EXTENSIONS,
 
@@ -1442,11 +1450,79 @@ export const useStore = create<StoreState>()(
         set((state) => ({ aiConfig: { ...state.aiConfig, ...config } })),
       
       addMessage: (message) =>
-        set((state) => ({ chatHistory: [...state.chatHistory, message] })),
+        set((state) => {
+          const newHistory = [...state.chatHistory, message];
+          // Also update the active chat session if exists
+          if (state.activeChatSessionId) {
+            const updatedSessions = state.chatSessions.map(session => 
+              session.id === state.activeChatSessionId 
+                ? { ...session, messages: newHistory, updatedAt: Date.now() }
+                : session
+            );
+            return { chatHistory: newHistory, chatSessions: updatedSessions };
+          }
+          return { chatHistory: newHistory };
+        }),
       
       clearChat: () => set({ chatHistory: [] }),
       
       setAiLoading: (loading) => set({ isAiLoading: loading }),
+
+      createChatSession: (name) => {
+        const sessionId = crypto.randomUUID();
+        const sessionName = name || `Chat ${new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
+        const newSession = {
+          id: sessionId,
+          name: sessionName,
+          messages: [] as ChatMessage[],
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        };
+        set((state) => ({
+          chatSessions: [newSession, ...state.chatSessions],
+          activeChatSessionId: sessionId,
+          chatHistory: [],
+        }));
+        return sessionId;
+      },
+
+      deleteChatSession: (sessionId) =>
+        set((state) => {
+          const filteredSessions = state.chatSessions.filter(s => s.id !== sessionId);
+          const isActive = state.activeChatSessionId === sessionId;
+          return {
+            chatSessions: filteredSessions,
+            activeChatSessionId: isActive ? (filteredSessions[0]?.id || null) : state.activeChatSessionId,
+            chatHistory: isActive ? (filteredSessions[0]?.messages || []) : state.chatHistory,
+          };
+        }),
+
+      switchChatSession: (sessionId) =>
+        set((state) => {
+          // Save current session first
+          let updatedSessions = state.chatSessions;
+          if (state.activeChatSessionId && state.chatHistory.length > 0) {
+            updatedSessions = state.chatSessions.map(session =>
+              session.id === state.activeChatSessionId
+                ? { ...session, messages: state.chatHistory, updatedAt: Date.now() }
+                : session
+            );
+          }
+          // Load new session
+          const targetSession = updatedSessions.find(s => s.id === sessionId);
+          return {
+            chatSessions: updatedSessions,
+            activeChatSessionId: sessionId,
+            chatHistory: targetSession?.messages || [],
+          };
+        }),
+
+      renameChatSession: (sessionId, newName) =>
+        set((state) => ({
+          chatSessions: state.chatSessions.map(session =>
+            session.id === sessionId ? { ...session, name: newName } : session
+          ),
+        })),
 
       // Extension Actions
       toggleExtension: (extensionId) =>
