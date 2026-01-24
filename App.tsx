@@ -608,8 +608,8 @@ const App: React.FC = () => {
   const [rightPanelWidth, setRightPanelWidth] = useState(380);
   const [splitRatio, setSplitRatio] = useState(50); // percentage for code/preview split
   
-  // Terminal panel state
-  const [terminalOpen, setTerminalOpen] = useState(false);
+  // Terminal panel state - open by default
+  const [terminalOpen, setTerminalOpen] = useState(true);
   const [terminalHeight, setTerminalHeight] = useState(200);
   
   // Split editor state
