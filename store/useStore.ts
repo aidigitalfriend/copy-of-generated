@@ -86,12 +86,55 @@ interface StoreState {
 }
 
 const DEFAULT_EDITOR_SETTINGS: EditorSettings = {
+  // Basic
   fontSize: 14,
+  fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Monaco', 'Consolas', monospace",
   tabSize: 2,
   wordWrap: true,
   minimap: true,
   lineNumbers: true,
   autoSave: true,
+  
+  // Professional Features
+  theme: 'vs-dark',
+  cursorStyle: 'line',
+  cursorBlinking: 'smooth',
+  smoothScrolling: true,
+  mouseWheelZoom: true,
+  
+  // Multi-cursor & Selection
+  multiCursorModifier: 'alt',
+  columnSelection: false,
+  
+  // Code Intelligence
+  quickSuggestions: true,
+  suggestOnTriggerCharacters: true,
+  acceptSuggestionOnEnter: 'on',
+  parameterHints: true,
+  autoClosingBrackets: 'languageDefined',
+  autoClosingQuotes: 'languageDefined',
+  autoIndent: 'full',
+  formatOnPaste: true,
+  formatOnType: false,
+  
+  // Display
+  renderWhitespace: 'selection',
+  renderControlCharacters: false,
+  renderLineHighlight: 'all',
+  bracketPairColorization: true,
+  guides: {
+    indentation: true,
+    bracketPairs: true,
+    highlightActiveBracketPair: true,
+  },
+  
+  // Performance (Large Files)
+  largeFileOptimizations: true,
+  maxTokenizationLineLength: 20000,
+  
+  // Diff Editor
+  enableSplitViewResizing: true,
+  renderSideBySide: true,
 };
 
 const DEFAULT_AI_CONFIG: AIConfig = {

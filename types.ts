@@ -50,15 +50,70 @@ export interface AIConfig {
   maxTokens: number;
 }
 
-// Editor Settings
+// Editor Settings - Professional Configuration
 export interface EditorSettings {
+  // Basic
   fontSize: number;
+  fontFamily: string;
   tabSize: number;
   wordWrap: boolean;
   minimap: boolean;
   lineNumbers: boolean;
   autoSave: boolean;
+  
+  // Professional Features
+  theme: EditorTheme;
+  cursorStyle: 'line' | 'block' | 'underline' | 'line-thin' | 'block-outline' | 'underline-thin';
+  cursorBlinking: 'blink' | 'smooth' | 'phase' | 'expand' | 'solid';
+  smoothScrolling: boolean;
+  mouseWheelZoom: boolean;
+  
+  // Multi-cursor & Selection
+  multiCursorModifier: 'ctrlCmd' | 'alt';
+  columnSelection: boolean;
+  
+  // Code Intelligence
+  quickSuggestions: boolean;
+  suggestOnTriggerCharacters: boolean;
+  acceptSuggestionOnEnter: 'on' | 'off' | 'smart';
+  parameterHints: boolean;
+  autoClosingBrackets: 'always' | 'languageDefined' | 'beforeWhitespace' | 'never';
+  autoClosingQuotes: 'always' | 'languageDefined' | 'beforeWhitespace' | 'never';
+  autoIndent: 'none' | 'keep' | 'brackets' | 'advanced' | 'full';
+  formatOnPaste: boolean;
+  formatOnType: boolean;
+  
+  // Display
+  renderWhitespace: 'none' | 'boundary' | 'selection' | 'trailing' | 'all';
+  renderControlCharacters: boolean;
+  renderLineHighlight: 'none' | 'gutter' | 'line' | 'all';
+  bracketPairColorization: boolean;
+  guides: {
+    indentation: boolean;
+    bracketPairs: boolean;
+    highlightActiveBracketPair: boolean;
+  };
+  
+  // Performance (Large Files)
+  largeFileOptimizations: boolean;
+  maxTokenizationLineLength: number;
+  
+  // Diff Editor
+  enableSplitViewResizing: boolean;
+  renderSideBySide: boolean;
 }
+
+export type EditorTheme = 
+  | 'vs-dark' 
+  | 'vs-light' 
+  | 'hc-black' 
+  | 'monokai' 
+  | 'dracula' 
+  | 'github-dark' 
+  | 'one-dark-pro'
+  | 'nord'
+  | 'solarized-dark'
+  | 'material-dark';
 
 export interface ChatMessage {
   id: string;
