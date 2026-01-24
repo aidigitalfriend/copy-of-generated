@@ -143,14 +143,30 @@ class SocketService {
   // ===========================================
   
   // Create a new terminal session
-  createTerminal(options?: { cols?: number; rows?: number }): Promise<string> {
+  createTerminal(options?: { 
+    cols?: number; 
+    rows?: number;
+    shell?: string;
+    args?: string[];
+    env?: Record<string, string>;
+    cwd?: string;
+  }): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
         reject(new Error('Socket not connected'));
         return;
       }
 
-      this.socket.emit('terminal:create', options || { cols: 80, rows: 24 });
+      const terminalOptions = {
+        cols: options?.cols || 80,
+        rows: options?.rows || 24,
+        shell: options?.shell,
+        args: options?.args,
+        env: options?.env,
+        cwd: options?.cwd,
+      };
+
+      this.socket.emit('terminal:create', terminalOptions);
       
       this.socket.once('terminal:created', (data: { terminalId: string }) => {
         console.log('[Socket] Terminal created:', data.terminalId);

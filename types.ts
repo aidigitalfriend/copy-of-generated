@@ -281,6 +281,68 @@ export interface Project {
   updatedAt: number;
 }
 
+// Workspace Types - Multiple project management
+export interface Workspace {
+  id: string;
+  name: string;
+  projectIds: string[];
+  lastOpened: number;
+  color?: string;
+  description?: string;
+  isDefault?: boolean;
+}
+
+// Recent Project Entry
+export interface RecentProject {
+  id: string;
+  name: string;
+  path: string;
+  lastOpened: number;
+  template: string;
+  fileCount: number;
+}
+
+// Search Types
+export interface SearchMatch {
+  fileId: string;
+  filePath: string;
+  fileName: string;
+  lineNumber: number;
+  lineContent: string;
+  matchStart: number;
+  matchEnd: number;
+}
+
+export interface SearchOptions {
+  query: string;
+  isRegex: boolean;
+  isCaseSensitive: boolean;
+  isWholeWord: boolean;
+  includePattern?: string;
+  excludePattern?: string;
+}
+
+export interface SearchResult {
+  file: FileNode;
+  matches: SearchMatch[];
+}
+
+// File Operation Types
+export interface FileOperation {
+  type: 'create' | 'delete' | 'rename' | 'move' | 'copy';
+  sourcePath: string;
+  targetPath?: string;
+  timestamp: number;
+}
+
+// Git Status Types (for enhanced Git panel)
+export interface GitFileStatus {
+  path: string;
+  status: 'added' | 'modified' | 'deleted' | 'untracked' | 'renamed' | 'conflicted';
+  staged: boolean;
+  originalPath?: string;
+}
+
 // Layout Types
 export type PanelLayout = 'default' | 'zen' | 'preview-focus' | 'terminal-focus';
 export type Theme = 'light' | 'dark' | 'high-contrast';

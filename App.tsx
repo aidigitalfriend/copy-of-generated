@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { useStore } from './store/useStore';
 import { FileExplorer } from './components/FileExplorer';
+import { FileProjectManager } from './components/FileProjectManager';
 import { CodeEditor } from './components/CodeEditor';
 import { Terminal } from './components/Terminal';
 import { RealTerminal } from './components/RealTerminal';
-import { IntegratedTerminal } from './components/IntegratedTerminal';
+import { IntegratedTerminal, IntegratedTerminalAdvanced } from './components/IntegratedTerminal';
 import { AIChat } from './components/AIChat';
 import { AgenticAIChat } from './components/AgenticAIChat';
 import { TemplateGallery } from './components/TemplateGallery';
@@ -14,12 +15,19 @@ import { DeployPanel } from './components/DeployPanel';
 import { ExtensionsPanel } from './components/ExtensionsPanel';
 import { ExtensionMarketplacePanel } from './components/ExtensionMarketplacePanel';
 import { SettingsPanel } from './components/SettingsPanel';
+import { SearchPanel } from './components/SearchPanel';
+import { SearchReplaceAdvanced } from './components/SearchReplaceAdvanced';
+import { QuickOpen } from './components/QuickOpen';
+import { QuickOpenAdvanced } from './components/QuickOpenAdvanced';
+import { WorkspaceManager } from './components/WorkspaceManager';
+import { GitPanel } from './components/GitPanel';
+import { GitIntegrationAdvanced } from './components/GitIntegrationAdvanced';
 import { SplitPane, Sash } from './components/SplitPane';
 import { FileNode, OpenFile, ProjectTemplate } from './types';
 import { voiceOutput, speechSupport } from './services/speech';
 import { mediaService } from './services/media';
 
-type LeftTab = 'files' | 'templates' | 'prebuilt' | 'extensions' | 'search' | 'history';
+type LeftTab = 'files' | 'templates' | 'prebuilt' | 'extensions' | 'search' | 'history' | 'git';
 type RightTab = 'ai' | 'deploy' | 'settings';
 
 // AI Provider Models Configuration
@@ -360,7 +368,8 @@ const App: React.FC = () => {
   
   // Terminal panel state - open by default
   const [terminalOpen, setTerminalOpen] = useState(true);
-  const [terminalHeight, setTerminalHeight] = useState(200);
+  const [terminalHeight, setTerminalHeight] = useState(250);
+  const [terminalMaximized, setTerminalMaximized] = useState(false);
   const [useRealTerminal, setUseRealTerminal] = useState(true); // Use real terminal by default
   
   // Split editor state
@@ -370,6 +379,12 @@ const App: React.FC = () => {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [commandSearch, setCommandSearch] = useState('');
   const commandInputRef = useRef<HTMLInputElement>(null);
+  
+  // Quick Open (Ctrl+P) state
+  const [quickOpenOpen, setQuickOpenOpen] = useState(false);
+  
+  // Workspace Manager state
+  const [workspaceManagerOpen, setWorkspaceManagerOpen] = useState(false);
   
   // Voice, Screenshot, Camera state
   const [voiceEnabled, setVoiceEnabled] = useState(false);
@@ -615,6 +630,12 @@ const App: React.FC = () => {
         setCommandPaletteOpen(true);
         setCommandSearch('');
       }
+      // Quick Open (Ctrl+P)
+      if (e.ctrlKey && !e.shiftKey && e.key === 'p') {
+        e.preventDefault();
+        e.stopPropagation();
+        setQuickOpenOpen(true);
+      }
       // Terminal: Ctrl+` (keyCode 192 for backtick)
       if (e.ctrlKey && (e.key === '`' || e.keyCode === 192)) {
         e.preventDefault();
@@ -651,6 +672,17 @@ const App: React.FC = () => {
         setLeftTab('search');
         setLeftSidebarOpen(true);
       }
+      // Git: Ctrl+Shift+G
+      if (e.ctrlKey && e.shiftKey && e.key === 'G') {
+        e.preventDefault();
+        setLeftTab('git');
+        setLeftSidebarOpen(true);
+      }
+      // Workspace Manager: Ctrl+Shift+O
+      if (e.ctrlKey && e.shiftKey && e.key === 'O') {
+        e.preventDefault();
+        setWorkspaceManagerOpen(true);
+      }
       // AI Chat: Ctrl+Shift+A
       if (e.ctrlKey && e.shiftKey && e.key === 'A') {
         e.preventDefault();
@@ -663,15 +695,17 @@ const App: React.FC = () => {
         setRightTab('settings');
         setRightSidebarOpen(true);
       }
-      // Escape to close command palette
-      if (e.key === 'Escape' && commandPaletteOpen) {
-        setCommandPaletteOpen(false);
+      // Escape to close modals
+      if (e.key === 'Escape') {
+        if (commandPaletteOpen) setCommandPaletteOpen(false);
+        if (quickOpenOpen) setQuickOpenOpen(false);
+        if (workspaceManagerOpen) setWorkspaceManagerOpen(false);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [terminalOpen, leftSidebarOpen, rightSidebarOpen, splitEditorOpen, commandPaletteOpen]);
+  }, [terminalOpen, leftSidebarOpen, rightSidebarOpen, splitEditorOpen, commandPaletteOpen, quickOpenOpen, workspaceManagerOpen]);
 
   // Focus command input when palette opens
   useEffect(() => {
@@ -707,6 +741,7 @@ const App: React.FC = () => {
   const leftSidebarItems = [
     { id: 'files' as LeftTab, label: 'Explorer', tooltip: 'File Explorer (Ctrl+Shift+E)' },
     { id: 'search' as LeftTab, label: 'Search', tooltip: 'Search (Ctrl+Shift+F)' },
+    { id: 'git' as LeftTab, label: 'Source Control', tooltip: 'Source Control (Ctrl+Shift+G)' },
     { id: 'templates' as LeftTab, label: 'Templates', tooltip: 'Project Templates' },
     { id: 'prebuilt' as LeftTab, label: 'Prebuilt', tooltip: 'Prebuilt App Templates' },
     { id: 'extensions' as LeftTab, label: 'Extensions', tooltip: 'Extensions (Ctrl+Shift+X)' },
@@ -728,6 +763,8 @@ const App: React.FC = () => {
         return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" /></svg>;
       case 'search':
         return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>;
+      case 'git':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>;
       case 'templates':
         return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>;
       case 'prebuilt':
@@ -895,7 +932,7 @@ const App: React.FC = () => {
             
             {/* Panel Content */}
             <div className="flex-1 overflow-hidden">
-              {leftTab === 'files' && <FileExplorer files={files} onFileSelect={handleFileSelect} />}
+              {leftTab === 'files' && <FileProjectManager onFileSelect={handleFileSelect} />}
               {leftTab === 'templates' && <TemplateGallery />}
               {leftTab === 'prebuilt' && (
                 <PrebuiltTemplatesGallery 
@@ -926,21 +963,8 @@ const App: React.FC = () => {
               )}
               {leftTab === 'extensions' && <ExtensionMarketplacePanel />}
               {leftTab === 'history' && <HistoryPanel />}
-              {leftTab === 'search' && (
-                <div className="p-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search files..."
-                      className={`w-full px-3 py-2 pl-9 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white placeholder-slate-500' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400'}`}
-                    />
-                    <svg className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                  <p className={`text-xs ${theme === 'dark' ? 'text-slate-500' : 'text-gray-500'} mt-4 text-center`}>Type to search across all files</p>
-                </div>
-              )}
+              {leftTab === 'search' && <SearchReplaceAdvanced onFileSelect={handleFileSelect} />}
+              {leftTab === 'git' && <GitIntegrationAdvanced />}
             </div>
             
             {/* Project Info */}
@@ -1002,11 +1026,14 @@ const App: React.FC = () => {
           )}
         </div>
 
-        {/* Terminal Panel - Using IntegratedTerminal with multi-tab support */}
+        {/* Terminal Panel - Using IntegratedTerminalAdvanced with multi-tab, split, and shell support */}
         {terminalOpen && (
-          <IntegratedTerminal
+          <IntegratedTerminalAdvanced
             defaultHeight={terminalHeight}
             onHeightChange={setTerminalHeight}
+            onMinimize={() => setTerminalOpen(false)}
+            onMaximize={() => setTerminalMaximized(!terminalMaximized)}
+            isMaximized={terminalMaximized}
           />
         )}
 
@@ -1305,6 +1332,19 @@ const App: React.FC = () => {
           </div>
         </div>
       )}
+      
+      {/* Quick Open Modal (Ctrl+P) */}
+      <QuickOpenAdvanced 
+        isOpen={quickOpenOpen}
+        onClose={() => setQuickOpenOpen(false)}
+        onFileSelect={handleFileSelect}
+      />
+      
+      {/* Workspace Manager Modal */}
+      <WorkspaceManager
+        isOpen={workspaceManagerOpen}
+        onClose={() => setWorkspaceManagerOpen(false)}
+      />
     </div>
   );
 };

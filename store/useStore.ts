@@ -11,13 +11,20 @@ import {
   PanelLayout,
   EditorSettings,
   UILayout,
-  ShellType
+  ShellType,
+  Workspace,
+  RecentProject
 } from '../types';
 
 interface StoreState {
   // Project
   currentProject: Project | null;
   projects: Project[];
+  
+  // Workspaces
+  workspaces: Workspace[];
+  activeWorkspaceId: string | null;
+  recentProjects: RecentProject[];
   
   // Files
   files: FileNode[];
@@ -51,6 +58,16 @@ interface StoreState {
   deleteProject: (projectId: string) => void;
   renameProject: (projectId: string, newName: string) => void;
   
+  // Actions - Workspace
+  createWorkspace: (name: string, color?: string) => void;
+  deleteWorkspace: (workspaceId: string) => void;
+  renameWorkspace: (workspaceId: string, newName: string) => void;
+  setActiveWorkspace: (workspaceId: string | null) => void;
+  addProjectToWorkspace: (workspaceId: string, projectId: string) => void;
+  removeProjectFromWorkspace: (workspaceId: string, projectId: string) => void;
+  addRecentProject: (project: Project) => void;
+  clearRecentProjects: () => void;
+  
   // Actions - Files
   setFiles: (files: FileNode[]) => void;
   openFile: (file: OpenFile) => void;
@@ -61,6 +78,8 @@ interface StoreState {
   createFolder: (path: string, name: string) => void;
   deleteNode: (path: string) => void;
   renameNode: (path: string, newName: string) => void;
+  moveNode: (sourcePath: string, targetPath: string) => void;
+  copyNode: (sourcePath: string, targetPath: string) => void;
   
   // Actions - UI
   setTheme: (theme: Theme) => void;
@@ -1094,6 +1113,9 @@ export const useStore = create<StoreState>()(
       // Initial State
       currentProject: null,
       projects: [],
+      workspaces: [],
+      activeWorkspaceId: null,
+      recentProjects: [],
       files: [],
       openFiles: [],
       activeFileId: null,
@@ -1119,7 +1141,13 @@ export const useStore = create<StoreState>()(
       extensions: DEFAULT_EXTENSIONS,
 
       // Project Actions
-      setCurrentProject: (project) => set({ currentProject: project }),
+      setCurrentProject: (project) => {
+        set({ currentProject: project });
+        // Add to recent projects
+        if (project) {
+          get().addRecentProject(project);
+        }
+      },
       
       createProject: (name, template, files) => {
         const project: Project = {
@@ -1138,14 +1166,25 @@ export const useStore = create<StoreState>()(
           openFiles: [],
           activeFileId: null,
         }));
+        // Add to recent
+        get().addRecentProject(project);
       },
 
       deleteProject: (projectId) => {
         set((state) => {
           const newProjects = state.projects.filter(p => p.id !== projectId);
           const isCurrentDeleted = state.currentProject?.id === projectId;
+          // Also remove from all workspaces
+          const updatedWorkspaces = state.workspaces.map(w => ({
+            ...w,
+            projectIds: w.projectIds.filter(id => id !== projectId)
+          }));
+          // Remove from recent projects
+          const updatedRecent = state.recentProjects.filter(rp => rp.id !== projectId);
           return {
             projects: newProjects,
+            workspaces: updatedWorkspaces,
+            recentProjects: updatedRecent,
             currentProject: isCurrentDeleted ? null : state.currentProject,
             files: isCurrentDeleted ? [] : state.files,
             openFiles: isCurrentDeleted ? [] : state.openFiles,
@@ -1162,8 +1201,90 @@ export const useStore = create<StoreState>()(
           currentProject: state.currentProject?.id === projectId 
             ? { ...state.currentProject, name: newName, updatedAt: Date.now() }
             : state.currentProject,
+          recentProjects: state.recentProjects.map(rp =>
+            rp.id === projectId ? { ...rp, name: newName } : rp
+          ),
         }));
       },
+
+      // Workspace Actions
+      createWorkspace: (name, color) => {
+        const workspace: Workspace = {
+          id: crypto.randomUUID(),
+          name,
+          projectIds: [],
+          lastOpened: Date.now(),
+          color: color || getRandomWorkspaceColor(),
+        };
+        set((state) => ({
+          workspaces: [...state.workspaces, workspace],
+        }));
+      },
+
+      deleteWorkspace: (workspaceId) => {
+        set((state) => ({
+          workspaces: state.workspaces.filter(w => w.id !== workspaceId),
+          activeWorkspaceId: state.activeWorkspaceId === workspaceId ? null : state.activeWorkspaceId,
+        }));
+      },
+
+      renameWorkspace: (workspaceId, newName) => {
+        set((state) => ({
+          workspaces: state.workspaces.map(w =>
+            w.id === workspaceId ? { ...w, name: newName } : w
+          ),
+        }));
+      },
+
+      setActiveWorkspace: (workspaceId) => {
+        set((state) => ({
+          activeWorkspaceId: workspaceId,
+          workspaces: state.workspaces.map(w =>
+            w.id === workspaceId ? { ...w, lastOpened: Date.now() } : w
+          ),
+        }));
+      },
+
+      addProjectToWorkspace: (workspaceId, projectId) => {
+        set((state) => ({
+          workspaces: state.workspaces.map(w =>
+            w.id === workspaceId && !w.projectIds.includes(projectId)
+              ? { ...w, projectIds: [...w.projectIds, projectId] }
+              : w
+          ),
+        }));
+      },
+
+      removeProjectFromWorkspace: (workspaceId, projectId) => {
+        set((state) => ({
+          workspaces: state.workspaces.map(w =>
+            w.id === workspaceId
+              ? { ...w, projectIds: w.projectIds.filter(id => id !== projectId) }
+              : w
+          ),
+        }));
+      },
+
+      addRecentProject: (project) => {
+        const recentEntry: RecentProject = {
+          id: project.id,
+          name: project.name,
+          path: `/${project.name}`,
+          lastOpened: Date.now(),
+          template: project.template,
+          fileCount: project.files.length,
+        };
+        set((state) => {
+          // Remove existing entry if present
+          const filtered = state.recentProjects.filter(rp => rp.id !== project.id);
+          // Add to front and limit to 20 entries
+          return {
+            recentProjects: [recentEntry, ...filtered].slice(0, 20),
+          };
+        });
+      },
+
+      clearRecentProjects: () => set({ recentProjects: [] }),
 
       // File Actions
       setFiles: (files) => set({ files }),
@@ -1247,6 +1368,46 @@ export const useStore = create<StoreState>()(
         }));
       },
 
+      moveNode: (sourcePath, targetPath) => {
+        set((state) => {
+          // Find the source node
+          const sourceNode = findNodeByPath(state.files, sourcePath);
+          if (!sourceNode) return state;
+          
+          // Remove from source
+          let newFiles = removeNodeFromTree(state.files, sourcePath);
+          
+          // Update path for the node and its children
+          const newPath = targetPath ? `${targetPath}/${sourceNode.name}` : sourceNode.name;
+          const updatedNode = updateNodePaths(sourceNode, newPath);
+          
+          // Add to target
+          newFiles = addNodeToTree(newFiles, targetPath, updatedNode);
+          
+          return { files: newFiles };
+        });
+      },
+
+      copyNode: (sourcePath, targetPath) => {
+        set((state) => {
+          // Find the source node
+          const sourceNode = findNodeByPath(state.files, sourcePath);
+          if (!sourceNode) return state;
+          
+          // Deep clone the node with new IDs
+          const clonedNode = cloneNodeWithNewIds(sourceNode);
+          
+          // Update path for the cloned node
+          const newPath = targetPath ? `${targetPath}/${clonedNode.name}` : clonedNode.name;
+          const updatedNode = updateNodePaths(clonedNode, newPath);
+          
+          // Add to target
+          const newFiles = addNodeToTree(state.files, targetPath, updatedNode);
+          
+          return { files: newFiles };
+        });
+      },
+
       // UI Actions
       setTheme: (theme) => {
         set({ theme });
@@ -1320,9 +1481,11 @@ export const useStore = create<StoreState>()(
     }),
     {
       name: 'ai-friend-zone-storage',
-      version: 2, // Increment version to trigger migration
+      version: 3, // Increment version to trigger migration
       partialize: (state) => ({
         projects: state.projects,
+        workspaces: state.workspaces,
+        recentProjects: state.recentProjects,
         theme: state.theme,
         aiConfig: state.aiConfig,
         extensions: state.extensions,
@@ -1333,6 +1496,15 @@ export const useStore = create<StoreState>()(
         // If old version or extensions are too few, reset to defaults
         if (version < 2 || !state.extensions || state.extensions.length < 20) {
           return { ...state, extensions: DEFAULT_EXTENSIONS };
+        }
+        // Add workspace support for version < 3
+        if (version < 3) {
+          return { 
+            ...state, 
+            workspaces: [], 
+            recentProjects: [],
+            activeWorkspaceId: null 
+          };
         }
         return state;
       },
@@ -1412,4 +1584,45 @@ function renameNodeInTree(nodes: FileNode[], path: string, newName: string): Fil
     }
     return node;
   });
+}
+
+function findNodeByPath(nodes: FileNode[], path: string): FileNode | null {
+  for (const node of nodes) {
+    if (node.path === path) return node;
+    if (node.children) {
+      const found = findNodeByPath(node.children, path);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function updateNodePaths(node: FileNode, newBasePath: string): FileNode {
+  const updatedNode = { ...node, path: newBasePath };
+  if (node.children) {
+    updatedNode.children = node.children.map(child => 
+      updateNodePaths(child, `${newBasePath}/${child.name}`)
+    );
+  }
+  return updatedNode;
+}
+
+function cloneNodeWithNewIds(node: FileNode): FileNode {
+  const clonedNode: FileNode = {
+    ...node,
+    id: crypto.randomUUID(),
+  };
+  if (node.children) {
+    clonedNode.children = node.children.map(child => cloneNodeWithNewIds(child));
+  }
+  return clonedNode;
+}
+
+function getRandomWorkspaceColor(): string {
+  const colors = [
+    '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', 
+    '#14b8a6', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', 
+    '#a855f7', '#ec4899'
+  ];
+  return colors[Math.floor(Math.random() * colors.length)];
 }

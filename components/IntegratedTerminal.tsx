@@ -5,8 +5,11 @@ import '@xterm/xterm/css/xterm.css';
 import { socketService } from '../services/socket';
 import { useStore } from '../store/useStore';
 
+// Re-export the advanced terminal for easy access
+export { IntegratedTerminalAdvanced } from './IntegratedTerminalAdvanced';
+
 // Shell types
-export type ShellType = 'bash' | 'zsh' | 'sh' | 'powershell' | 'cmd';
+export type ShellType = 'bash' | 'zsh' | 'sh' | 'powershell' | 'cmd' | 'fish';
 
 // Terminal tab interface
 export interface TerminalTab {
@@ -40,6 +43,7 @@ const SHELL_CONFIG: Record<ShellType, { icon: string; label: string; command?: s
   sh: { icon: '💲', label: 'Shell', command: '/bin/sh' },
   powershell: { icon: '🔵', label: 'PowerShell', command: 'powershell.exe' },
   cmd: { icon: '⬛', label: 'CMD', command: 'cmd.exe' },
+  fish: { icon: '🐟', label: 'Fish', command: '/usr/bin/fish' },
 };
 
 export const IntegratedTerminal: React.FC<IntegratedTerminalProps> = ({
