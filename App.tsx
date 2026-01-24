@@ -4,6 +4,7 @@ import { FileExplorer } from './components/FileExplorer';
 import { CodeEditor } from './components/CodeEditor';
 import { Terminal } from './components/Terminal';
 import { RealTerminal } from './components/RealTerminal';
+import { IntegratedTerminal } from './components/IntegratedTerminal';
 import { AIChat } from './components/AIChat';
 import { AgenticAIChat } from './components/AgenticAIChat';
 import { TemplateGallery } from './components/TemplateGallery';
@@ -12,6 +13,7 @@ import { LivePreview } from './components/LivePreview';
 import { DeployPanel } from './components/DeployPanel';
 import { ExtensionsPanel } from './components/ExtensionsPanel';
 import { ExtensionMarketplacePanel } from './components/ExtensionMarketplacePanel';
+import { SettingsPanel } from './components/SettingsPanel';
 import { SplitPane, Sash } from './components/SplitPane';
 import { FileNode, OpenFile, ProjectTemplate } from './types';
 import { voiceOutput, speechSupport } from './services/speech';
@@ -331,260 +333,6 @@ const HistoryPanel: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-// Settings Panel Component
-const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = ({ theme, setTheme }) => {
-  const { editorSettings, setEditorSettings, aiConfig, setAiConfig } = useStore();
-  
-  const bgCard = theme === 'dark' ? 'bg-vscode-bg border border-vscode-border rounded-md' : 'bg-white border border-gray-200 rounded-md';
-  const textPrimary = theme === 'dark' ? 'text-white' : 'text-gray-900';
-  const textSecondary = theme === 'dark' ? 'text-vscode-text' : 'text-gray-700';
-  const textMuted = theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500';
-  const borderColor = theme === 'dark' ? 'border-vscode-border' : 'border-gray-200';
-  const inputBg = theme === 'dark' ? 'bg-vscode-input border border-vscode-border text-white rounded' : 'bg-white border border-gray-300 text-gray-900 rounded';
-  const kbdBg = theme === 'dark' ? 'bg-vscode-bg' : 'bg-gray-100';
-
-  const currentProvider = AI_PROVIDERS[aiConfig.provider as AIProviderKey] || AI_PROVIDERS.openai;
-
-  return (
-    <div className="p-4 space-y-6 overflow-auto h-full">
-      {/* Appearance */}
-      <div>
-        <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Appearance</h3>
-        <div className="space-y-2">
-          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
-            <span className={`text-sm ${textSecondary}`}>Theme</span>
-            <select
-              value={theme}
-              onChange={(e) => setTheme(e.target.value)}
-              title="Select theme"
-              className={`${inputBg} text-sm px-3 py-1 focus:outline-none focus:border-vscode-inputBorder`}
-            >
-              <option value="dark">Dark</option>
-              <option value="light">Light</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Editor Settings */}
-      <div>
-        <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Editor</h3>
-        <div className="space-y-2">
-          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
-            <span className={`text-sm ${textSecondary}`}>Font Size</span>
-            <select
-              value={editorSettings.fontSize}
-              onChange={(e) => setEditorSettings({ fontSize: Number(e.target.value) })}
-              className={`${inputBg} text-sm px-3 py-1 focus:outline-none focus:border-vscode-inputBorder`}
-            >
-              {[10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24].map(size => (
-                <option key={size} value={size}>{size}px</option>
-              ))}
-            </select>
-          </div>
-          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
-            <span className={`text-sm ${textSecondary}`}>Tab Size</span>
-            <select
-              value={editorSettings.tabSize}
-              onChange={(e) => setEditorSettings({ tabSize: Number(e.target.value) })}
-              className={`${inputBg} text-sm px-3 py-1 focus:outline-none focus:border-vscode-inputBorder`}
-            >
-              <option value={2}>2 spaces</option>
-              <option value={4}>4 spaces</option>
-              <option value={8}>8 spaces</option>
-            </select>
-          </div>
-          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
-            <span className={`text-sm ${textSecondary}`}>Word Wrap</span>
-            <button
-              onClick={() => setEditorSettings({ wordWrap: !editorSettings.wordWrap })}
-              className={`text-sm px-3 py-1 font-medium rounded transition-colors ${
-                editorSettings.wordWrap
-                  ? 'bg-vscode-accent text-white'
-                  : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
-              }`}
-            >
-              {editorSettings.wordWrap ? 'On' : 'Off'}
-            </button>
-          </div>
-          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
-            <span className={`text-sm ${textSecondary}`}>Minimap</span>
-            <button
-              onClick={() => setEditorSettings({ minimap: !editorSettings.minimap })}
-              className={`text-sm px-3 py-1 font-medium rounded transition-colors ${
-                editorSettings.minimap
-                  ? 'bg-vscode-accent text-white'
-                  : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
-              }`}
-            >
-              {editorSettings.minimap ? 'On' : 'Off'}
-            </button>
-          </div>
-          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
-            <span className={`text-sm ${textSecondary}`}>Line Numbers</span>
-            <button
-              onClick={() => setEditorSettings({ lineNumbers: !editorSettings.lineNumbers })}
-              className={`text-sm px-3 py-1 font-medium rounded transition-colors ${
-                editorSettings.lineNumbers
-                  ? 'bg-vscode-accent text-white'
-                  : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
-              }`}
-            >
-              {editorSettings.lineNumbers ? 'On' : 'Off'}
-            </button>
-          </div>
-          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
-            <span className={`text-sm ${textSecondary}`}>Auto Save</span>
-            <button
-              onClick={() => setEditorSettings({ autoSave: !editorSettings.autoSave })}
-              className={`text-sm px-3 py-1 font-medium rounded transition-colors ${
-                editorSettings.autoSave
-                  ? 'bg-vscode-accent text-white'
-                  : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
-              }`}
-            >
-              {editorSettings.autoSave ? 'On' : 'Off'}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* AI Assistant */}
-      <div>
-        <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>AI Config</h3>
-        <div className="space-y-2">
-          <div className={`p-3 ${bgCard} space-y-2`}>
-            <span className={`text-sm ${textSecondary} block mb-2`}>Provider</span>
-            <select
-              value={aiConfig.provider}
-              onChange={(e) => {
-                const provider = e.target.value as AIProviderKey;
-                const models = AI_PROVIDERS[provider]?.models || [];
-                setAiConfig({ 
-                  provider: provider as any, 
-                  model: models[0] || '' 
-                });
-              }}
-              className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-inputBorder`}
-            >
-              {Object.entries(AI_PROVIDERS).map(([key, provider]) => (
-                <option key={key} value={key}>
-                  {provider.icon} {provider.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div className={`p-3 ${bgCard} space-y-2`}>
-            <span className={`text-sm ${textSecondary} block mb-2`}>Model</span>
-            <select
-              value={aiConfig.model}
-              onChange={(e) => setAiConfig({ model: e.target.value })}
-              className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-inputBorder font-mono`}
-            >
-              {currentProvider.models.map((model) => (
-                <option key={model} value={model}>
-                  {model}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className={`p-3 ${bgCard} space-y-2`}>
-            <div className="flex items-center justify-between">
-              <span className={`text-sm ${textSecondary}`}>Temperature</span>
-              <span className={`text-sm ${theme === 'dark' ? 'text-vscode-accent' : 'text-blue-600'} font-mono`}>{aiConfig.temperature}</span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={aiConfig.temperature}
-              onChange={(e) => setAiConfig({ temperature: Number(e.target.value) })}
-              className="w-full accent-vscode-accent"
-            />
-            <div className={`flex justify-between text-xs ${textMuted}`}>
-              <span>Precise</span>
-              <span>Creative</span>
-            </div>
-          </div>
-
-          <div className={`p-3 ${bgCard} space-y-2`}>
-            <span className={`text-sm ${textSecondary} block mb-2`}>Max Tokens</span>
-            <select
-              value={aiConfig.maxTokens}
-              onChange={(e) => setAiConfig({ maxTokens: Number(e.target.value) })}
-              className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-inputBorder`}
-            >
-              <option value={1024}>1,024</option>
-              <option value={2048}>2,048</option>
-              <option value={4096}>4,096</option>
-              <option value={8192}>8,192</option>
-              <option value={16384}>16,384</option>
-              <option value={32768}>32,768</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Keyboard Shortcuts */}
-      <div>
-        <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide`}>Keyboard Shortcuts</h3>
-        <div className="space-y-1 text-xs">
-          <div className={`flex justify-between p-2 ${textMuted}`}>
-            <span>Open File</span>
-            <kbd className={`px-2 py-0.5 ${kbdBg} rounded`}>Ctrl+O</kbd>
-          </div>
-          <div className={`flex justify-between p-2 ${textMuted}`}>
-            <span>Save File</span>
-            <kbd className={`px-2 py-0.5 ${kbdBg} rounded`}>Ctrl+S</kbd>
-          </div>
-          <div className={`flex justify-between p-2 ${textMuted}`}>
-            <span>AI Assistant</span>
-            <kbd className={`px-2 py-0.5 ${kbdBg} rounded`}>Ctrl+Shift+A</kbd>
-          </div>
-        </div>
-      </div>
-
-      {/* Reset Settings */}
-      <div>
-        <button
-          onClick={() => {
-            setEditorSettings({
-              fontSize: 14,
-              tabSize: 2,
-              wordWrap: true,
-              minimap: true,
-              lineNumbers: true,
-              autoSave: true,
-            });
-            setAiConfig({
-              provider: 'openai',
-              model: 'gpt-4o-mini',
-              temperature: 0.7,
-              maxTokens: 4096,
-            });
-          }}
-          className={`w-full py-2 px-4 rounded text-sm font-medium transition-colors ${
-            theme === 'dark' 
-              ? 'bg-vscode-hover hover:bg-vscode-active text-vscode-text' 
-              : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-          }`}
-        >
-          Reset to Defaults
-        </button>
-      </div>
-
-      <div className={`pt-4 border-t ${borderColor}`}>
-        <p className={`text-xs ${textMuted} text-center`}>
-          AI Digital Friend Zone v1.0.0
-        </p>
-      </div>
     </div>
   );
 };
@@ -1254,60 +1002,12 @@ const App: React.FC = () => {
           )}
         </div>
 
-        {/* Terminal Panel */}
+        {/* Terminal Panel - Using IntegratedTerminal with multi-tab support */}
         {terminalOpen && (
-          <div 
-            className={`flex flex-col border-t ${theme === 'dark' ? 'border-vscode-border bg-[#1e1e1e]' : 'border-gray-200 bg-gray-900'}`}
-            style={{ height: terminalHeight, minHeight: 100, maxHeight: 500 }}
-          >
-            {/* Terminal Header with Sash */}
-            <div className="relative flex-shrink-0">
-              {/* Resizable Sash at top */}
-              <Sash
-                direction="horizontal"
-                position="start"
-                onResize={(delta) => setTerminalHeight(Math.max(100, Math.min(500, terminalHeight - delta)))}
-                className="z-20"
-              />
-              {/* Terminal Tab Bar */}
-              <div className={`h-7 flex items-center justify-between px-2 border-b ${theme === 'dark' ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-700 bg-gray-800'}`}>
-                <div className="flex items-center gap-2">
-                  <div className={`flex items-center gap-1.5 px-2 py-0.5 text-[10px] ${theme === 'dark' ? 'bg-[#1e1e1e] text-white' : 'bg-gray-900 text-white'} rounded-t border-t-2 border-t-vscode-accent`}>
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span>Terminal</span>
-                    <span className={`text-[9px] px-1 rounded ${useRealTerminal ? 'bg-green-500/30 text-green-400' : 'bg-yellow-500/30 text-yellow-400'}`}>
-                      {useRealTerminal ? 'Real' : 'Emulated'}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  {/* Toggle Real/Emulated Terminal */}
-                  <button
-                    onClick={() => setUseRealTerminal(!useRealTerminal)}
-                    className={`p-0.5 px-1.5 text-[9px] ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'} transition-colors rounded`}
-                    title={useRealTerminal ? 'Switch to Emulated Terminal' : 'Switch to Real Terminal'}
-                  >
-                    {useRealTerminal ? '🔌 Real' : '🌐 Emulated'}
-                  </button>
-                  <button
-                    onClick={() => setTerminalOpen(false)}
-                    className={`p-0.5 ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
-                    title="Close Terminal"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-            {/* Terminal Content */}
-            <div className="flex-1 min-h-0">
-              {useRealTerminal ? <RealTerminal /> : <Terminal />}
-            </div>
-          </div>
+          <IntegratedTerminal
+            defaultHeight={terminalHeight}
+            onHeightChange={setTerminalHeight}
+          />
         )}
 
         {/* Status Bar */}

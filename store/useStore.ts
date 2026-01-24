@@ -9,7 +9,9 @@ import {
   Extension,
   Theme,
   PanelLayout,
-  EditorSettings 
+  EditorSettings,
+  UILayout,
+  ShellType
 } from '../types';
 
 interface StoreState {
@@ -25,6 +27,7 @@ interface StoreState {
   // UI
   theme: Theme;
   layout: PanelLayout;
+  uiLayout: UILayout;
   sidebarOpen: boolean;
   sidebarTab: 'files' | 'templates' | 'extensions';
   aiPanelOpen: boolean;
@@ -62,6 +65,7 @@ interface StoreState {
   // Actions - UI
   setTheme: (theme: Theme) => void;
   setLayout: (layout: PanelLayout) => void;
+  setUILayout: (uiLayout: Partial<UILayout>) => void;
   toggleSidebar: () => void;
   setSidebarTab: (tab: 'files' | 'templates' | 'extensions') => void;
   toggleAiPanel: () => void;
@@ -89,6 +93,9 @@ const DEFAULT_EDITOR_SETTINGS: EditorSettings = {
   // Basic
   fontSize: 14,
   fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Monaco', 'Consolas', monospace",
+  fontLigatures: true,
+  lineHeight: 1.6,
+  letterSpacing: 0,
   tabSize: 2,
   wordWrap: true,
   minimap: true,
@@ -97,6 +104,7 @@ const DEFAULT_EDITOR_SETTINGS: EditorSettings = {
   
   // Professional Features
   theme: 'vs-dark',
+  iconTheme: 'material',
   cursorStyle: 'line',
   cursorBlinking: 'smooth',
   smoothScrolling: true,
@@ -135,6 +143,19 @@ const DEFAULT_EDITOR_SETTINGS: EditorSettings = {
   // Diff Editor
   enableSplitViewResizing: true,
   renderSideBySide: true,
+  
+  // Terminal Settings
+  terminal: {
+    defaultShell: 'bash',
+    fontSize: 13,
+    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+    cursorStyle: 'bar',
+    cursorBlink: true,
+    scrollback: 10000,
+    copyOnSelect: false,
+    enableBell: false,
+    lineHeight: 1.4,
+  },
 };
 
 const DEFAULT_AI_CONFIG: AIConfig = {
@@ -1078,6 +1099,14 @@ export const useStore = create<StoreState>()(
       activeFileId: null,
       theme: 'dark',
       layout: 'default',
+      uiLayout: {
+        leftSidebarWidth: 260,
+        rightSidebarWidth: 380,
+        terminalHeight: 200,
+        sidebarPosition: 'left',
+        panelPosition: 'bottom',
+        compactMode: false,
+      },
       sidebarOpen: true,
       sidebarTab: 'files',
       aiPanelOpen: true,
@@ -1223,12 +1252,20 @@ export const useStore = create<StoreState>()(
         set({ theme });
         if (theme === 'dark') {
           document.documentElement.classList.add('dark');
+          document.documentElement.classList.remove('high-contrast');
+        } else if (theme === 'high-contrast') {
+          document.documentElement.classList.add('dark');
+          document.documentElement.classList.add('high-contrast');
         } else {
           document.documentElement.classList.remove('dark');
+          document.documentElement.classList.remove('high-contrast');
         }
       },
       
       setLayout: (layout) => set({ layout }),
+      setUILayout: (uiLayout) => set((state) => ({ 
+        uiLayout: { ...state.uiLayout, ...uiLayout } 
+      })),
       toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
       setSidebarTab: (tab) => set({ sidebarTab: tab }),
       toggleAiPanel: () => set((state) => ({ aiPanelOpen: !state.aiPanelOpen })),

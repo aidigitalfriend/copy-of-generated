@@ -1,0 +1,694 @@
+import React, { useState } from 'react';
+import { useStore } from '../store/useStore';
+import { ShellType } from '../types';
+
+// AI Provider Configuration (from App.tsx)
+const AI_PROVIDERS = {
+  gemini: {
+    name: 'Google Gemini',
+    icon: '✨',
+    models: ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.0-pro'],
+  },
+  openai: {
+    name: 'OpenAI',
+    icon: '🤖',
+    models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo', 'o1-preview', 'o1-mini'],
+  },
+  anthropic: {
+    name: 'Anthropic',
+    icon: '🧠',
+    models: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],
+  },
+  mistral: {
+    name: 'Mistral AI',
+    icon: '🌀',
+    models: ['mistral-large-latest', 'mistral-medium-latest', 'mistral-small-latest', 'codestral-latest'],
+  },
+  groq: {
+    name: 'Groq',
+    icon: '⚡',
+    models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768'],
+  },
+  xai: {
+    name: 'xAI',
+    icon: '🅧',
+    models: ['grok-2', 'grok-2-mini', 'grok-beta'],
+  },
+  cerebras: {
+    name: 'Cerebras',
+    icon: '🔮',
+    models: ['llama-3.3-70b', 'llama-3.1-8b', 'llama-3.1-70b'],
+  },
+  huggingface: {
+    name: 'Hugging Face',
+    icon: '🤗',
+    models: ['meta-llama/Llama-3.2-3B-Instruct', 'mistralai/Mistral-7B-Instruct-v0.3'],
+  },
+  ollama: {
+    name: 'Ollama (Local)',
+    icon: '🦙',
+    models: ['llama3.2', 'mistral', 'codellama', 'deepseek-coder', 'qwen2.5-coder'],
+  },
+};
+
+type AIProviderKey = keyof typeof AI_PROVIDERS;
+
+interface SettingsPanelProps {
+  theme: string;
+  setTheme: (theme: string) => void;
+}
+
+export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme }) => {
+  const { editorSettings, setEditorSettings, aiConfig, setAiConfig, uiLayout, setUILayout } = useStore();
+  const [activeTab, setActiveTab] = useState<'appearance' | 'editor' | 'fonts' | 'terminal' | 'layout' | 'ai'>('appearance');
+  
+  const bgCard = theme === 'dark' 
+    ? 'bg-vscode-bg border border-vscode-border rounded-md' 
+    : theme === 'high-contrast' 
+      ? 'bg-black border-2 border-white rounded-md' 
+      : 'bg-white border border-gray-200 rounded-md';
+      
+  const textPrimary = theme === 'dark' ? 'text-white' : theme === 'high-contrast' ? 'text-white' : 'text-gray-900';
+  const textSecondary = theme === 'dark' ? 'text-vscode-text' : theme === 'high-contrast' ? 'text-gray-200' : 'text-gray-700';
+  const textMuted = theme === 'dark' ? 'text-vscode-textMuted' : theme === 'high-contrast' ? 'text-gray-300' : 'text-gray-500';
+  const borderColor = theme === 'dark' ? 'border-vscode-border' : theme === 'high-contrast' ? 'border-white' : 'border-gray-200';
+  const inputBg = theme === 'dark' 
+    ? 'bg-vscode-input border border-vscode-border text-white rounded' 
+    : theme === 'high-contrast' 
+      ? 'bg-black border-2 border-white text-white rounded' 
+      : 'bg-white border border-gray-300 text-gray-900 rounded';
+
+  const currentProvider = AI_PROVIDERS[aiConfig.provider as AIProviderKey] || AI_PROVIDERS.openai;
+  
+  const fontOptions = [
+    "'JetBrains Mono', monospace",
+    "'Fira Code', monospace",
+    "'Cascadia Code', monospace",
+    "'Source Code Pro', monospace",
+    "'IBM Plex Mono', monospace",
+    "'Consolas', monospace",
+    "'Monaco', monospace",
+    "'Menlo', monospace",
+  ];
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Tabs */}
+      <div className={`flex border-b ${borderColor} ${theme === 'dark' ? 'bg-vscode-sidebar' : theme === 'high-contrast' ? 'bg-black' : 'bg-gray-50'}`}>
+        {(['appearance', 'editor', 'fonts', 'terminal', 'layout', 'ai'] as const).map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-2.5 text-xs font-medium capitalize transition-colors ${
+              activeTab === tab
+                ? `${textPrimary} border-b-2 border-vscode-accent bg-vscode-accent/10`
+                : `${textMuted} hover:${textSecondary}`
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+      
+      <div className="flex-1 p-4 space-y-6 overflow-auto">
+        {/* Appearance Tab */}
+        {activeTab === 'appearance' && (
+          <>
+            <div>
+              <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Color Theme</h3>
+              <div className="space-y-2">
+                <div className={`p-3 ${bgCard}`}>
+                  <label className={`text-sm ${textSecondary} block mb-2`}>Application Theme</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { value: 'dark', label: '🌙 Dark', desc: 'Dark theme' },
+                      { value: 'light', label: '☀️ Light', desc: 'Light theme' },
+                      { value: 'high-contrast', label: '🔲 High Contrast', desc: 'Maximum contrast' }
+                    ].map(t => (
+                      <button
+                        key={t.value}
+                        onClick={() => setTheme(t.value)}
+                        className={`p-3 text-left border-2 rounded-lg transition-all ${
+                          theme === t.value
+                            ? 'border-vscode-accent bg-vscode-accent/10'
+                            : `${borderColor.replace('border-', 'border-')} hover:border-vscode-accent/50`
+                        }`}
+                      >
+                        <div className={`text-sm font-medium ${textPrimary}`}>{t.label}</div>
+                        <div className={`text-xs ${textMuted} mt-1`}>{t.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                  <span className={`text-sm ${textSecondary}`}>Icon Theme</span>
+                  <select
+                    value={editorSettings.iconTheme || 'material'}
+                    onChange={(e) => setEditorSettings({ iconTheme: e.target.value as any })}
+                    className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  >
+                    <option value="default">📁 Default</option>
+                    <option value="material">🎨 Material Icons</option>
+                    <option value="seti">📂 Seti</option>
+                    <option value="minimal">▫️ Minimal</option>
+                    <option value="vscode">💙 VS Code</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Editor Color Scheme</h3>
+              <div className="space-y-2">
+                <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                  <span className={`text-sm ${textSecondary}`}>Editor Theme</span>
+                  <select
+                    value={editorSettings.theme}
+                    onChange={(e) => setEditorSettings({ theme: e.target.value as any })}
+                    className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  >
+                    <option value="vs-dark">VS Dark</option>
+                    <option value="vs-light">VS Light</option>
+                    <option value="hc-black">High Contrast Black</option>
+                    <option value="hc-light">High Contrast Light</option>
+                    <option value="monokai">Monokai</option>
+                    <option value="dracula">Dracula</option>
+                    <option value="github-dark">GitHub Dark</option>
+                    <option value="one-dark-pro">One Dark Pro</option>
+                    <option value="nord">Nord</option>
+                    <option value="solarized-dark">Solarized Dark</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+        
+        {/* Fonts Tab */}
+        {activeTab === 'fonts' && (
+          <div>
+            <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Font Configuration</h3>
+            <div className="space-y-2">
+              <div className={`p-3 ${bgCard} space-y-2`}>
+                <label className={`text-sm ${textSecondary} block`}>Font Family</label>
+                <select
+                  value={editorSettings.fontFamily}
+                  onChange={(e) => setEditorSettings({ fontFamily: e.target.value })}
+                  className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-accent font-mono`}
+                >
+                  {fontOptions.map(font => (
+                    <option key={font} value={font}>{font.split("'")[1]}</option>
+                  ))}
+                </select>
+                <p className={`text-xs ${textMuted}`}>Choose your preferred monospace font</p>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Font Size</span>
+                <select
+                  value={editorSettings.fontSize}
+                  onChange={(e) => setEditorSettings({ fontSize: Number(e.target.value) })}
+                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                >
+                  {[10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 28, 32].map(size => (
+                    <option key={size} value={size}>{size}px</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Line Height</span>
+                <select
+                  value={editorSettings.lineHeight || 1.6}
+                  onChange={(e) => setEditorSettings({ lineHeight: Number(e.target.value) })}
+                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                >
+                  {[1.2, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2].map(height => (
+                    <option key={height} value={height}>{height}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Letter Spacing</span>
+                <select
+                  value={editorSettings.letterSpacing || 0}
+                  onChange={(e) => setEditorSettings({ letterSpacing: Number(e.target.value) })}
+                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                >
+                  {[-0.5, 0, 0.5, 1, 1.5, 2].map(spacing => (
+                    <option key={spacing} value={spacing}>{spacing}px</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <div>
+                  <div className={`text-sm ${textSecondary}`}>Font Ligatures</div>
+                  <div className={`text-xs ${textMuted} mt-0.5`}>Enable programming ligatures (→ ≠ ≤)</div>
+                </div>
+                <button
+                  onClick={() => setEditorSettings({ fontLigatures: !editorSettings.fontLigatures })}
+                  className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
+                    editorSettings.fontLigatures
+                      ? 'bg-vscode-accent text-white'
+                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                  }`}
+                >
+                  {editorSettings.fontLigatures ? 'On' : 'Off'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Terminal Tab */}
+        {activeTab === 'terminal' && (
+          <div>
+            <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>
+              <span className="mr-2">🖥️</span>Integrated Terminal
+            </h3>
+            <div className="space-y-2">
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <div>
+                  <div className={`text-sm ${textSecondary}`}>Default Shell</div>
+                  <div className={`text-xs ${textMuted} mt-0.5`}>Shell to open new terminals with</div>
+                </div>
+                <select
+                  value={editorSettings.terminal?.defaultShell || 'bash'}
+                  onChange={(e) => setEditorSettings({ 
+                    terminal: { ...editorSettings.terminal, defaultShell: e.target.value as ShellType } 
+                  })}
+                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                >
+                  <option value="bash">🐚 Bash</option>
+                  <option value="zsh">⚡ Zsh</option>
+                  <option value="sh">💲 Shell (sh)</option>
+                  <option value="powershell">🔵 PowerShell</option>
+                  <option value="cmd">⬛ CMD</option>
+                  <option value="fish">🐟 Fish</option>
+                </select>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Font Size</span>
+                <select
+                  value={editorSettings.terminal?.fontSize || 13}
+                  onChange={(e) => setEditorSettings({ 
+                    terminal: { ...editorSettings.terminal, fontSize: Number(e.target.value) } 
+                  })}
+                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                >
+                  {[10, 11, 12, 13, 14, 15, 16, 18, 20].map(size => (
+                    <option key={size} value={size}>{size}px</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Cursor Style</span>
+                <select
+                  value={editorSettings.terminal?.cursorStyle || 'bar'}
+                  onChange={(e) => setEditorSettings({ 
+                    terminal: { ...editorSettings.terminal, cursorStyle: e.target.value as 'block' | 'underline' | 'bar' } 
+                  })}
+                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                >
+                  <option value="bar">▏ Bar</option>
+                  <option value="block">█ Block</option>
+                  <option value="underline">_ Underline</option>
+                </select>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <div>
+                  <div className={`text-sm ${textSecondary}`}>Cursor Blink</div>
+                  <div className={`text-xs ${textMuted} mt-0.5`}>Animate cursor</div>
+                </div>
+                <button
+                  onClick={() => setEditorSettings({ 
+                    terminal: { ...editorSettings.terminal, cursorBlink: !editorSettings.terminal?.cursorBlink } 
+                  })}
+                  className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
+                    editorSettings.terminal?.cursorBlink !== false
+                      ? 'bg-vscode-accent text-white'
+                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                  }`}
+                >
+                  {editorSettings.terminal?.cursorBlink !== false ? 'On' : 'Off'}
+                </button>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Line Height</span>
+                <select
+                  value={editorSettings.terminal?.lineHeight || 1.4}
+                  onChange={(e) => setEditorSettings({ 
+                    terminal: { ...editorSettings.terminal, lineHeight: Number(e.target.value) } 
+                  })}
+                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                >
+                  {[1.0, 1.2, 1.4, 1.5, 1.6, 1.8, 2.0].map(height => (
+                    <option key={height} value={height}>{height}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <div>
+                  <div className={`text-sm ${textSecondary}`}>Scrollback Buffer</div>
+                  <div className={`text-xs ${textMuted} mt-0.5`}>Lines to keep in buffer</div>
+                </div>
+                <select
+                  value={editorSettings.terminal?.scrollback || 10000}
+                  onChange={(e) => setEditorSettings({ 
+                    terminal: { ...editorSettings.terminal, scrollback: Number(e.target.value) } 
+                  })}
+                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                >
+                  <option value={1000}>1,000</option>
+                  <option value={5000}>5,000</option>
+                  <option value={10000}>10,000</option>
+                  <option value={20000}>20,000</option>
+                  <option value={50000}>50,000</option>
+                </select>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <div>
+                  <div className={`text-sm ${textSecondary}`}>Copy on Select</div>
+                  <div className={`text-xs ${textMuted} mt-0.5`}>Auto-copy selected text</div>
+                </div>
+                <button
+                  onClick={() => setEditorSettings({ 
+                    terminal: { ...editorSettings.terminal, copyOnSelect: !editorSettings.terminal?.copyOnSelect } 
+                  })}
+                  className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
+                    editorSettings.terminal?.copyOnSelect
+                      ? 'bg-vscode-accent text-white'
+                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                  }`}
+                >
+                  {editorSettings.terminal?.copyOnSelect ? 'On' : 'Off'}
+                </button>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <div>
+                  <div className={`text-sm ${textSecondary}`}>Terminal Bell</div>
+                  <div className={`text-xs ${textMuted} mt-0.5`}>Play audio on bell character</div>
+                </div>
+                <button
+                  onClick={() => setEditorSettings({ 
+                    terminal: { ...editorSettings.terminal, enableBell: !editorSettings.terminal?.enableBell } 
+                  })}
+                  className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
+                    editorSettings.terminal?.enableBell
+                      ? 'bg-vscode-accent text-white'
+                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                  }`}
+                >
+                  {editorSettings.terminal?.enableBell ? 'On' : 'Off'}
+                </button>
+              </div>
+            </div>
+            
+            <h3 className={`text-xs font-semibold ${textPrimary} mb-3 mt-6 uppercase tracking-wide border-b ${borderColor} pb-2`}>
+              <span className="mr-2">⌨️</span>Keyboard Shortcuts
+            </h3>
+            <div className="space-y-2">
+              <div className={`p-3 ${bgCard}`}>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className={`flex items-center justify-between ${textMuted}`}>
+                    <span>New Terminal</span>
+                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+Shift+`</kbd>
+                  </div>
+                  <div className={`flex items-center justify-between ${textMuted}`}>
+                    <span>Toggle Terminal</span>
+                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+`</kbd>
+                  </div>
+                  <div className={`flex items-center justify-between ${textMuted}`}>
+                    <span>Split Horizontal</span>
+                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+Shift+5</kbd>
+                  </div>
+                  <div className={`flex items-center justify-between ${textMuted}`}>
+                    <span>Close Terminal</span>
+                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+W</kbd>
+                  </div>
+                  <div className={`flex items-center justify-between ${textMuted}`}>
+                    <span>Previous Tab</span>
+                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+PageUp</kbd>
+                  </div>
+                  <div className={`flex items-center justify-between ${textMuted}`}>
+                    <span>Next Tab</span>
+                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+PageDown</kbd>
+                  </div>
+                  <div className={`flex items-center justify-between ${textMuted}`}>
+                    <span>Find in Terminal</span>
+                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+Shift+F</kbd>
+                  </div>
+                  <div className={`flex items-center justify-between ${textMuted}`}>
+                    <span>Clear Terminal</span>
+                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+L</kbd>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Layout Tab */}
+        {activeTab === 'layout' && (
+          <div>
+            <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>UI Layout Configuration</h3>
+            <div className="space-y-2">
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <div>
+                  <div className={`text-sm ${textSecondary}`}>Sidebar Position</div>
+                  <div className={`text-xs ${textMuted} mt-0.5`}>Choose sidebar location</div>
+                </div>
+                <select
+                  value={uiLayout?.sidebarPosition || 'left'}
+                  onChange={(e) => setUILayout({ sidebarPosition: e.target.value as any })}
+                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                >
+                  <option value="left">← Left</option>
+                  <option value="right">Right →</option>
+                </select>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <div>
+                  <div className={`text-sm ${textSecondary}`}>Panel Position</div>
+                  <div className={`text-xs ${textMuted} mt-0.5`}>Terminal & output panel location</div>
+                </div>
+                <select
+                  value={uiLayout?.panelPosition || 'bottom'}
+                  onChange={(e) => setUILayout({ panelPosition: e.target.value as any })}
+                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                >
+                  <option value="bottom">↓ Bottom</option>
+                  <option value="right">Right →</option>
+                </select>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <div>
+                  <div className={`text-sm ${textSecondary}`}>Compact Mode</div>
+                  <div className={`text-xs ${textMuted} mt-0.5`}>Reduce padding and spacing</div>
+                </div>
+                <button
+                  onClick={() => setUILayout({ compactMode: !uiLayout?.compactMode })}
+                  className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
+                    uiLayout?.compactMode
+                      ? 'bg-vscode-accent text-white'
+                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                  }`}
+                >
+                  {uiLayout?.compactMode ? 'On' : 'Off'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Editor Tab */}
+        {activeTab === 'editor' && (
+          <div>
+            <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Editor Behavior</h3>
+            <div className="space-y-2">
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Tab Size</span>
+                <select
+                  value={editorSettings.tabSize}
+                  onChange={(e) => setEditorSettings({ tabSize: Number(e.target.value) })}
+                  className={`${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                >
+                  <option value={2}>2 spaces</option>
+                  <option value={4}>4 spaces</option>
+                  <option value={8}>8 spaces</option>
+                </select>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Word Wrap</span>
+                <button
+                  onClick={() => setEditorSettings({ wordWrap: !editorSettings.wordWrap })}
+                  className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
+                    editorSettings.wordWrap
+                      ? 'bg-vscode-accent text-white'
+                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                  }`}
+                >
+                  {editorSettings.wordWrap ? 'On' : 'Off'}
+                </button>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Minimap</span>
+                <button
+                  onClick={() => setEditorSettings({ minimap: !editorSettings.minimap })}
+                  className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
+                    editorSettings.minimap
+                      ? 'bg-vscode-accent text-white'
+                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                  }`}
+                >
+                  {editorSettings.minimap ? 'On' : 'Off'}
+                </button>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Line Numbers</span>
+                <button
+                  onClick={() => setEditorSettings({ lineNumbers: !editorSettings.lineNumbers })}
+                  className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
+                    editorSettings.lineNumbers
+                      ? 'bg-vscode-accent text-white'
+                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                  }`}
+                >
+                  {editorSettings.lineNumbers ? 'On' : 'Off'}
+                </button>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Auto Save</span>
+                <button
+                  onClick={() => setEditorSettings({ autoSave: !editorSettings.autoSave })}
+                  className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
+                    editorSettings.autoSave
+                      ? 'bg-vscode-accent text-white'
+                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                  }`}
+                >
+                  {editorSettings.autoSave ? 'On' : 'Off'}
+                </button>
+              </div>
+              
+              <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                <span className={`text-sm ${textSecondary}`}>Bracket Pair Colorization</span>
+                <button
+                  onClick={() => setEditorSettings({ bracketPairColorization: !editorSettings.bracketPairColorization })}
+                  className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
+                    editorSettings.bracketPairColorization
+                      ? 'bg-vscode-accent text-white'
+                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                  }`}
+                >
+                  {editorSettings.bracketPairColorization ? 'On' : 'Off'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* AI Tab */}
+        {activeTab === 'ai' && (
+          <div>
+            <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>AI Configuration</h3>
+            <div className="space-y-2">
+              <div className={`p-3 ${bgCard} space-y-2`}>
+                <label className={`text-sm ${textSecondary} block mb-2`}>AI Provider</label>
+                <select
+                  value={aiConfig.provider}
+                  onChange={(e) => {
+                    const provider = e.target.value as AIProviderKey;
+                    const models = AI_PROVIDERS[provider]?.models || [];
+                    setAiConfig({ 
+                      provider: provider as any, 
+                      model: models[0] || '' 
+                    });
+                  }}
+                  className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-accent`}
+                >
+                  {Object.entries(AI_PROVIDERS).map(([key, provider]) => (
+                    <option key={key} value={key}>
+                      {provider.icon} {provider.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className={`p-3 ${bgCard} space-y-2`}>
+                <label className={`text-sm ${textSecondary} block mb-2`}>Model</label>
+                <select
+                  value={aiConfig.model}
+                  onChange={(e) => setAiConfig({ model: e.target.value })}
+                  className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-accent font-mono`}
+                >
+                  {currentProvider.models.map((model) => (
+                    <option key={model} value={model}>
+                      {model}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={`p-3 ${bgCard} space-y-2`}>
+                <div className="flex items-center justify-between">
+                  <label className={`text-sm ${textSecondary}`}>Temperature</label>
+                  <span className={`text-sm ${theme === 'dark' ? 'text-vscode-accent' : theme === 'high-contrast' ? 'text-white' : 'text-blue-600'} font-mono`}>
+                    {aiConfig.temperature}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="2"
+                  step="0.1"
+                  value={aiConfig.temperature}
+                  onChange={(e) => setAiConfig({ temperature: parseFloat(e.target.value) })}
+                  className="w-full"
+                />
+                <p className={`text-xs ${textMuted}`}>Controls randomness (0 = focused, 2 = creative)</p>
+              </div>
+
+              <div className={`p-3 ${bgCard} space-y-2`}>
+                <div className="flex items-center justify-between">
+                  <label className={`text-sm ${textSecondary}`}>Max Tokens</label>
+                  <span className={`text-sm ${theme === 'dark' ? 'text-vscode-accent' : theme === 'high-contrast' ? 'text-white' : 'text-blue-600'} font-mono`}>
+                    {aiConfig.maxTokens}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="256"
+                  max="8192"
+                  step="256"
+                  value={aiConfig.maxTokens}
+                  onChange={(e) => setAiConfig({ maxTokens: parseInt(e.target.value) })}
+                  className="w-full"
+                />
+                <p className={`text-xs ${textMuted}`}>Maximum response length</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default SettingsPanel;
