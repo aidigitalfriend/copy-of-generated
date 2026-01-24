@@ -313,10 +313,12 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
     terminal.loadAddon(fitAddon);
     
     terminal.open(terminalRef.current);
-    fitAddon.fit();
     
-    // Focus terminal immediately
-    terminal.focus();
+    // Delay fit to ensure container is properly sized
+    setTimeout(() => {
+      fitAddon.fit();
+      terminal.focus();
+    }, 50);
 
     xtermRef.current = terminal;
     fitAddonRef.current = fitAddon;
@@ -394,33 +396,41 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
     };
   }, [handleCommand, writePrompt, clearCurrentLine]);
 
-  // Focus terminal on click
+  // Focus terminal on click and re-fit
   const handleTerminalClick = useCallback(() => {
     if (xtermRef.current) {
       xtermRef.current.focus();
     }
+    // Re-fit on click in case container size changed
+    if (fitAddonRef.current) {
+      fitAddonRef.current.fit();
+    }
   }, []);
 
-  // Auto-focus when component mounts
+  // Auto-focus and fit when component mounts/becomes visible
   useEffect(() => {
     const timer = setTimeout(() => {
       if (xtermRef.current) {
         xtermRef.current.focus();
       }
-    }, 100);
+      if (fitAddonRef.current) {
+        fitAddonRef.current.fit();
+      }
+    }, 150);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <div 
-      className={`h-full bg-[#1e1e1e] font-mono cursor-text ${className}`}
+      className={`h-full w-full bg-[#1e1e1e] font-mono cursor-text ${className}`}
       onClick={handleTerminalClick}
+      style={{ minHeight: '100px' }}
     >
       {/* Terminal Content - no header, App.tsx provides it */}
       <div 
         ref={terminalRef} 
-        className="h-full w-full"
-        style={{ outline: 'none' }}
+        className="h-full w-full p-2"
+        style={{ outline: 'none', minHeight: '80px' }}
       />
     </div>
   );

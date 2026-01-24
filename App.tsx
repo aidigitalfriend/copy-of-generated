@@ -860,27 +860,32 @@ const App: React.FC = () => {
       // Command Palette: Ctrl+Shift+P or F1
       if ((e.ctrlKey && e.shiftKey && e.key === 'P') || e.key === 'F1') {
         e.preventDefault();
+        e.stopPropagation();
         setCommandPaletteOpen(true);
         setCommandSearch('');
       }
-      // Terminal: Ctrl+`
-      if (e.ctrlKey && e.key === '`') {
+      // Terminal: Ctrl+` (keyCode 192 for backtick)
+      if (e.ctrlKey && (e.key === '`' || e.keyCode === 192)) {
         e.preventDefault();
+        e.stopPropagation();
         setTerminalOpen(!terminalOpen);
       }
       // Left Sidebar: Ctrl+B
       if (e.ctrlKey && !e.shiftKey && e.key === 'b') {
         e.preventDefault();
+        e.stopPropagation();
         setLeftSidebarOpen(!leftSidebarOpen);
       }
       // Right Sidebar: Ctrl+Shift+B
       if (e.ctrlKey && e.shiftKey && e.key === 'B') {
         e.preventDefault();
+        e.stopPropagation();
         setRightSidebarOpen(!rightSidebarOpen);
       }
       // Split Editor: Ctrl+\
       if (e.ctrlKey && e.key === '\\') {
         e.preventDefault();
+        e.stopPropagation();
         setSplitEditorOpen(!splitEditorOpen);
       }
       // Explorer: Ctrl+Shift+E
