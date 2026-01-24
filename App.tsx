@@ -11,6 +11,7 @@ import PrebuiltTemplatesGallery from './components/PrebuiltTemplatesGallery';
 import { LivePreview } from './components/LivePreview';
 import { DeployPanel } from './components/DeployPanel';
 import { ExtensionsPanel } from './components/ExtensionsPanel';
+import { ExtensionMarketplacePanel } from './components/ExtensionMarketplacePanel';
 import { SplitPane, Sash } from './components/SplitPane';
 import { FileNode, OpenFile, ProjectTemplate } from './types';
 import { voiceOutput, speechSupport } from './services/speech';
@@ -1175,7 +1176,7 @@ const App: React.FC = () => {
                   }}
                 />
               )}
-              {leftTab === 'extensions' && <ExtensionsPanel />}
+              {leftTab === 'extensions' && <ExtensionMarketplacePanel />}
               {leftTab === 'history' && <HistoryPanel />}
               {leftTab === 'search' && (
                 <div className="p-4">

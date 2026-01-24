@@ -17,6 +17,15 @@ export const GitPanel: React.FC<GitPanelProps> = ({ className = '' }) => {
   const [commitMessage, setCommitMessage] = useState('');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [diffContent, setDiffContent] = useState<string>('');
+  
+  // Push/Pull state
+  const [showPushModal, setShowPushModal] = useState(false);
+  const [remoteUrl, setRemoteUrl] = useState('');
+  const [remoteBranch, setRemoteBranch] = useState('main');
+  const [gitUsername, setGitUsername] = useState('');
+  const [gitToken, setGitToken] = useState('');
+  const [pushLoading, setPushLoading] = useState(false);
+  const [pushMode, setPushMode] = useState<'push' | 'pull'>('push');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -127,6 +136,48 @@ export const GitPanel: React.FC<GitPanelProps> = ({ className = '' }) => {
     }
   };
 
+  // Push to remote
+  const handlePush = async () => {
+    if (!gitToken) {
+      setError('GitHub token is required for push');
+      return;
+    }
+    setPushLoading(true);
+    try {
+      await gitService.push('origin', remoteBranch, {
+        username: gitUsername || 'git',
+        password: gitToken
+      });
+      setShowPushModal(false);
+      setError(null);
+      // Show success
+      alert('Successfully pushed to remote!');
+    } catch (err: any) {
+      setError(`Push failed: ${err.message || 'Unknown error'}`);
+    } finally {
+      setPushLoading(false);
+    }
+  };
+
+  // Pull from remote
+  const handlePull = async () => {
+    setPushLoading(true);
+    try {
+      await gitService.pull('origin', remoteBranch, gitToken ? {
+        username: gitUsername || 'git',
+        password: gitToken
+      } : undefined);
+      setShowPushModal(false);
+      await loadStatus();
+      await loadCommits();
+      alert('Successfully pulled from remote!');
+    } catch (err: any) {
+      setError(`Pull failed: ${err.message || 'Unknown error'}`);
+    } finally {
+      setPushLoading(false);
+    }
+  };
+
   // Status icon
   const getStatusIcon = (fileStatus: GitStatus['status']) => {
     switch (fileStatus) {
@@ -165,6 +216,24 @@ export const GitPanel: React.FC<GitPanelProps> = ({ className = '' }) => {
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+          <button
+            onClick={() => { setPushMode('pull'); setShowPushModal(true); }}
+            className={`p-1 rounded ${isDark ? 'hover:bg-slate-700' : 'hover:bg-gray-100'}`}
+            title="Pull"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+          </button>
+          <button
+            onClick={() => { setPushMode('push'); setShowPushModal(true); }}
+            className={`p-1 rounded ${isDark ? 'hover:bg-slate-700 text-green-400' : 'hover:bg-gray-100 text-green-600'}`}
+            title="Push"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
           </button>
         </div>
@@ -383,6 +452,99 @@ export const GitPanel: React.FC<GitPanelProps> = ({ className = '' }) => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Push/Pull Modal */}
+      <AnimatePresence>
+        {showPushModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            onClick={() => setShowPushModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className={`w-96 rounded-lg shadow-xl ${isDark ? 'bg-slate-800' : 'bg-white'} p-4`}
+              onClick={e => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                {pushMode === 'push' ? (
+                  <><svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg> Push to Remote</>
+                ) : (
+                  <><svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> Pull from Remote</>
+                )}
+              </h3>
+              
+              <div className="space-y-3">
+                <div>
+                  <label className={`block text-xs mb-1 ${isDark ? 'text-slate-400' : 'text-gray-600'}`}>Branch</label>
+                  <input
+                    type="text"
+                    value={remoteBranch}
+                    onChange={e => setRemoteBranch(e.target.value)}
+                    placeholder="main"
+                    className={`w-full px-3 py-2 text-sm rounded border ${isDark ? 'bg-slate-700 border-slate-600' : 'bg-gray-50 border-gray-300'} outline-none focus:border-blue-500`}
+                  />
+                </div>
+                
+                <div>
+                  <label className={`block text-xs mb-1 ${isDark ? 'text-slate-400' : 'text-gray-600'}`}>GitHub Username (optional)</label>
+                  <input
+                    type="text"
+                    value={gitUsername}
+                    onChange={e => setGitUsername(e.target.value)}
+                    placeholder="username"
+                    className={`w-full px-3 py-2 text-sm rounded border ${isDark ? 'bg-slate-700 border-slate-600' : 'bg-gray-50 border-gray-300'} outline-none focus:border-blue-500`}
+                  />
+                </div>
+                
+                <div>
+                  <label className={`block text-xs mb-1 ${isDark ? 'text-slate-400' : 'text-gray-600'}`}>
+                    GitHub Token / PAT {pushMode === 'push' && <span className="text-red-400">*</span>}
+                  </label>
+                  <input
+                    type="password"
+                    value={gitToken}
+                    onChange={e => setGitToken(e.target.value)}
+                    placeholder="ghp_xxxxxxxxxxxx"
+                    className={`w-full px-3 py-2 text-sm rounded border ${isDark ? 'bg-slate-700 border-slate-600' : 'bg-gray-50 border-gray-300'} outline-none focus:border-blue-500`}
+                  />
+                  <p className={`text-xs mt-1 ${isDark ? 'text-slate-500' : 'text-gray-500'}`}>
+                    Generate at GitHub → Settings → Developer settings → Personal access tokens
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={() => setShowPushModal(false)}
+                  className={`flex-1 px-4 py-2 text-sm rounded ${isDark ? 'bg-slate-700 hover:bg-slate-600' : 'bg-gray-100 hover:bg-gray-200'}`}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={pushMode === 'push' ? handlePush : handlePull}
+                  disabled={pushLoading || (pushMode === 'push' && !gitToken)}
+                  className={`flex-1 px-4 py-2 text-sm rounded text-white flex items-center justify-center gap-2 ${
+                    pushLoading || (pushMode === 'push' && !gitToken)
+                      ? 'bg-gray-500 cursor-not-allowed'
+                      : pushMode === 'push' ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600'
+                  }`}
+                >
+                  {pushLoading ? (
+                    <><svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> {pushMode === 'push' ? 'Pushing...' : 'Pulling...'}</>
+                  ) : (
+                    pushMode === 'push' ? 'Push' : 'Pull'
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Error toast */}
       <AnimatePresence>
