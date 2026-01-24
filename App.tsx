@@ -12,6 +12,7 @@ import { TemplateGallery } from './components/TemplateGallery';
 import PrebuiltTemplatesGallery from './components/PrebuiltTemplatesGallery';
 import { LivePreview } from './components/LivePreview';
 import { DeployPanel } from './components/DeployPanel';
+import { EnhancedDeployPanel } from './components/EnhancedDeployPanel';
 import { ExtensionsPanel } from './components/ExtensionsPanel';
 import { ExtensionMarketplacePanel } from './components/ExtensionMarketplacePanel';
 import { SettingsPanel } from './components/SettingsPanel';
@@ -1315,7 +1316,7 @@ const App: React.FC = () => {
             <div className="flex-1 overflow-hidden">
               {rightTab === 'ai' && <AgenticAIChat voiceEnabled={voiceEnabled} />}
               {rightTab === 'ai-tools' && <AIIntegrationPanel />}
-              {rightTab === 'deploy' && <DeployPanel />}
+              {rightTab === 'deploy' && <EnhancedDeployPanel />}
               {rightTab === 'settings' && <SettingsPanel theme={theme} setTheme={setTheme} />}
             </div>
           </div>
