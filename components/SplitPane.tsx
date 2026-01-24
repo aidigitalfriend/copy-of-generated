@@ -160,27 +160,27 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
       {/* Sash / Divider */}
       <div
         style={sashStyle}
-        className={`group flex items-center justify-center ${isDragging ? 'bg-indigo-500' : ''}`}
+        className={`group flex items-center justify-center ${isDragging ? 'bg-vscode-accent' : ''}`}
         onMouseDown={handleMouseDown}
         onDoubleClick={handleDoubleClick}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
-        {/* Visual sash indicator */}
+        {/* Sash indicator */}
         <div
           className={`
             ${isHorizontal ? 'w-[2px] h-full' : 'w-full h-[2px]'}
             transition-all duration-150
             ${isDragging 
-              ? 'bg-indigo-500' 
+              ? 'bg-vscode-accent' 
               : isHovering 
-                ? 'bg-indigo-400' 
-                : 'bg-transparent group-hover:bg-slate-600'
+                ? 'bg-vscode-accent/80' 
+                : 'bg-vscode-border/50 group-hover:bg-vscode-border'
             }
           `}
         />
         
-        {/* Drag handle dots (optional visual indicator) */}
+        {/* Drag handle dots */}
         {(isHovering || isDragging) && (
           <div 
             className={`
@@ -193,7 +193,7 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
                 key={i}
                 className={`
                   w-1 h-1 rounded-full
-                  ${isDragging ? 'bg-white' : 'bg-slate-500'}
+                  ${isDragging ? 'bg-white' : 'bg-vscode-accent'}
                 `}
               />
             ))}

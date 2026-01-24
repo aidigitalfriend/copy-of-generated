@@ -40,52 +40,50 @@ export const ExtensionsPanel: React.FC = () => {
   const displayedExtensions = activeTab === 'installed' ? installedExtensions : availableExtensions;
 
   return (
-    <div className={`flex flex-col h-full ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'}`}>
+    <div className="flex flex-col h-full bg-vscode-sidebar font-mono">
       {/* Header */}
-      <div className={`flex items-center justify-between px-4 py-3 border-b ${theme === 'dark' ? 'border-slate-700' : 'border-gray-200'}`}>
+      <div className="flex items-center justify-between px-4 py-3 border-b border-vscode-border bg-vscode-bg">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🧩</span>
-          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Extensions</span>
+          <span className="text-lg">◎</span>
+          <span className="font-semibold text-white">Extensions</span>
         </div>
-        <span className={`text-xs px-2 py-0.5 rounded-full ${theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>
-          {installedExtensions.length} active
+        <span className="text-[9px] px-1.5 py-0.5 bg-vscode-success/10 text-vscode-success font-medium rounded">
+          {installedExtensions.length} Active
         </span>
       </div>
 
       {/* Search */}
-      <div className={`p-3 border-b ${theme === 'dark' ? 'border-slate-700/50' : 'border-gray-200'}`}>
+      <div className="p-3 border-b border-vscode-border">
         <div className="relative">
           <input
             type="text"
             placeholder="Search extensions..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className={`w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-500' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400'}`}
+            className="w-full pl-9 pr-3 py-2 bg-vscode-bg border border-vscode-border text-white text-sm focus:outline-none focus:border-vscode-accent placeholder-vscode-textMuted font-mono"
           />
-          <svg className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-vscode-textMuted">▶</span>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className={`flex border-b ${theme === 'dark' ? 'border-slate-700' : 'border-gray-200'}`}>
+      <div className="flex border-b border-vscode-border">
         <button
           onClick={() => setActiveTab('installed')}
-          className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+          className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
             activeTab === 'installed' 
-              ? 'text-indigo-500 border-b-2 border-indigo-500' 
-              : theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'
+              ? 'text-white border-b border-vscode-accent bg-vscode-accent/10' 
+              : 'text-vscode-textMuted hover:text-white'
           }`}
         >
           Installed ({installedExtensions.length})
         </button>
         <button
           onClick={() => setActiveTab('available')}
-          className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+          className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
             activeTab === 'available' 
-              ? 'text-indigo-500 border-b-2 border-indigo-500' 
-              : theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'
+              ? 'text-white border-b border-vscode-accent bg-vscode-accent/10' 
+              : 'text-vscode-textMuted hover:text-white'
           }`}
         >
           Available ({availableExtensions.length})
@@ -98,22 +96,22 @@ export const ExtensionsPanel: React.FC = () => {
           displayedExtensions.map(ext => (
             <div
               key={ext.id}
-              className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${theme === 'dark' ? 'bg-slate-800/50 hover:bg-slate-800' : 'bg-gray-50 hover:bg-gray-100'}`}
+              className="flex items-center gap-3 p-2 bg-vscode-bg hover:bg-white/5 transition rounded"
             >
               {/* Icon */}
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl shrink-0 ${theme === 'dark' ? 'bg-slate-700' : 'bg-gray-200'}`}>
-                {ext.icon || '🧩'}
+              <div className="w-8 h-8 bg-vscode-sidebar flex items-center justify-center text-lg shrink-0 rounded">
+                {ext.icon || '◎'}
               </div>
               
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <h4 className={`text-sm font-medium truncate ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                <h4 className="text-sm font-semibold truncate text-white">
                   {ext.name}
                 </h4>
-                <p className={`text-xs truncate ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>
+                <p className="text-xs truncate text-vscode-textMuted">
                   {ext.description}
                 </p>
-                <span className={`text-xs ${theme === 'dark' ? 'text-slate-500' : 'text-gray-400'}`}>
+                <span className="text-xs text-vscode-textMuted/60 font-medium">
                   v{ext.version}
                 </span>
               </div>
@@ -122,22 +120,14 @@ export const ExtensionsPanel: React.FC = () => {
               {activeTab === 'installed' ? (
                 <button
                   onClick={() => handleUninstall(ext.id)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                    theme === 'dark' 
-                      ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' 
-                      : 'bg-red-100 text-red-600 hover:bg-red-200'
-                  }`}
+                  className="px-2 py-1 text-[10px] font-medium text-vscode-error hover:bg-vscode-error/10 transition rounded"
                 >
-                  Uninstall
+                  Remove
                 </button>
               ) : (
                 <button
                   onClick={() => handleInstall(ext.id)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                    theme === 'dark' 
-                      ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30' 
-                      : 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200'
-                  }`}
+                  className="px-2 py-1 text-[10px] font-medium text-vscode-success hover:bg-vscode-success/10 transition rounded"
                 >
                   Install
                 </button>
@@ -145,14 +135,14 @@ export const ExtensionsPanel: React.FC = () => {
             </div>
           ))
         ) : (
-          <div className={`text-center py-8 ${theme === 'dark' ? 'text-slate-500' : 'text-gray-500'}`}>
+          <div className="text-center py-8 text-vscode-textMuted border border-dashed border-vscode-border/50 rounded">
             <div className="text-4xl mb-3">
-              {activeTab === 'installed' ? '📭' : '✨'}
+              {activeTab === 'installed' ? '▢' : '◉'}
             </div>
-            <p className="text-sm">
+            <p className="text-xs font-medium">
               {activeTab === 'installed' 
                 ? 'No extensions installed' 
-                : 'All extensions are installed!'}
+                : 'All extensions installed!'}
             </p>
           </div>
         )}

@@ -373,16 +373,16 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
 
   const filteredFiles = useMemo(() => filterFiles(files, searchQuery), [files, searchQuery, filterFiles]);
 
-  // Theme classes - slimmer design
+  // Theme classes - VS Code design
   const isDark = theme === 'dark';
-  const bgClass = isDark ? 'bg-[#1e1e1e]' : 'bg-[#f3f3f3]';
-  const headerBg = isDark ? 'bg-[#252526]' : 'bg-[#e8e8e8]';
-  const borderClass = isDark ? 'border-[#3c3c3c]' : 'border-[#e0e0e0]';
-  const textClass = isDark ? 'text-[#cccccc]' : 'text-[#333333]';
-  const mutedClass = isDark ? 'text-[#858585]' : 'text-[#6e6e6e]';
-  const hoverBg = isDark ? 'hover:bg-[#2a2d2e]' : 'hover:bg-[#e8e8e8]';
-  const activeBg = isDark ? 'bg-[#094771]' : 'bg-[#0060c0]';
-  const activeText = 'text-white';
+  const bgClass = isDark ? 'bg-vscode-sidebar' : 'bg-white';
+  const headerBg = isDark ? 'bg-vscode-bg' : 'bg-gray-50';
+  const borderClass = isDark ? 'border-vscode-border' : 'border-gray-200';
+  const textClass = isDark ? 'text-vscode-text' : 'text-gray-700';
+  const mutedClass = isDark ? 'text-vscode-textMuted' : 'text-gray-500';
+  const hoverBg = isDark ? 'hover:bg-vscode-listHover' : 'hover:bg-gray-100';
+  const activeBg = isDark ? 'bg-vscode-listActive' : 'bg-blue-100';
+  const activeText = isDark ? 'text-white' : 'text-blue-900';
 
   const renderNode = (node: FileNode, depth: number = 0) => {
     const isExpanded = expandedFolders.has(node.path);
@@ -394,8 +394,8 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
     return (
       <div key={node.id}>
         <div
-          className={`flex items-center h-[22px] cursor-pointer select-none group transition-colors duration-75
-            ${isActive ? `${activeBg} ${activeText}` : `${textClass} ${hoverBg}`}`}
+          className={`flex items-center h-[22px] cursor-pointer select-none group transition-colors duration-75 border-l-2
+            ${isActive ? `${activeBg} ${activeText} border-vscode-accent` : `${textClass} ${hoverBg} border-transparent`}`}
           style={{ paddingLeft: `${depth * 8 + 4}px` }}
           onClick={() => {
             if (node.type === 'folder') {
@@ -414,7 +414,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
           {/* Expand/Collapse indicator */}
           <span className={`flex-shrink-0 w-4 h-4 flex items-center justify-center ${node.type === 'folder' ? '' : 'invisible'}`}>
             {node.type === 'folder' && (
-              <span className={isActive ? 'text-white' : mutedClass}>
+              <span className={isActive ? activeText : mutedClass}>
                 {Icons.chevron(isExpanded)}
               </span>
             )}
@@ -433,7 +433,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
             <input
               type="text"
               defaultValue={renameItem.name}
-              className={`flex-1 text-[12px] px-1 outline-none ${isDark ? 'bg-[#3c3c3c] text-white' : 'bg-white text-black'} border border-blue-500 rounded`}
+              className={`flex-1 text-[12px] px-1 outline-none rounded ${isDark ? 'bg-vscode-input text-white border border-vscode-inputBorder' : 'bg-white text-gray-900 border border-blue-500'}`}
               autoFocus
               onBlur={(e) => handleRenameSubmit(e.target.value)}
               onKeyDown={(e) => {
@@ -443,7 +443,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
-            <span className={`flex-1 text-[12px] truncate ${fileError?.severity === 'error' ? 'text-red-400' : fileError?.severity === 'warning' ? 'text-yellow-400' : ''}`}>
+            <span className={`flex-1 text-[12px] truncate ${fileError?.severity === 'error' ? 'text-vscode-error' : fileError?.severity === 'warning' ? 'text-vscode-warning' : ''}`}>
               {node.name}
             </span>
           )}
@@ -452,12 +452,12 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
           {node.type === 'folder' && folderErrors && (folderErrors.errors > 0 || folderErrors.warnings > 0) && (
             <span className="flex gap-0.5 mr-1">
               {folderErrors.errors > 0 && (
-                <span className="text-[10px] px-1 rounded bg-red-500/20 text-red-400 font-medium">
+                <span className="text-[10px] px-1 bg-vscode-error text-white rounded-sm">
                   {folderErrors.errors}
                 </span>
               )}
               {folderErrors.warnings > 0 && (
-                <span className="text-[10px] px-1 rounded bg-yellow-500/20 text-yellow-400 font-medium">
+                <span className="text-[10px] px-1 bg-vscode-warning text-black rounded-sm">
                   {folderErrors.warnings}
                 </span>
               )}
@@ -465,10 +465,10 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
           )}
           
           {node.type === 'file' && fileError && (
-            <span className={`text-[10px] px-1 rounded mr-1 font-medium ${
+            <span className={`text-[10px] px-1 mr-1 rounded-sm ${
               fileError.severity === 'error' 
-                ? 'bg-red-500/20 text-red-400' 
-                : 'bg-yellow-500/20 text-yellow-400'
+                ? 'bg-vscode-error text-white' 
+                : 'bg-vscode-warning text-black'
             }`}>
               {fileError.count}
             </span>
@@ -476,7 +476,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
 
           {/* Monorepo indicator for package.json */}
           {node.name === 'package.json' && depth > 0 && (
-            <span className="text-[9px] px-1 rounded bg-purple-500/20 text-purple-400 font-medium mr-1">
+            <span className="text-[9px] px-1 bg-vscode-success text-black rounded-sm mr-1">
               pkg
             </span>
           )}
@@ -500,35 +500,35 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
   return (
     <div className={`h-full flex flex-col ${bgClass} overflow-hidden`} onClick={() => setContextMenu(null)}>
       {/* Header */}
-      <div className={`flex items-center justify-between px-2 h-[35px] ${headerBg} border-b ${borderClass}`}>
-        <span className={`text-[11px] font-semibold ${mutedClass} uppercase tracking-wide`}>
+      <div className={`flex items-center justify-between px-2 h-[32px] ${headerBg} border-b ${borderClass}`}>
+        <span className={`text-[11px] font-medium ${textClass} uppercase tracking-wide`}>
           Explorer
         </span>
         <div className="flex gap-0.5">
           <button
             onClick={() => handleNewFile('')}
-            className={`p-1 rounded ${hoverBg} ${mutedClass} hover:${textClass} transition-colors`}
+            className={`p-1 rounded ${hoverBg} ${mutedClass} hover:text-white transition-colors`}
             title="New File"
           >
             {Icons.newFile()}
           </button>
           <button
             onClick={() => handleNewFolder('')}
-            className={`p-1 rounded ${hoverBg} ${mutedClass} hover:${textClass} transition-colors`}
+            className={`p-1 rounded ${hoverBg} ${mutedClass} hover:text-white transition-colors`}
             title="New Folder"
           >
             {Icons.newFolder()}
           </button>
           <button
             onClick={collapseAll}
-            className={`p-1 rounded ${hoverBg} ${mutedClass} hover:${textClass} transition-colors`}
+            className={`p-1 rounded ${hoverBg} ${mutedClass} hover:text-white transition-colors`}
             title="Collapse All"
           >
             {Icons.collapse()}
           </button>
           <button
             onClick={() => setShowSearch(!showSearch)}
-            className={`p-1 rounded ${hoverBg} ${showSearch ? textClass : mutedClass} transition-colors`}
+            className={`p-1 rounded ${hoverBg} ${showSearch ? 'text-white' : mutedClass} transition-colors`}
             title="Search Files"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -546,9 +546,9 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
             placeholder="Search files..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className={`w-full text-[12px] px-2 py-1 rounded outline-none ${
-              isDark ? 'bg-[#3c3c3c] text-white placeholder-gray-500' : 'bg-white text-black placeholder-gray-400'
-            } border ${isDark ? 'border-[#3c3c3c] focus:border-blue-500' : 'border-gray-300 focus:border-blue-500'}`}
+            className={`w-full text-[12px] px-2 py-1 outline-none rounded ${
+              isDark ? 'bg-vscode-input text-white placeholder-vscode-textMuted border border-vscode-border focus:border-vscode-inputBorder' : 'bg-white text-gray-900 placeholder-gray-400 border border-gray-300 focus:border-blue-500'
+            }`}
             autoFocus
           />
         </div>
@@ -558,7 +558,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
       <div className="flex-1 overflow-auto py-1">
         {filteredFiles.length === 0 ? (
           <div className={`px-4 py-8 text-center ${mutedClass} text-[12px]`}>
-            {searchQuery ? 'No matching files found.' : 'No files yet. Create a project to get started.'}
+            {searchQuery ? 'No matching files' : 'No files yet'}
           </div>
         ) : (
           filteredFiles
@@ -573,19 +573,19 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
       {/* Context Menu */}
       {contextMenu && (
         <div
-          className={`fixed z-50 ${isDark ? 'bg-[#252526] border-[#454545]' : 'bg-white border-gray-200'} border rounded shadow-lg py-1 min-w-[140px]`}
+          className={`fixed z-50 ${isDark ? 'bg-vscode-panel border-vscode-border' : 'bg-white border-gray-200'} border rounded-md shadow-lg py-1 min-w-[140px]`}
           style={{ left: contextMenu.x, top: contextMenu.y }}
           onClick={(e) => e.stopPropagation()}
         >
           <button
-            className={`w-full px-3 py-1 text-left text-[12px] ${textClass} ${hoverBg} flex items-center gap-2`}
+            className={`w-full px-3 py-1.5 text-left text-[12px] ${textClass} ${hoverBg} flex items-center gap-2`}
             onClick={() => handleNewFile(contextMenu.path)}
           >
             {Icons.newFile()}
             <span>New File</span>
           </button>
           <button
-            className={`w-full px-3 py-1 text-left text-[12px] ${textClass} ${hoverBg} flex items-center gap-2`}
+            className={`w-full px-3 py-1.5 text-left text-[12px] ${textClass} ${hoverBg} flex items-center gap-2`}
             onClick={() => handleNewFolder(contextMenu.path)}
           >
             {Icons.newFolder()}
@@ -593,7 +593,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
           </button>
           <div className={`border-t ${borderClass} my-1`} />
           <button
-            className={`w-full px-3 py-1 text-left text-[12px] ${textClass} ${hoverBg} flex items-center gap-2`}
+            className={`w-full px-3 py-1.5 text-left text-[12px] ${textClass} ${hoverBg} flex items-center gap-2`}
             onClick={() => handleRename(contextMenu.path, contextMenu.path.split('/').pop() || '')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -602,7 +602,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
             <span>Rename</span>
           </button>
           <button
-            className={`w-full px-3 py-1 text-left text-[12px] text-red-400 ${hoverBg} flex items-center gap-2`}
+            className={`w-full px-3 py-1.5 text-left text-[12px] text-red-500 ${hoverBg} flex items-center gap-2`}
             onClick={() => handleDelete(contextMenu.path)}
           >
             {Icons.trash()}

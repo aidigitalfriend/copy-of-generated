@@ -315,73 +315,43 @@ export const LivePreview: React.FC = () => {
   const deviceStyle = getDeviceStyle();
 
   return (
-    <div className={`h-full flex flex-col ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'}`}>
-      {/* Preview Header */}
-      <div className={`flex items-center justify-between px-4 py-2 ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-gray-50 border-gray-200'} border-b`}>
-        <div className="flex items-center gap-3">
-          <div className={`flex items-center gap-2 px-3 py-1 ${theme === 'dark' ? 'bg-slate-900' : 'bg-white border border-gray-200'} rounded-lg`}>
-            <div className={`w-2 h-2 rounded-full ${isLoading ? 'bg-yellow-500' : webContainerUrl ? 'bg-green-500' : 'bg-blue-500'} animate-pulse`} />
-            <span className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-gray-600'}`}>
-              {isLoading ? 'Building...' : webContainerUrl ? 'Server Running' : 'localhost:3000'}
-            </span>
-          </div>
-          {lastBuildTime > 0 && (
-            <span className={`text-xs ${theme === 'dark' ? 'text-slate-500' : 'text-gray-400'}`}>
-              Last build: {new Date(lastBuildTime).toLocaleTimeString()}
-            </span>
-          )}
-        </div>
-        
-        <div className="flex items-center gap-2">
+    <div className="h-full flex flex-col bg-vscode-bg font-mono">
+      {/* Preview Toolbar */}
+      <div className="flex items-center justify-end px-2 py-0.5 bg-vscode-sidebar border-b border-vscode-border">
+        <div className="flex items-center gap-0.5">
           <button
             onClick={handleRefresh}
             disabled={isLoading}
-            className={`p-1.5 rounded ${theme === 'dark' ? 'hover:bg-slate-700 text-slate-400 hover:text-white' : 'hover:bg-gray-200 text-gray-500 hover:text-gray-700'} transition-colors disabled:opacity-50`}
+            className="p-0.5 text-vscode-textMuted hover:text-white hover:bg-white/5 transition rounded disabled:opacity-50"
             title="Refresh Preview"
           >
-            <svg className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
+            <span className={`text-[10px] ${isLoading ? 'animate-spin inline-block' : ''}`}>↻</span>
           </button>
           
           <button
             onClick={handleOpenNewTab}
-            className={`p-1.5 rounded ${theme === 'dark' ? 'hover:bg-slate-700 text-slate-400 hover:text-white' : 'hover:bg-gray-200 text-gray-500 hover:text-gray-700'} transition-colors`}
+            className="p-0.5 text-vscode-textMuted hover:text-white hover:bg-white/5 transition rounded"
             title="Open in New Tab"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
+            <span className="text-[10px]">↗</span>
           </button>
           
           {/* Device toggles */}
-          <div className="flex items-center gap-1 ml-2 border-l border-slate-600 pl-2">
+          <div className="flex items-center gap-0.5 ml-0.5 border-l border-vscode-border/50 pl-0.5">
             {(['desktop', 'tablet', 'mobile'] as DeviceView[]).map((device) => (
               <button
                 key={device}
                 onClick={() => setDeviceView(device)}
-                className={`p-1.5 rounded transition-colors ${
+                className={`px-1 py-0.5 text-[10px] font-medium transition rounded ${
                   deviceView === device
-                    ? (theme === 'dark' ? 'bg-slate-700 text-white' : 'bg-gray-200 text-gray-700')
-                    : (theme === 'dark' ? 'hover:bg-slate-700 text-slate-400 hover:text-white' : 'hover:bg-gray-200 text-gray-500')
+                    ? 'text-vscode-accent bg-vscode-accent/10'
+                    : 'text-vscode-textMuted hover:text-white hover:bg-white/5'
                 }`}
                 title={`${device.charAt(0).toUpperCase() + device.slice(1)} View`}
               >
-                {device === 'desktop' && (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                )}
-                {device === 'tablet' && (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                )}
-                {device === 'mobile' && (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                )}
+                {device === 'desktop' && '▣'}
+                {device === 'tablet' && '▢'}
+                {device === 'mobile' && '▯'}
               </button>
             ))}
           </div>
@@ -389,16 +359,16 @@ export const LivePreview: React.FC = () => {
       </div>
 
       {/* Preview Content */}
-      <div className={`flex-1 flex items-center justify-center p-4 ${theme === 'dark' ? 'bg-slate-950' : 'bg-gray-100'}`}>
+      <div className="flex-1 flex items-center justify-center p-4 bg-vscode-sidebar">
         {error ? (
-          <div className="text-red-500 text-center p-4">
-            <div className="text-4xl mb-2">⚠️</div>
-            <p>{error}</p>
+          <div className="text-red-400 text-center p-4 border border-red-400 rounded">
+            <div className="text-4xl mb-2">⚠</div>
+            <p className="font-medium text-sm">{error}</p>
           </div>
         ) : (
           <div 
-            className={`bg-white rounded-lg shadow-2xl overflow-hidden transition-all duration-300 ${
-              deviceView !== 'desktop' ? 'border-8 border-slate-800 rounded-3xl' : ''
+            className={`bg-white overflow-hidden transition-all duration-300 shadow-lg rounded ${
+              deviceView !== 'desktop' ? 'border-4 border-vscode-border' : 'border border-vscode-border'
             }`}
             style={deviceStyle}
           >

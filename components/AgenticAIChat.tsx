@@ -75,12 +75,12 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
 
   const activeFile = openFiles.find(f => f.id === activeFileId);
   
-  // Theme classes
-  const bgClass = theme === 'dark' ? 'bg-slate-900' : 'bg-gray-50';
-  const borderClass = theme === 'dark' ? 'border-slate-700' : 'border-gray-200';
-  const textClass = theme === 'dark' ? 'text-white' : 'text-gray-900';
-  const mutedTextClass = theme === 'dark' ? 'text-slate-400' : 'text-gray-500';
-  const inputBgClass = theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-300';
+  // Theme classes - VS Code style
+  const bgClass = theme === 'dark' ? 'bg-vscode-sidebar' : 'bg-white';
+  const borderClass = theme === 'dark' ? 'border-vscode-border' : 'border-gray-200';
+  const textClass = theme === 'dark' ? 'text-vscode-text' : 'text-gray-800';
+  const mutedTextClass = theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500';
+  const inputBgClass = theme === 'dark' ? 'bg-vscode-input border-vscode-border' : 'bg-white border-gray-300';
 
   // Auto-scroll
   useEffect(() => {
@@ -573,12 +573,12 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   const renderContent = (content: string) => {
     // Clean file operation tags for display
     const cleanContent = content
-      .replace(/<dyad-write[^>]*>[\s\S]*?<\/dyad-write>/gi, '\n✅ File created\n')
-      .replace(/<file_create[^>]*>[\s\S]*?<\/file_create>/gi, '\n✅ File created\n')
-      .replace(/<dyad-search-replace[^>]*>[\s\S]*?<\/dyad-search-replace>/gi, '\n✅ File updated\n')
-      .replace(/<file_edit[^>]*>[\s\S]*?<\/file_edit>/gi, '\n✅ File updated\n')
-      .replace(/<dyad-delete[^>]*>[\s\S]*?<\/dyad-delete>/gi, '\n🗑️ File deleted\n')
-      .replace(/<file_delete[^>]*\/?>/gi, '\n🗑️ File deleted\n');
+      .replace(/<dyad-write[^>]*>[\s\S]*?<\/dyad-write>/gi, '\n✅ FILE_CREATED\n')
+      .replace(/<file_create[^>]*>[\s\S]*?<\/file_create>/gi, '\n✅ FILE_CREATED\n')
+      .replace(/<dyad-search-replace[^>]*>[\s\S]*?<\/dyad-search-replace>/gi, '\n✅ FILE_UPDATED\n')
+      .replace(/<file_edit[^>]*>[\s\S]*?<\/file_edit>/gi, '\n✅ FILE_UPDATED\n')
+      .replace(/<dyad-delete[^>]*>[\s\S]*?<\/dyad-delete>/gi, '\n🗑️ FILE_DELETED\n')
+      .replace(/<file_delete[^>]*\/?>/gi, '\n🗑️ FILE_DELETED\n');
     
     return (
       <ReactMarkdown
@@ -590,25 +590,25 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
             
             if (isInline) {
               return (
-                <code className={`${theme === 'dark' ? 'bg-slate-600' : 'bg-gray-200'} px-1 py-0.5 rounded text-sm`}>
+                <code className={`${theme === 'dark' ? 'bg-vscode-input text-vscode-accent' : 'bg-gray-100 text-gray-800'} px-1.5 py-0.5 text-sm font-mono rounded`}>
                   {children}
                 </code>
               );
             }
             
             return (
-              <div className={`relative mt-2 rounded-lg overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-gray-100'}`}>
-                <div className={`flex items-center justify-between px-3 py-1 ${theme === 'dark' ? 'bg-slate-700' : 'bg-gray-200'} text-xs`}>
-                  <span className={mutedTextClass}>{match[1]}</span>
+              <div className={`relative mt-2 overflow-hidden rounded border ${theme === 'dark' ? 'bg-vscode-bg border-vscode-border' : 'bg-gray-50 border-gray-200'}`}>
+                <div className={`flex items-center justify-between px-3 py-1.5 ${theme === 'dark' ? 'bg-vscode-sidebar text-vscode-textMuted' : 'bg-gray-100 text-gray-600'} text-xs font-medium`}>
+                  <span>{match[1]}</span>
                   <button
                     onClick={() => navigator.clipboard.writeText(String(children))}
-                    className={`${mutedTextClass} hover:text-white transition-colors`}
+                    className={`hover:text-vscode-accent transition-colors`}
                   >
-                    📋 Copy
+                    Copy
                   </button>
                 </div>
                 <pre className="p-3 overflow-x-auto text-sm">
-                  <code className={className}>{children}</code>
+                  <code className={`${className} ${theme === 'dark' ? 'text-vscode-text' : 'text-gray-800'}`}>{children}</code>
                 </pre>
               </div>
             );
@@ -617,10 +617,13 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
             return <p className="mb-2 leading-relaxed">{children}</p>;
           },
           ul({ children }) {
-            return <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>;
+            return <ul className="list-none mb-2 space-y-1">{children}</ul>;
           },
           ol({ children }) {
-            return <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>;
+            return <ol className="list-none mb-2 space-y-1">{children}</ol>;
+          },
+          li({ children }) {
+            return <li className="before:content-['▸'] before:mr-2 before:text-vscode-accent">{children}</li>;
           },
         }}
       >
@@ -630,52 +633,25 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   };
 
   return (
-    <div className={`flex flex-col h-full ${bgClass}`}>
-      {/* Header */}
-      <div className={`flex items-center justify-between px-4 py-3 border-b ${borderClass}`}>
-        <div className="flex items-center gap-3">
-          <div className="text-2xl">🤖</div>
-          <div>
-            <h2 className={`font-semibold ${textClass}`}>Maula AI</h2>
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${
-                connectionStatus === 'connected' ? 'bg-green-500' : 
-                connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : 'bg-red-500'
-              }`} />
-              <span className={`text-xs ${mutedTextClass}`}>
-                {connectionStatus === 'connected' ? 'Ready' : connectionStatus === 'connecting' ? 'Connecting...' : 'Offline'}
-              </span>
-            </div>
-          </div>
-        </div>
-        
-        <button
-          onClick={clearChat}
-          className={`p-2 rounded-lg ${theme === 'dark' ? 'hover:bg-slate-800' : 'hover:bg-gray-100'} transition-colors`}
-          title="Clear Chat"
-        >
-          🗑️
-        </button>
-      </div>
-
+    <div className={`flex flex-col h-full ${bgClass} font-mono`}>
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
         {chatHistory.length === 0 && !isStreaming && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">👋</div>
-            <h3 className={`text-xl font-semibold ${textClass} mb-2`}>How can I help you?</h3>
-            <p className={mutedTextClass}>I can create apps, write code, and help you build projects.</p>
+          <div className="text-center py-12 border border-dashed border-vscode-border rounded-lg">
+            <div className="text-5xl mb-4 text-vscode-accent">⚡</div>
+            <h3 className={`text-xl font-semibold ${textClass} mb-2`}>Ready to Build</h3>
+            <p className={`${mutedTextClass} text-sm`}>I create apps, write code, and build projects</p>
             
-            <div className="flex flex-wrap justify-center gap-2 mt-6">
+            <div className="flex flex-wrap justify-center gap-1.5 mt-4">
               {quickActions.map((action, i) => (
                 <button
                   key={i}
                   onClick={() => setInput(action.prompt)}
-                  className={`px-4 py-2 rounded-lg text-sm ${
+                  className={`px-2.5 py-1 text-xs font-medium transition-all rounded ${
                     theme === 'dark' 
-                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-300' 
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                  } transition-colors`}
+                      ? 'text-vscode-textMuted hover:text-white hover:bg-white/5' 
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
                 >
                   {action.label}
                 </button>
@@ -689,13 +665,13 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
             key={msg.id}
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+            <div className={`max-w-[85%] px-4 py-3 rounded-lg ${
               msg.role === 'user'
-                ? 'bg-indigo-600 text-white'
-                : theme === 'dark' ? 'bg-slate-800 text-white' : 'bg-gray-100 text-gray-900'
+                ? 'bg-vscode-accent text-white shadow-lg'
+                : theme === 'dark' ? 'bg-vscode-sidebar border border-vscode-border text-vscode-text' : 'bg-white border border-gray-200 text-gray-800 shadow-sm'
             }`}>
               {msg.role === 'user' ? (
-                <p className="whitespace-pre-wrap">{msg.content}</p>
+                <p className="whitespace-pre-wrap font-medium">{msg.content}</p>
               ) : (
                 <div className="prose prose-sm max-w-none dark:prose-invert">
                   {renderContent(msg.content)}
@@ -708,18 +684,18 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
         {/* Streaming content */}
         {isStreaming && (
           <div className="flex justify-start">
-            <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${
-              theme === 'dark' ? 'bg-slate-800 text-white' : 'bg-gray-100 text-gray-900'
+            <div className={`max-w-[85%] px-4 py-3 rounded-lg border ${
+              theme === 'dark' ? 'bg-vscode-sidebar border-vscode-accent text-vscode-text' : 'bg-white border-blue-300 text-gray-800'
             }`}>
               {/* Active agent indicator */}
               {agentStatus && (
-                <div className={`flex items-center gap-2 mb-3 p-2 rounded-lg ${
-                  theme === 'dark' ? 'bg-purple-900/50' : 'bg-purple-100'
+                <div className={`flex items-center gap-2 mb-3 p-2 rounded border ${
+                  theme === 'dark' ? 'bg-vscode-bg border-green-500/50' : 'bg-green-50 border-green-300'
                 }`}>
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
-                  <span className="text-sm">
-                    {AGENTS.find(a => a.id === agentStatus.agent)?.icon || '🤖'} 
-                    <span className="font-medium ml-1">{AGENTS.find(a => a.id === agentStatus.agent)?.name || 'Agent'}</span>
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-sm font-medium">
+                    {AGENTS.find(a => a.id === agentStatus.agent)?.icon || '◉'} 
+                    <span className="ml-1">{AGENTS.find(a => a.id === agentStatus.agent)?.name || 'Agent'}</span>
                     <span className="ml-2 opacity-70">{agentStatus.message || 'Working...'}</span>
                   </span>
                 </div>
@@ -727,24 +703,24 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
               
               {/* Currently streaming file indicator */}
               {currentStreamingFile && (
-                <div className={`flex items-center gap-2 mb-3 p-2 rounded-lg ${
-                  theme === 'dark' ? 'bg-indigo-900/50' : 'bg-indigo-100'
+                <div className={`flex items-center gap-2 mb-3 p-2 rounded border ${
+                  theme === 'dark' ? 'bg-vscode-bg border-blue-500/50' : 'bg-blue-50 border-blue-300'
                 }`}>
-                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
-                  <span className="text-sm">
-                    {currentStreamingFile.type === 'create' ? '📄 Creating' : '✏️ Editing'}: 
-                    <code className="ml-1 font-mono text-indigo-400">{currentStreamingFile.path}</code>
+                  <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                  <span className="text-sm font-medium">
+                    {currentStreamingFile.type === 'create' ? '▶ Creating' : '▶ Editing'}: 
+                    <code className={`ml-1 font-mono ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>{currentStreamingFile.path}</code>
                   </span>
                 </div>
               )}
               
               <div className="prose prose-sm max-w-none dark:prose-invert">
-                {renderContent(streamingContent || '...')}
+                {renderContent(streamingContent || '█')}
               </div>
               
               {/* Files created counter */}
               {createdFilesCount > 0 && (
-                <div className={`mt-2 text-xs ${mutedTextClass}`}>
+                <div className={`mt-2 text-xs ${mutedTextClass} font-medium border-t border-vscode-border pt-2`}>
                   ✅ {createdFilesCount} file{createdFilesCount > 1 ? 's' : ''} created
                 </div>
               )}
@@ -754,27 +730,27 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
       </div>
 
       {/* Input Area */}
-      <div className={`p-4 border-t ${borderClass}`}>
+      <div className={`p-4 border-t ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
         {/* Uploaded files preview */}
         {uploadedFiles.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-2">
             {uploadedFiles.map((file, index) => (
               <div
                 key={index}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm ${
-                  theme === 'dark' ? 'bg-slate-700 text-slate-200' : 'bg-gray-200 text-gray-700'
+                className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded border ${
+                  theme === 'dark' ? 'bg-vscode-sidebar border-vscode-border text-vscode-text' : 'bg-gray-50 border-gray-300 text-gray-700'
                 }`}
               >
                 {file.isImage ? (
                   <img 
                     src={file.content} 
                     alt={file.name} 
-                    className="w-8 h-8 object-cover rounded"
+                    className="w-8 h-8 object-cover rounded border border-vscode-border"
                   />
                 ) : (
-                  <span>📎</span>
+                  <span className="text-vscode-accent">◉</span>
                 )}
-                <span className="max-w-32 truncate">{file.name}</span>
+                <span className="max-w-32 truncate font-mono text-xs">{file.name}</span>
                 <button
                   onClick={() => removeUploadedFile(index)}
                   className={`ml-1 hover:text-red-500 transition-colors`}
@@ -787,7 +763,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
           </div>
         )}
         
-        <div className={`flex items-end gap-1.5 p-2 rounded-xl ${inputBgClass} border min-w-0`}>
+        <div className={`flex items-end gap-1.5 p-2 ${inputBgClass} min-w-0`}>
           {/* Hidden file input - accepts both text and image files */}
           <input
             ref={fileInputRef}
@@ -802,23 +778,23 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
           <div className="relative flex-shrink-0">
             <button
               onClick={() => setShowAgentSelector(!showAgentSelector)}
-              className={`p-2 rounded-lg transition-colors flex items-center gap-1 text-sm ${
-                theme === 'dark' ? 'hover:bg-slate-700 text-slate-300' : 'hover:bg-gray-100 text-gray-600'
-              } ${selectedAgent !== 'orchestrator' ? 'ring-1 ring-indigo-500' : ''}`}
+              className={`p-1 transition-colors flex items-center gap-0.5 text-xs rounded ${
+                theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/5' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+              } ${selectedAgent !== 'orchestrator' ? 'text-green-400' : ''}`}
               title={`Current: ${AGENTS.find(a => a.id === selectedAgent)?.name || 'Orchestrator'}`}
             >
-              <span>{AGENTS.find(a => a.id === selectedAgent)?.icon || '🎯'}</span>
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <span>{AGENTS.find(a => a.id === selectedAgent)?.icon || '◉'}</span>
+              <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             
             {/* Agent dropdown */}
             {showAgentSelector && (
-              <div className={`absolute bottom-full left-0 mb-2 w-56 rounded-lg shadow-xl border ${
-                theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
+              <div className={`absolute bottom-full left-0 mb-2 w-56 shadow-xl rounded-lg border ${
+                theme === 'dark' ? 'bg-vscode-sidebar border-vscode-border' : 'bg-white border-gray-200'
               } max-h-80 overflow-y-auto z-50`}>
-                <div className={`px-3 py-2 text-xs font-semibold ${mutedTextClass} border-b ${borderClass}`}>
+                <div className={`px-3 py-2 text-xs font-semibold ${theme === 'dark' ? 'text-vscode-textMuted bg-vscode-bg' : 'text-gray-500 bg-gray-50'} border-b ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
                   Select Agent
                 </div>
                 {AGENTS.map((agent) => (
@@ -828,10 +804,10 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                       setSelectedAgent(agent.id);
                       setShowAgentSelector(false);
                     }}
-                    className={`w-full px-3 py-2 text-left flex items-center gap-2 transition-colors ${
+                    className={`w-full px-3 py-2 text-left flex items-center gap-2 transition-colors border-b border-vscode-border/30 ${
                       selectedAgent === agent.id
-                        ? 'bg-indigo-600 text-white'
-                        : theme === 'dark' ? 'hover:bg-slate-700 text-slate-200' : 'hover:bg-gray-100 text-gray-700'
+                        ? 'bg-vscode-accent text-white'
+                        : theme === 'dark' ? 'hover:bg-vscode-input text-vscode-text' : 'hover:bg-gray-100 text-gray-700'
                     }`}
                   >
                     <span className="text-lg">{agent.icon}</span>
@@ -842,9 +818,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                       }`}>{agent.description}</div>
                     </div>
                     {selectedAgent === agent.id && (
-                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
+                      <span className="font-medium">✓</span>
                     )}
                   </button>
                 ))}
@@ -855,13 +829,13 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
           {/* File upload button */}
           <button
             onClick={handleFileUpload}
-            className={`p-1.5 rounded-lg transition-colors flex-shrink-0 ${
-              theme === 'dark' ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-gray-100 text-gray-500'
+            className={`p-1 transition-colors flex-shrink-0 rounded ${
+              theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/5' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
             }`}
             title="Upload files or images"
             disabled={isAiLoading || isStreaming}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
             </svg>
           </button>
@@ -876,42 +850,42 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                 ? "Describe these files..." 
                 : selectedAgent === 'orchestrator'
                   ? "Ask me to build something..."
-                  : `Ask ${AGENTS.find(a => a.id === selectedAgent)?.name || 'agent'}...`
+                  : `Ask ${AGENTS.find(a => a.id === selectedAgent)?.name || 'Agent'}...`
             }
-            className={`flex-1 min-w-0 resize-none bg-transparent outline-none text-sm ${textClass} placeholder:${mutedTextClass}`}
+            className={`flex-1 min-w-0 resize-none bg-transparent outline-none text-sm ${textClass} placeholder:${mutedTextClass} font-mono`}
             rows={1}
             style={{ minHeight: '24px', maxHeight: '200px' }}
             disabled={isAiLoading || isStreaming}
           />
           
-          <div className="flex items-center gap-0.5 flex-shrink-0">
+          <div className="flex items-center gap-1 flex-shrink-0">
             {speechSupport.recognition && (
               <button
                 onClick={handleVoiceInput}
-                className={`p-1.5 rounded-lg transition-colors text-sm ${
+                className={`p-1 transition-colors text-xs rounded ${
                   isListening 
-                    ? 'bg-red-500 text-white' 
-                    : theme === 'dark' ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-gray-100 text-gray-500'
+                    ? 'bg-red-500/20 text-red-400' 
+                    : theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/5' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
                 }`}
                 title={isListening ? 'Stop listening' : 'Voice input'}
               >
-                🎤
+                ◉
               </button>
             )}
             
             <button
               onClick={handleSend}
               disabled={(!input.trim() && uploadedFiles.length === 0) || isAiLoading || isStreaming}
-              className={`p-1.5 rounded-lg transition-colors ${
+              className={`p-1 transition-all rounded ${
                 (input.trim() || uploadedFiles.length > 0) && !isAiLoading && !isStreaming
-                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                  : theme === 'dark' ? 'bg-slate-700 text-slate-500' : 'bg-gray-200 text-gray-400'
+                  ? 'text-vscode-accent hover:bg-vscode-accent/10'
+                  : theme === 'dark' ? 'text-vscode-textMuted/50' : 'text-gray-300'
               }`}
             >
               {isAiLoading || isStreaming ? (
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-3.5 h-3.5 border border-vscode-accent/30 border-t-vscode-accent rounded-full animate-spin" />
               ) : (
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
               )}
             </button>
           </div>

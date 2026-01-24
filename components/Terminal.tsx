@@ -273,61 +273,38 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
   useEffect(() => {
     if (!terminalRef.current || xtermRef.current) return;
 
-    // Theme-aware terminal colors
-    const isDark = theme === 'dark';
-    const terminalTheme = isDark ? {
-      background: '#0f172a',
-      foreground: '#e2e8f0',
-      cursor: '#a78bfa',
-      cursorAccent: '#0f172a',
-      selectionBackground: '#6366f180',
-      black: '#1e293b',
-      red: '#f87171',
-      green: '#4ade80',
-      yellow: '#facc15',
-      blue: '#60a5fa',
-      magenta: '#c084fc',
-      cyan: '#22d3ee',
-      white: '#f1f5f9',
-      brightBlack: '#475569',
-      brightRed: '#fca5a5',
-      brightGreen: '#86efac',
-      brightYellow: '#fde047',
-      brightBlue: '#93c5fd',
-      brightMagenta: '#d8b4fe',
-      brightCyan: '#67e8f9',
+    // VS Code terminal theme
+    const terminalTheme = {
+      background: '#0a0a0a',
+      foreground: '#ffff00',
+      cursor: '#ffff00',
+      cursorAccent: '#0a0a0a',
+      selectionBackground: '#ffff0040',
+      black: '#1a1a1a',
+      red: '#ff3333',
+      green: '#00ff00',
+      yellow: '#ffff00',
+      blue: '#00aaff',
+      magenta: '#ff00ff',
+      cyan: '#00ffff',
+      white: '#ffffff',
+      brightBlack: '#666666',
+      brightRed: '#ff6666',
+      brightGreen: '#66ff66',
+      brightYellow: '#ffff66',
+      brightBlue: '#66bbff',
+      brightMagenta: '#ff66ff',
+      brightCyan: '#66ffff',
       brightWhite: '#ffffff',
-    } : {
-      background: '#ffffff',
-      foreground: '#1e293b',
-      cursor: '#6366f1',
-      cursorAccent: '#ffffff',
-      selectionBackground: '#6366f140',
-      black: '#1e293b',
-      red: '#dc2626',
-      green: '#16a34a',
-      yellow: '#ca8a04',
-      blue: '#2563eb',
-      magenta: '#9333ea',
-      cyan: '#0891b2',
-      white: '#f1f5f9',
-      brightBlack: '#64748b',
-      brightRed: '#ef4444',
-      brightGreen: '#22c55e',
-      brightYellow: '#eab308',
-      brightBlue: '#3b82f6',
-      brightMagenta: '#a855f7',
-      brightCyan: '#06b6d4',
-      brightWhite: '#0f172a',
     };
 
     const terminal = new XTerminal({
       theme: terminalTheme,
-      fontFamily: "'Fira Code', 'JetBrains Mono', Consolas, monospace",
+      fontFamily: "'JetBrains Mono', 'IBM Plex Mono', Consolas, monospace",
       fontSize: 13,
       lineHeight: 1.4,
       cursorBlink: true,
-      cursorStyle: 'bar',
+      cursorStyle: 'block',
     });
 
     const fitAddon = new FitAddon();
@@ -340,11 +317,11 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
     fitAddonRef.current = fitAddon;
 
     // Welcome message
-    terminal.writeln('\x1b[1;35m╔════════════════════════════════════════════════════════╗\x1b[0m');
-    terminal.writeln('\x1b[1;35m║\x1b[0m   \x1b[1;36m🚀 AI Digital Friend Zone Terminal\x1b[0m                    \x1b[1;35m║\x1b[0m');
-    terminal.writeln('\x1b[1;35m╚════════════════════════════════════════════════════════╝\x1b[0m');
+    terminal.writeln('\x1b[1;36m╔════════════════════════════════════════════════════════╗\x1b[0m');
+    terminal.writeln('\x1b[1;36m║\x1b[0m   \x1b[1;37m◉ AI Digital Friend Zone // Terminal\x1b[0m                \x1b[1;36m║\x1b[0m');
+    terminal.writeln('\x1b[1;36m╚════════════════════════════════════════════════════════╝\x1b[0m');
     terminal.writeln('');
-    terminal.writeln('\x1b[90mWelcome! This terminal supports Node.js and Python.\x1b[0m');
+    terminal.writeln('\x1b[90mSystem ready. Node.js and Python support enabled.\x1b[0m');
     terminal.writeln('\x1b[90mType \x1b[36mhelp\x1b[90m for available commands.\x1b[0m');
     terminal.writeln('');
     writePrompt(terminal);
@@ -409,27 +386,23 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
   }, [handleCommand, writePrompt, clearCurrentLine]);
 
   return (
-    <div className={`h-full ${theme === 'dark' ? 'bg-slate-900' : 'bg-gray-50'} ${className}`}>
+    <div className={`h-full bg-vscode-bg font-mono ${className}`}>
       {/* Terminal Header */}
-      <div className={`flex items-center justify-between px-4 py-2 ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'} border-b`}>
+      <div className="flex items-center justify-between px-4 py-2 bg-vscode-sidebar border-b border-vscode-border">
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-red-500" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500" />
-            <div className="w-3 h-3 rounded-full bg-green-500" />
+            <div className="w-3 h-3 bg-vscode-error rounded-full" />
+            <div className="w-3 h-3 bg-yellow-500 rounded-full" />
+            <div className="w-3 h-3 bg-vscode-success rounded-full" />
           </div>
-          <span className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-gray-600'} ml-2`}>Terminal</span>
+          <span className="text-xs text-vscode-textMuted ml-2 font-medium">Terminal</span>
         </div>
-        <div className="flex items-center gap-2">
-          <button className={`p-1 rounded ${theme === 'dark' ? 'hover:bg-slate-700 text-slate-400 hover:text-slate-200' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'}`} title="New Terminal">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
+        <div className="flex items-center gap-1">
+          <button className="p-0.5 text-vscode-textMuted hover:text-white hover:bg-white/5 transition rounded" title="New Terminal">
+            <span className="text-[10px]">+</span>
           </button>
-          <button className={`p-1 rounded ${theme === 'dark' ? 'hover:bg-slate-700 text-slate-400 hover:text-slate-200' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'}`} title="Clear">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
+          <button className="p-0.5 text-vscode-textMuted hover:text-white hover:bg-white/5 transition rounded" title="Clear">
+            <span className="text-[10px]">⌫</span>
           </button>
         </div>
       </div>

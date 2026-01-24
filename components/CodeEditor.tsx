@@ -59,40 +59,34 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ className = '' }) => {
   };
 
   return (
-    <div className={`flex flex-col h-full ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'} ${className}`}>
+    <div className={`flex flex-col h-full bg-vscode-bg ${className}`}>
       {/* Tabs */}
-      <div className={`flex items-center ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-gray-50 border-gray-200'} border-b overflow-x-auto`}>
+      <div className="flex items-center h-7 bg-vscode-sidebar border-b border-vscode-border overflow-x-auto">
         {openFiles.map((file) => (
           <div
             key={file.id}
-            className={`flex items-center gap-2 px-4 py-2 border-r cursor-pointer min-w-fit
+            className={`flex items-center gap-1.5 px-2 py-1 border-r border-vscode-border cursor-pointer min-w-fit text-[10px]
               ${file.id === activeFileId 
-                ? theme === 'dark' 
-                  ? 'bg-slate-900 text-white border-slate-700 border-t-2 border-t-indigo-500' 
-                  : 'bg-white text-gray-900 border-gray-200 border-t-2 border-t-indigo-500'
-                : theme === 'dark'
-                  ? 'text-slate-400 hover:bg-slate-700/50 border-slate-700'
-                  : 'text-gray-600 hover:bg-gray-100 border-gray-200'}`}
+                ? 'bg-vscode-bg text-white border-t border-t-vscode-accent' 
+                : 'text-vscode-textMuted hover:text-white'}`}
             onClick={() => setActiveFile(file.id)}
           >
-            <span className="text-sm">{getFileIcon(file.name)}</span>
-            <span className="text-sm whitespace-nowrap">{file.name}</span>
-            {file.isDirty && <span className="w-2 h-2 rounded-full bg-orange-400" />}
+            <span className="text-xs">{getFileIcon(file.name)}</span>
+            <span className="whitespace-nowrap">{file.name}</span>
+            {file.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 closeFile(file.id);
               }}
-              className={`ml-2 p-0.5 rounded ${theme === 'dark' ? 'hover:bg-slate-600 text-slate-500 hover:text-slate-200' : 'hover:bg-gray-200 text-gray-400 hover:text-gray-700'}`}
+              className="ml-0.5 p-0.5 text-vscode-textMuted hover:text-white"
             >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <span className="text-[10px]">✕</span>
             </button>
           </div>
         ))}
         {openFiles.length === 0 && (
-          <div className={`px-4 py-2 ${theme === 'dark' ? 'text-slate-500' : 'text-gray-500'} text-sm`}>
+          <div className="px-3 py-1 text-vscode-textMuted text-[10px]">
             No files open
           </div>
         )}
@@ -105,13 +99,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ className = '' }) => {
             height="100%"
             language={activeFile.language}
             value={activeFile.content}
-            theme={theme === 'dark' ? 'vs-dark' : 'light'}
+            theme="vs-dark"
             onChange={handleEditorChange}
             onMount={handleEditorMount}
             options={{
               minimap: { enabled: editorSettings.minimap },
               fontSize: editorSettings.fontSize,
-              fontFamily: "'Fira Code', 'JetBrains Mono', Consolas, monospace",
+              fontFamily: "'Menlo', 'Monaco', 'Consolas', monospace",
               fontLigatures: true,
               lineNumbers: editorSettings.lineNumbers ? 'on' : 'off',
               wordWrap: editorSettings.wordWrap ? 'on' : 'off',
@@ -124,12 +118,12 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ className = '' }) => {
             }}
           />
         ) : (
-          <div className={`h-full flex items-center justify-center ${theme === 'dark' ? 'text-slate-500' : 'text-gray-500'}`}>
+          <div className="h-full flex items-center justify-center bg-vscode-bg text-vscode-textMuted">
             <div className="text-center">
-              <div className="text-6xl mb-4">🚀</div>
-              <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-slate-300' : 'text-gray-700'} mb-2`}>AI Digital Friend Zone</h2>
-              <p className="text-sm">Select a file to start editing</p>
-              <p className={`text-xs mt-2 ${theme === 'dark' ? 'text-slate-600' : 'text-gray-400'}`}>or create a new project from templates</p>
+              <div className="text-6xl mb-4 opacity-20">⚡</div>
+              <h2 className="text-lg font-medium text-white mb-2">AI Digital Friend Zone</h2>
+              <p className="text-sm">Select a file to edit</p>
+              <p className="text-xs mt-2 text-vscode-textMuted">or create from templates</p>
             </div>
           </div>
         )}

@@ -102,58 +102,42 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
   };
 
   return (
-    <div className="h-full flex flex-col bg-[#1e1e1e] text-white">
-      {/* Compact Header */}
-      <div className="p-3 border-b border-[#333]">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🎨</span>
-            <h2 className="text-sm font-semibold">Prebuilt Templates</h2>
-          </div>
-          {onClose && (
-            <button 
-              onClick={onClose}
-              className="p-1 hover:bg-[#333] rounded text-xs"
-            >
-              ✕
-            </button>
-          )}
-        </div>
-        
-        {/* Search */}
+    <div className="h-full flex flex-col bg-vscode-sidebar text-white font-mono">
+      {/* Search */}
+      <div className="p-3 border-b border-vscode-border bg-vscode-bg/50">
         <div className="relative">
           <input
             type="text"
             placeholder="Search templates..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#2d2d2d] border border-[#444] rounded px-3 py-1.5 text-xs focus:outline-none focus:border-[#0078d4] pl-7"
+            className="w-full bg-vscode-bg border border-vscode-border text-white px-3 py-1.5 text-xs focus:outline-none focus:border-vscode-accent pl-7 font-mono placeholder-vscode-textMuted rounded"
           />
-          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs">🔍</span>
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-vscode-textMuted text-xs">▶</span>
         </div>
       </div>
 
-      {/* Category Pills - Horizontal Scroll */}
-      <div className="px-3 py-2 border-b border-[#333] overflow-x-auto scrollbar-none">
+      {/* Category Pills */}
+      <div className="px-3 py-2 border-b border-vscode-border overflow-x-auto scrollbar-none">
         <div className="flex gap-1.5">
           <button
             onClick={() => setSelectedCategory('all')}
-            className={`px-2.5 py-1 rounded-full text-[10px] font-medium whitespace-nowrap transition ${
+            className={`px-2.5 py-1 text-[10px] font-medium whitespace-nowrap transition border rounded ${
               selectedCategory === 'all'
-                ? 'bg-[#0078d4] text-white'
-                : 'bg-[#333] text-gray-300 hover:bg-[#444]'
+                ? 'bg-vscode-accent text-white border-vscode-accent'
+                : 'bg-vscode-sidebar border-vscode-border text-vscode-textMuted hover:border-vscode-accent hover:text-white'
             }`}
           >
-            All Templates
+            All
           </button>
           {PREBUILT_CATEGORIES.map(cat => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-2.5 py-1 rounded-full text-[10px] font-medium whitespace-nowrap transition flex items-center gap-1 ${
+              className={`px-2 py-0.5 text-[10px] font-medium whitespace-nowrap transition flex items-center gap-1 rounded ${
                 selectedCategory === cat.id
-                  ? 'bg-[#0078d4] text-white'
-                  : 'bg-[#333] text-gray-300 hover:bg-[#444]'
+                  ? 'bg-vscode-accent/20 text-vscode-accent'
+                  : 'text-vscode-textMuted hover:text-white hover:bg-white/5'
               }`}
             >
               <span>{cat.icon}</span>
@@ -166,30 +150,30 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
       {/* Templates List or Preview */}
       <div className="flex-1 overflow-auto p-2">
         {selectedTemplate ? (
-          /* Template Preview Mode - Full Height */
+          /* Template Preview Mode */
           <div className="h-full flex flex-col">
             {/* Compact Header Bar */}
-            <div className="flex items-center justify-between mb-2 pb-2 border-b border-[#333]">
+            <div className="flex items-center justify-between mb-2 pb-2 border-b border-vscode-border">
               <button
                 onClick={() => setSelectedTemplate(null)}
-                className="flex items-center gap-1 text-xs text-gray-400 hover:text-white px-2 py-1 rounded hover:bg-[#333] transition"
+                className="flex items-center gap-1 text-[10px] text-vscode-textMuted hover:text-white px-1.5 py-0.5 hover:bg-white/5 transition font-medium rounded"
               >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>
+                <span>◀</span>
                 Back
               </button>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setPreviewMode('preview')}
-                  className={`px-2 py-1 rounded text-[10px] font-medium ${
-                    previewMode === 'preview' ? 'bg-[#0078d4] text-white' : 'bg-[#333] text-gray-300 hover:bg-[#444]'
+                  className={`px-1.5 py-0.5 text-[10px] font-medium rounded ${
+                    previewMode === 'preview' ? 'bg-vscode-accent/20 text-vscode-accent' : 'text-vscode-textMuted hover:text-white hover:bg-white/5'
                   }`}
                 >
                   Preview
                 </button>
                 <button
                   onClick={() => setPreviewMode('code')}
-                  className={`px-2 py-1 rounded text-[10px] font-medium ${
-                    previewMode === 'code' ? 'bg-[#0078d4] text-white' : 'bg-[#333] text-gray-300 hover:bg-[#444]'
+                  className={`px-1.5 py-0.5 text-[10px] font-medium rounded ${
+                    previewMode === 'code' ? 'bg-vscode-accent/20 text-vscode-accent' : 'text-vscode-textMuted hover:text-white hover:bg-white/5'
                   }`}
                 >
                   Code
@@ -197,8 +181,8 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
               </div>
             </div>
 
-            {/* Large Preview Area - Takes most space */}
-            <div className="flex-1 bg-[#1a1a1a] rounded-lg overflow-hidden border border-[#333] min-h-0">
+            {/* Large Preview Area */}
+            <div className="flex-1 bg-vscode-bg overflow-hidden border border-vscode-border min-h-0 rounded">
               {previewMode === 'preview' ? (
                 <iframe
                   srcDoc={selectedTemplate.files['index.html']}
@@ -217,26 +201,26 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
             </div>
 
             {/* Compact Footer */}
-            <div className="mt-2 pt-2 border-t border-[#333] flex items-center justify-between gap-3">
+            <div className="mt-2 pt-2 border-t border-vscode-border flex items-center justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-sm truncate">{selectedTemplate.name}</h3>
-                <p className="text-[10px] text-gray-500 truncate">{selectedTemplate.description}</p>
+                <h3 className="font-semibold text-sm truncate text-white">{selectedTemplate.name}</h3>
+                <p className="text-[10px] text-vscode-textMuted truncate">{selectedTemplate.description}</p>
               </div>
               <button
                 onClick={() => handleSelectTemplate(selectedTemplate)}
-                className="bg-[#0078d4] hover:bg-[#0066b8] px-4 py-1.5 rounded text-xs font-medium transition flex-shrink-0"
+                className="bg-vscode-accent hover:bg-vscode-accentHover text-white px-3 py-1 text-[10px] font-medium transition flex-shrink-0 rounded"
               >
                 Use
               </button>
             </div>
           </div>
         ) : (
-          /* Templates List - Single Column Slim Design */
+          /* Templates List - Single Column */
           <div className="flex flex-col gap-2">
             {filteredTemplates.map(template => (
               <div
                 key={template.id}
-                className="bg-[#2d2d2d] rounded-lg overflow-hidden border border-[#444] hover:border-[#0078d4] transition group"
+                className="bg-vscode-sidebar overflow-hidden border border-vscode-border hover:border-vscode-accent transition group rounded"
               >
                 {/* Compact Card Layout */}
                 <div className="p-3">
@@ -244,34 +228,34 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
                   <div className="flex items-center gap-2.5 mb-2">
                     <span className="text-2xl flex-shrink-0">{template.icon}</span>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-sm truncate">{template.name}</h3>
-                      <p className="text-xs text-gray-500 truncate">{template.description}</p>
+                      <h3 className="font-semibold text-sm truncate text-white">{template.name}</h3>
+                      <p className="text-xs text-vscode-textMuted truncate">{template.description}</p>
                     </div>
                   </div>
                   
-                  {/* Tech Stack - Inline */}
+                  {/* Tech Stack */}
                   <div className="flex flex-wrap items-center gap-1 mb-2">
                     {template.techStack.slice(0, 3).map((tech, i) => (
-                      <span key={i} className="text-[10px] text-[#0078d4] bg-[#0078d4]/10 px-1.5 py-0.5 rounded">
+                      <span key={i} className="text-[9px] text-green-400/80 bg-green-400/10 px-1 py-0.5 font-medium rounded">
                         {tech}
                       </span>
                     ))}
                     {template.techStack.length > 3 && (
-                      <span className="text-[10px] text-gray-500">+{template.techStack.length - 3}</span>
+                      <span className="text-[9px] text-vscode-textMuted font-medium">+{template.techStack.length - 3}</span>
                     )}
                   </div>
 
-                  {/* Actions Row - Compact */}
+                  {/* Actions Row */}
                   <div className="flex gap-1">
                     <button
                       onClick={() => handlePreview(template)}
-                      className="flex-1 py-1 border border-[#444] rounded text-[10px] hover:bg-[#333] hover:border-[#555] transition"
+                      className="flex-1 py-0.5 text-[10px] hover:bg-white/5 transition font-medium text-vscode-textMuted hover:text-white rounded"
                     >
                       View
                     </button>
                     <button
                       onClick={() => handleSelectTemplate(template)}
-                      className="flex-1 py-1 bg-[#0078d4] hover:bg-[#0066b8] rounded text-[10px] font-medium transition"
+                      className="flex-1 py-0.5 bg-vscode-accent/20 text-vscode-accent text-[10px] font-medium transition hover:bg-vscode-accent hover:text-white rounded"
                     >
                       Use
                     </button>
@@ -283,9 +267,9 @@ const PrebuiltTemplatesGallery: React.FC<PrebuiltTemplatesGalleryProps> = ({
         )}
 
         {filteredTemplates.length === 0 && !selectedTemplate && (
-          <div className="text-center py-12 text-gray-400">
-            <span className="text-4xl block mb-4">🔍</span>
-            <p>No templates found matching your criteria</p>
+          <div className="text-center py-12 text-vscode-textMuted border border-dashed border-vscode-border rounded">
+            <span className="text-4xl block mb-4">▶</span>
+            <p className="font-medium">No templates found</p>
           </div>
         )}
       </div>

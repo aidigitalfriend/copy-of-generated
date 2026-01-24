@@ -84,12 +84,12 @@ const HistoryPanel: React.FC = () => {
     }
   }, [menuOpen]);
   
-  const bgCard = theme === 'dark' ? 'bg-slate-800' : 'bg-gray-50';
-  const bgCardHover = theme === 'dark' ? 'hover:bg-slate-700' : 'hover:bg-gray-100';
+  const bgCard = theme === 'dark' ? 'bg-vscode-sidebar border border-vscode-border rounded-md' : 'bg-white border border-gray-200 rounded-md';
+  const bgCardHover = theme === 'dark' ? 'hover:bg-vscode-hover' : 'hover:bg-gray-50';
   const textPrimary = theme === 'dark' ? 'text-white' : 'text-gray-900';
-  const textSecondary = theme === 'dark' ? 'text-slate-300' : 'text-gray-600';
-  const textMuted = theme === 'dark' ? 'text-slate-400' : 'text-gray-500';
-  const borderColor = theme === 'dark' ? 'border-slate-700' : 'border-gray-200';
+  const textSecondary = theme === 'dark' ? 'text-vscode-text' : 'text-gray-700';
+  const textMuted = theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500';
+  const borderColor = theme === 'dark' ? 'border-vscode-border' : 'border-gray-200';
 
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -166,42 +166,42 @@ const HistoryPanel: React.FC = () => {
     setMenuOpen(null);
   };
 
-  const menuBg = theme === 'dark' ? 'bg-slate-700' : 'bg-white';
-  const menuHover = theme === 'dark' ? 'hover:bg-slate-600' : 'hover:bg-gray-100';
+  const menuBg = theme === 'dark' ? 'bg-vscode-panel' : 'bg-white';
+  const menuHover = theme === 'dark' ? 'hover:bg-vscode-hover' : 'hover:bg-gray-100';
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* Header */}
-      <div className={`px-4 py-3 border-b ${borderColor}`}>
-        <h3 className={`text-sm font-semibold ${textPrimary}`}>Project History</h3>
+      <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-200 bg-gray-50'}`}>
+        <h3 className={`text-xs font-semibold ${textPrimary} uppercase tracking-wide`}>Project History</h3>
         <p className={`text-xs ${textMuted} mt-1`}>{projects.length} project{projects.length !== 1 ? 's' : ''}</p>
       </div>
 
       {/* Projects List */}
-      <div className="flex-1 overflow-auto p-2">
+      <div className="flex-1 overflow-auto p-3">
         {projects.length === 0 ? (
-          <div className="text-center py-8">
+          <div className={`text-center py-8 border border-dashed rounded-lg ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-300'}`}>
             <div className="text-4xl mb-3">📭</div>
             <p className={`text-sm ${textMuted}`}>No projects yet</p>
-            <p className={`text-xs ${textMuted} mt-1`}>Create a new project from templates</p>
+            <p className={`text-xs ${textMuted} mt-1`}>Create one from templates</p>
           </div>
         ) : (
           <div className="space-y-2">
             {[...projects].reverse().map((project) => (
               <div
                 key={project.id}
-                className={`relative w-full text-left p-3 rounded-lg transition-all duration-200 ${bgCard} border ${borderColor} ${
+                className={`relative w-full text-left p-3 transition-all duration-200 rounded-md ${bgCard} ${
                   currentProject?.id === project.id 
-                    ? 'ring-2 ring-indigo-500 border-indigo-500' 
+                    ? theme === 'dark' ? 'border-vscode-accent bg-vscode-selection/30' : 'border-blue-500 bg-blue-50'
                     : ''
                 }`}
               >
                 <div 
-                  className={`flex items-start gap-3 cursor-pointer ${bgCardHover} rounded -m-3 p-3`}
+                  className={`flex items-start gap-3 cursor-pointer rounded-md ${bgCardHover} -m-3 p-3`}
                   onClick={() => handleOpenProject(project)}
                 >
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg ${
-                    theme === 'dark' ? 'bg-slate-700' : 'bg-gray-200'
+                  <div className={`w-9 h-9 flex items-center justify-center text-base rounded-md ${
+                    theme === 'dark' ? 'bg-vscode-bg' : 'bg-gray-100'
                   }`}>
                     {getTemplateIcon(project.template)}
                   </div>
@@ -218,13 +218,13 @@ const HistoryPanel: React.FC = () => {
                         }}
                         onClick={(e) => e.stopPropagation()}
                         autoFocus
-                        className={`w-full px-2 py-1 text-sm rounded ${theme === 'dark' ? 'bg-slate-600 text-white' : 'bg-white text-gray-900 border'} focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+                        className={`w-full px-2 py-1 text-sm rounded ${theme === 'dark' ? 'bg-vscode-input border border-vscode-inputBorder text-white' : 'bg-white border border-blue-500 text-gray-900'} focus:outline-none`}
                       />
                     ) : (
                       <div className="flex items-center gap-2">
                         <h4 className={`font-medium truncate ${textPrimary}`}>{project.name}</h4>
                         {currentProject?.id === project.id && (
-                          <span className="text-xs px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400">Active</span>
+                          <span className="text-xs px-1.5 py-0.5 bg-vscode-accent text-white rounded">Active</span>
                         )}
                       </div>
                     )}
@@ -336,13 +336,13 @@ const HistoryPanel: React.FC = () => {
 const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = ({ theme, setTheme }) => {
   const { editorSettings, setEditorSettings, aiConfig, setAiConfig } = useStore();
   
-  const bgCard = theme === 'dark' ? 'bg-slate-800' : 'bg-gray-50';
+  const bgCard = theme === 'dark' ? 'bg-vscode-bg border border-vscode-border rounded-md' : 'bg-white border border-gray-200 rounded-md';
   const textPrimary = theme === 'dark' ? 'text-white' : 'text-gray-900';
-  const textSecondary = theme === 'dark' ? 'text-slate-300' : 'text-gray-700';
-  const textMuted = theme === 'dark' ? 'text-slate-400' : 'text-gray-500';
-  const borderColor = theme === 'dark' ? 'border-slate-700' : 'border-gray-200';
-  const inputBg = theme === 'dark' ? 'bg-slate-700' : 'bg-white border border-gray-300';
-  const kbdBg = theme === 'dark' ? 'bg-slate-700' : 'bg-gray-200';
+  const textSecondary = theme === 'dark' ? 'text-vscode-text' : 'text-gray-700';
+  const textMuted = theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500';
+  const borderColor = theme === 'dark' ? 'border-vscode-border' : 'border-gray-200';
+  const inputBg = theme === 'dark' ? 'bg-vscode-input border border-vscode-border text-white rounded' : 'bg-white border border-gray-300 text-gray-900 rounded';
+  const kbdBg = theme === 'dark' ? 'bg-vscode-bg' : 'bg-gray-100';
 
   const currentProvider = AI_PROVIDERS[aiConfig.provider as AIProviderKey] || AI_PROVIDERS.openai;
 
@@ -350,15 +350,15 @@ const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = (
     <div className="p-4 space-y-6 overflow-auto h-full">
       {/* Appearance */}
       <div>
-        <h3 className={`text-sm font-semibold ${textPrimary} mb-3`}>Appearance</h3>
+        <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Appearance</h3>
         <div className="space-y-2">
-          <div className={`flex items-center justify-between p-3 ${bgCard} rounded-lg`}>
+          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
             <span className={`text-sm ${textSecondary}`}>Theme</span>
             <select
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
               title="Select theme"
-              className={`${inputBg} ${textPrimary} text-sm px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              className={`${inputBg} text-sm px-3 py-1 focus:outline-none focus:border-vscode-inputBorder`}
             >
               <option value="dark">Dark</option>
               <option value="light">Light</option>
@@ -369,79 +369,79 @@ const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = (
 
       {/* Editor Settings */}
       <div>
-        <h3 className={`text-sm font-semibold ${textPrimary} mb-3`}>Editor</h3>
+        <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Editor</h3>
         <div className="space-y-2">
-          <div className={`flex items-center justify-between p-3 ${bgCard} rounded-lg`}>
+          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
             <span className={`text-sm ${textSecondary}`}>Font Size</span>
             <select
               value={editorSettings.fontSize}
               onChange={(e) => setEditorSettings({ fontSize: Number(e.target.value) })}
-              className={`${inputBg} ${textPrimary} text-sm px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              className={`${inputBg} text-sm px-3 py-1 focus:outline-none focus:border-vscode-inputBorder`}
             >
               {[10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24].map(size => (
                 <option key={size} value={size}>{size}px</option>
               ))}
             </select>
           </div>
-          <div className={`flex items-center justify-between p-3 ${bgCard} rounded-lg`}>
+          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
             <span className={`text-sm ${textSecondary}`}>Tab Size</span>
             <select
               value={editorSettings.tabSize}
               onChange={(e) => setEditorSettings({ tabSize: Number(e.target.value) })}
-              className={`${inputBg} ${textPrimary} text-sm px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              className={`${inputBg} text-sm px-3 py-1 focus:outline-none focus:border-vscode-inputBorder`}
             >
               <option value={2}>2 spaces</option>
               <option value={4}>4 spaces</option>
               <option value={8}>8 spaces</option>
             </select>
           </div>
-          <div className={`flex items-center justify-between p-3 ${bgCard} rounded-lg`}>
+          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
             <span className={`text-sm ${textSecondary}`}>Word Wrap</span>
             <button
               onClick={() => setEditorSettings({ wordWrap: !editorSettings.wordWrap })}
-              className={`text-sm px-3 py-1 rounded transition-colors ${
+              className={`text-sm px-3 py-1 font-medium rounded transition-colors ${
                 editorSettings.wordWrap
-                  ? 'bg-emerald-500/20 text-emerald-500'
-                  : `${theme === 'dark' ? 'bg-slate-600' : 'bg-gray-200'} ${textMuted}`
+                  ? 'bg-vscode-accent text-white'
+                  : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
               }`}
             >
               {editorSettings.wordWrap ? 'On' : 'Off'}
             </button>
           </div>
-          <div className={`flex items-center justify-between p-3 ${bgCard} rounded-lg`}>
+          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
             <span className={`text-sm ${textSecondary}`}>Minimap</span>
             <button
               onClick={() => setEditorSettings({ minimap: !editorSettings.minimap })}
-              className={`text-sm px-3 py-1 rounded transition-colors ${
+              className={`text-sm px-3 py-1 font-medium rounded transition-colors ${
                 editorSettings.minimap
-                  ? 'bg-emerald-500/20 text-emerald-500'
-                  : `${theme === 'dark' ? 'bg-slate-600' : 'bg-gray-200'} ${textMuted}`
+                  ? 'bg-vscode-accent text-white'
+                  : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
               }`}
             >
               {editorSettings.minimap ? 'On' : 'Off'}
             </button>
           </div>
-          <div className={`flex items-center justify-between p-3 ${bgCard} rounded-lg`}>
+          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
             <span className={`text-sm ${textSecondary}`}>Line Numbers</span>
             <button
               onClick={() => setEditorSettings({ lineNumbers: !editorSettings.lineNumbers })}
-              className={`text-sm px-3 py-1 rounded transition-colors ${
+              className={`text-sm px-3 py-1 font-medium rounded transition-colors ${
                 editorSettings.lineNumbers
-                  ? 'bg-emerald-500/20 text-emerald-500'
-                  : `${theme === 'dark' ? 'bg-slate-600' : 'bg-gray-200'} ${textMuted}`
+                  ? 'bg-vscode-accent text-white'
+                  : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
               }`}
             >
               {editorSettings.lineNumbers ? 'On' : 'Off'}
             </button>
           </div>
-          <div className={`flex items-center justify-between p-3 ${bgCard} rounded-lg`}>
+          <div className={`flex items-center justify-between p-3 ${bgCard}`}>
             <span className={`text-sm ${textSecondary}`}>Auto Save</span>
             <button
               onClick={() => setEditorSettings({ autoSave: !editorSettings.autoSave })}
-              className={`text-sm px-3 py-1 rounded transition-colors ${
+              className={`text-sm px-3 py-1 font-medium rounded transition-colors ${
                 editorSettings.autoSave
-                  ? 'bg-emerald-500/20 text-emerald-500'
-                  : `${theme === 'dark' ? 'bg-slate-600' : 'bg-gray-200'} ${textMuted}`
+                  ? 'bg-vscode-accent text-white'
+                  : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
               }`}
             >
               {editorSettings.autoSave ? 'On' : 'Off'}
@@ -452,9 +452,9 @@ const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = (
 
       {/* AI Assistant */}
       <div>
-        <h3 className={`text-sm font-semibold ${textPrimary} mb-3`}>AI Assistant</h3>
+        <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>AI Config</h3>
         <div className="space-y-2">
-          <div className={`p-3 ${bgCard} rounded-lg space-y-2`}>
+          <div className={`p-3 ${bgCard} space-y-2`}>
             <span className={`text-sm ${textSecondary} block mb-2`}>Provider</span>
             <select
               value={aiConfig.provider}
@@ -466,7 +466,7 @@ const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = (
                   model: models[0] || '' 
                 });
               }}
-              className={`w-full ${inputBg} ${textPrimary} text-sm px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-inputBorder`}
             >
               {Object.entries(AI_PROVIDERS).map(([key, provider]) => (
                 <option key={key} value={key}>
@@ -476,12 +476,12 @@ const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = (
             </select>
           </div>
           
-          <div className={`p-3 ${bgCard} rounded-lg space-y-2`}>
+          <div className={`p-3 ${bgCard} space-y-2`}>
             <span className={`text-sm ${textSecondary} block mb-2`}>Model</span>
             <select
               value={aiConfig.model}
               onChange={(e) => setAiConfig({ model: e.target.value })}
-              className={`w-full ${inputBg} ${textPrimary} text-sm px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-inputBorder font-mono`}
             >
               {currentProvider.models.map((model) => (
                 <option key={model} value={model}>
@@ -491,10 +491,10 @@ const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = (
             </select>
           </div>
 
-          <div className={`p-3 ${bgCard} rounded-lg space-y-2`}>
+          <div className={`p-3 ${bgCard} space-y-2`}>
             <div className="flex items-center justify-between">
               <span className={`text-sm ${textSecondary}`}>Temperature</span>
-              <span className={`text-sm ${textMuted}`}>{aiConfig.temperature}</span>
+              <span className={`text-sm ${theme === 'dark' ? 'text-vscode-accent' : 'text-blue-600'} font-mono`}>{aiConfig.temperature}</span>
             </div>
             <input
               type="range"
@@ -503,7 +503,7 @@ const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = (
               step="0.1"
               value={aiConfig.temperature}
               onChange={(e) => setAiConfig({ temperature: Number(e.target.value) })}
-              className="w-full accent-indigo-500"
+              className="w-full accent-vscode-accent"
             />
             <div className={`flex justify-between text-xs ${textMuted}`}>
               <span>Precise</span>
@@ -511,12 +511,12 @@ const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = (
             </div>
           </div>
 
-          <div className={`p-3 ${bgCard} rounded-lg space-y-2`}>
+          <div className={`p-3 ${bgCard} space-y-2`}>
             <span className={`text-sm ${textSecondary} block mb-2`}>Max Tokens</span>
             <select
               value={aiConfig.maxTokens}
               onChange={(e) => setAiConfig({ maxTokens: Number(e.target.value) })}
-              className={`w-full ${inputBg} ${textPrimary} text-sm px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              className={`w-full ${inputBg} text-sm px-3 py-2 focus:outline-none focus:border-vscode-inputBorder`}
             >
               <option value={1024}>1,024</option>
               <option value={2048}>2,048</option>
@@ -531,7 +531,7 @@ const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = (
 
       {/* Keyboard Shortcuts */}
       <div>
-        <h3 className={`text-sm font-semibold ${textPrimary} mb-3`}>Keyboard Shortcuts</h3>
+        <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide`}>Keyboard Shortcuts</h3>
         <div className="space-y-1 text-xs">
           <div className={`flex justify-between p-2 ${textMuted}`}>
             <span>Open File</span>
@@ -567,9 +567,9 @@ const SettingsPanel: React.FC<{ theme: string; setTheme: (t: any) => void }> = (
               maxTokens: 4096,
             });
           }}
-          className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+          className={`w-full py-2 px-4 rounded text-sm font-medium transition-colors ${
             theme === 'dark' 
-              ? 'bg-slate-700 hover:bg-slate-600 text-slate-300' 
+              ? 'bg-vscode-hover hover:bg-vscode-active text-vscode-text' 
               : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
           }`}
         >
@@ -857,47 +857,47 @@ const App: React.FC = () => {
     { id: 'settings' as RightTab, icon: '⚙️', label: 'Settings', tooltip: 'Settings (Ctrl+,)' },
   ];
 
-  // Theme classes - Light mode should be WHITE
+  // VS Code Theme classes
   const themeClasses = theme === 'dark' 
-    ? 'bg-slate-900 text-white' 
+    ? 'bg-vscode-bg text-vscode-text' 
     : 'bg-white text-gray-900';
   
   const sidebarClasses = theme === 'dark'
-    ? 'bg-slate-900 border-slate-800'
-    : 'bg-gray-50 border-gray-200';
+    ? 'bg-vscode-sidebar border-vscode-border border-r'
+    : 'bg-gray-100 border-gray-200 border-r';
   
   const panelClasses = theme === 'dark'
-    ? 'bg-slate-800 border-slate-700'
+    ? 'bg-vscode-sidebar border-vscode-border'
     : 'bg-white border-gray-200';
   
   const headerClasses = theme === 'dark'
-    ? 'bg-slate-800/50 border-slate-700'
-    : 'bg-white border-gray-200';
+    ? 'bg-vscode-sidebar border-vscode-border border-b'
+    : 'bg-white border-gray-200 border-b';
   
   const iconBarBtnActive = theme === 'dark'
-    ? 'bg-slate-800 text-white'
-    : 'bg-white text-gray-900 shadow-sm';
+    ? 'text-white border-l-2 border-l-vscode-accent'
+    : 'text-blue-600 border-l-2 border-l-blue-600';
   
   const iconBarBtnInactive = theme === 'dark'
-    ? 'text-slate-500 hover:text-white hover:bg-slate-800/50'
-    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-200';
+    ? 'text-vscode-textMuted hover:text-white'
+    : 'text-gray-400 hover:text-gray-600';
   
   const tooltipClasses = theme === 'dark'
-    ? 'bg-slate-700 text-white'
-    : 'bg-gray-800 text-white';
+    ? 'bg-vscode-panel text-vscode-text border border-vscode-border shadow-vscode'
+    : 'bg-white text-gray-900 border border-gray-200 shadow-lg';
 
   return (
-    <div className={`flex h-screen w-full overflow-hidden font-sans ${themeClasses}`}>
+    <div className={`flex h-screen w-full overflow-hidden ${themeClasses}`}>
       {/* ===== LEFT SIDEBAR ===== */}
       <aside className="flex h-full">
-        {/* Icon Bar */}
-        <div className={`w-12 border-r flex flex-col items-center py-2 gap-1 ${sidebarClasses}`}>
+        {/* Icon Bar - VS Code Style */}
+        <div className={`w-12 border-r flex flex-col items-center py-2 gap-0.5 ${sidebarClasses}`}>
           {/* Logo */}
           <div className="w-10 h-10 flex items-center justify-center mb-2">
-            <span className="text-2xl" title="AI Digital Friend Zone">🚀</span>
+            <span className="text-2xl" title="AI Digital Friend Zone">⚡</span>
           </div>
           
-          <div className={`w-8 h-px ${theme === 'dark' ? 'bg-slate-700' : 'bg-gray-300'} my-1`} />
+          <div className={`w-8 h-px ${theme === 'dark' ? 'bg-vscode-border' : 'bg-gray-300'} my-2`} />
           
           {/* Left Tab Icons */}
           {leftSidebarItems.map((item) => (
@@ -911,7 +911,7 @@ const App: React.FC = () => {
                   setLeftSidebarOpen(true);
                 }
               }}
-              className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all relative group
+              className={`w-10 h-10 flex items-center justify-center transition-all relative group
                 ${leftTab === item.id && leftSidebarOpen
                   ? iconBarBtnActive 
                   : iconBarBtnInactive
@@ -919,11 +919,8 @@ const App: React.FC = () => {
               title={item.tooltip}
             >
               <span className="text-lg">{item.icon}</span>
-              {leftTab === item.id && leftSidebarOpen && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-indigo-500 rounded-r" />
-              )}
               {/* Tooltip */}
-              <div className={`absolute left-full ml-2 px-2 py-1 ${tooltipClasses} text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity shadow-lg`}>
+              <div className={`absolute left-full ml-2 px-2 py-1 ${tooltipClasses} text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity`}>
                 {item.tooltip}
               </div>
             </button>
@@ -932,67 +929,67 @@ const App: React.FC = () => {
           <div className="flex-1" />
           
           {/* View Mode Icons */}
-          <div className={`w-8 h-px ${theme === 'dark' ? 'bg-slate-700' : 'bg-gray-300'} my-1`} />
+          <div className={`w-8 h-px ${theme === 'dark' ? 'bg-vscode-border' : 'bg-gray-300'} my-2`} />
           
           <button
             onClick={() => setViewMode('code')}
-            className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all group relative
+            className={`w-10 h-10 flex items-center justify-center transition-all group relative
               ${viewMode === 'code' ? iconBarBtnActive : iconBarBtnInactive}`}
             title="Code Only"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
             </svg>
-            <div className={`absolute left-full ml-2 px-2 py-1 ${tooltipClasses} text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-lg`}>
-              Code Only
+            <div className={`absolute left-full ml-2 px-2 py-1 ${tooltipClasses} text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50`}>
+              Code View
             </div>
           </button>
           
           <button
             onClick={() => setViewMode('split')}
-            className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all group relative
+            className={`w-10 h-10 flex items-center justify-center transition-all group relative
               ${viewMode === 'split' ? iconBarBtnActive : iconBarBtnInactive}`}
             title="Split View (Code + Preview)"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" />
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v18M3 3h18v18H3V3z" />
             </svg>
-            <div className={`absolute left-full ml-2 px-2 py-1 ${tooltipClasses} text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-lg`}>
+            <div className={`absolute left-full ml-2 px-2 py-1 ${tooltipClasses} text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50`}>
               Split View
             </div>
           </button>
           
           <button
             onClick={() => setViewMode('preview')}
-            className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all group relative
+            className={`w-10 h-10 flex items-center justify-center transition-all group relative
               ${viewMode === 'preview' ? iconBarBtnActive : iconBarBtnInactive}`}
             title="Preview Only"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z" />
             </svg>
-            <div className={`absolute left-full ml-2 px-2 py-1 ${tooltipClasses} text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-lg`}>
-              Preview Only
+            <div className={`absolute left-full ml-2 px-2 py-1 ${tooltipClasses} text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50`}>
+              Preview
             </div>
           </button>
         </div>
         
         {/* Left Panel Content */}
         {leftSidebarOpen && (
-          <div className={`relative flex flex-col ${panelClasses}`} style={{ width: leftPanelWidth, minWidth: 180, maxWidth: 500 }}>
+          <div className={`relative flex flex-col border-r ${panelClasses}`} style={{ width: leftPanelWidth, minWidth: 180, maxWidth: 500 }}>
             {/* Panel Header */}
-            <div className={`h-10 flex items-center justify-between px-4 border-b ${theme === 'dark' ? 'border-slate-700' : 'border-gray-200'}`}>
-              <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-gray-600'} uppercase tracking-wider`}>
+            <div className={`h-7 flex items-center justify-between px-3 border-b ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
+              <span className={`text-[10px] font-medium ${theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500'} uppercase tracking-wide`}>
                 {leftSidebarItems.find(i => i.id === leftTab)?.label}
               </span>
               <button
                 onClick={() => setLeftSidebarOpen(false)}
-                className={`p-1 ${theme === 'dark' ? 'text-slate-500 hover:text-white' : 'text-gray-500 hover:text-gray-900'} rounded transition-colors`}
+                className={`p-0.5 ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
                 title="Close Panel"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
@@ -1049,9 +1046,9 @@ const App: React.FC = () => {
             
             {/* Project Info */}
             {currentProject && (
-              <div className={`p-3 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-gray-200'}`}>
-                <div className={`flex items-center gap-2 text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-gray-600'}`}>
-                  <span>📁</span>
+              <div className={`p-3 border-t ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
+                <div className={`flex items-center gap-2 text-xs ${theme === 'dark' ? 'text-vscode-text' : 'text-gray-600'}`}>
+                  <span className="text-vscode-accent">▶</span>
                   <span className="truncate">{currentProject.name}</span>
                 </div>
               </div>
@@ -1070,19 +1067,6 @@ const App: React.FC = () => {
 
       {/* ===== MAIN CONTENT ===== */}
       <main className="flex-1 flex flex-col overflow-hidden">
-        {/* Clean Header */}
-        <header className={`h-10 border-b flex items-center justify-center px-4 ${headerClasses}`}>
-          <div className="flex items-center gap-2">
-            <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>🚀 AI Digital Friend Zone</span>
-            {currentProject && (
-              <>
-                <span className={theme === 'dark' ? 'text-slate-600' : 'text-gray-400'}>—</span>
-                <span className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-gray-600'}`}>{currentProject.name}</span>
-              </>
-            )}
-          </div>
-        </header>
-
         {/* Editor + Preview */}
         <div className="flex-1 flex overflow-hidden">
           {viewMode === 'code' && (
@@ -1113,15 +1097,15 @@ const App: React.FC = () => {
         </div>
 
         {/* Status Bar */}
-        <footer className={`h-6 border-t flex items-center justify-between px-4 text-xs ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-500' : 'bg-gray-100 border-gray-200 text-gray-500'}`}>
-          <div className="flex items-center gap-4">
+        <footer className={`h-6 border-t flex items-center justify-between px-3 text-xs ${theme === 'dark' ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'}`}>
+          <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-emerald-500" />
+              <div className="w-2 h-2 rounded-full bg-green-400" />
               Ready
             </span>
             {currentProject && <span>{currentProject.template}</span>}
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <span>TypeScript</span>
             <span>UTF-8</span>
             <span>Spaces: 2</span>
@@ -1132,7 +1116,7 @@ const App: React.FC = () => {
       {/* ===== RIGHT SIDEBAR ===== */}
       <aside className="flex h-full flex-row-reverse">
         {/* Icon Bar */}
-        <div className={`w-12 border-l flex flex-col items-center py-2 gap-1 ${sidebarClasses}`}>
+        <div className={`w-12 border-l flex flex-col items-center py-2 gap-0.5 ${sidebarClasses}`}>
           {/* Right Tab Icons */}
           {rightSidebarItems.map((item) => (
             <button
@@ -1145,68 +1129,65 @@ const App: React.FC = () => {
                   setRightSidebarOpen(true);
                 }
               }}
-              className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all relative group
+              className={`w-10 h-10 flex items-center justify-center transition-all relative group
                 ${rightTab === item.id && rightSidebarOpen
-                  ? theme === 'dark' ? 'bg-slate-800 text-white' : 'bg-gray-300 text-gray-900'
-                  : theme === 'dark' ? 'text-slate-500 hover:text-white hover:bg-slate-800/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-300/50'
+                  ? theme === 'dark' ? 'text-white border-r-2 border-r-vscode-accent' : 'text-blue-600 border-r-2 border-r-blue-600'
+                  : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
                 }`}
               title={item.tooltip}
             >
               <span className="text-lg">{item.icon}</span>
-              {rightTab === item.id && rightSidebarOpen && (
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-indigo-500 rounded-l" />
-              )}
               {/* Tooltip */}
-              <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity shadow-lg ${theme === 'dark' ? 'bg-slate-700 text-white' : 'bg-gray-800 text-white'}`}>
+              <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity ${tooltipClasses}`}>
                 {item.tooltip}
               </div>
             </button>
           ))}
           
-          <div className={`w-8 h-px ${theme === 'dark' ? 'bg-slate-600' : 'bg-gray-300'} my-2`} />
+          <div className={`w-8 h-px ${theme === 'dark' ? 'bg-vscode-border' : 'bg-gray-300'} my-2`} />
           
           {/* Media buttons - Camera, Screenshot, Voice */}
           <button
             onClick={handleCameraToggle}
-            className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all group relative ${
+            className={`w-10 h-10 flex items-center justify-center transition-all group relative ${
               cameraActive 
-                ? 'bg-red-500 text-white' 
-                : theme === 'dark' ? 'text-slate-500 hover:text-white hover:bg-slate-800/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-300/50'
+                ? 'text-red-400' 
+                : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
             }`}
             title={cameraActive ? "Stop Camera" : "Start Camera"}
           >
-            <span className="text-lg">{cameraActive ? '🔴' : '📷'}</span>
-            <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-lg ${theme === 'dark' ? 'bg-slate-700 text-white' : 'bg-gray-800 text-white'}`}>
+            <span className="text-lg">{cameraActive ? '◉' : '📷'}</span>
+            <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 ${tooltipClasses}`}>
               {cameraActive ? 'Stop Camera' : 'Start Camera'}
             </div>
           </button>
           <button
             onClick={handleScreenshot}
             disabled={isCapturing}
-            className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all group relative ${
+            className={`w-10 h-10 flex items-center justify-center transition-all group relative ${
               isCapturing 
-                ? 'bg-blue-500 text-white animate-pulse' 
-                : theme === 'dark' ? 'text-slate-500 hover:text-white hover:bg-slate-800/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-300/50'
+                ? 'text-blue-400 animate-pulse' 
+                : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
             }`}
             title="Screenshot"
           >
             <span className="text-lg">{isCapturing ? '⏳' : '🖥️'}</span>
-            <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-lg ${theme === 'dark' ? 'bg-slate-700 text-white' : 'bg-gray-800 text-white'}`}>
-              {isCapturing ? 'Capturing...' : 'Take Screenshot'}
+            <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 ${tooltipClasses}`}>
+              {isCapturing ? 'Capturing...' : 'Screenshot'}
             </div>
           </button>
           <button
             onClick={handleVoiceToggle}
-            className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all group relative ${
+            className={`w-10 h-10 flex items-center justify-center transition-all group relative ${
               voiceEnabled 
-                ? theme === 'dark' ? 'bg-emerald-600 text-white' : 'bg-emerald-500 text-white'
-                : theme === 'dark' ? 'text-slate-500 hover:text-white hover:bg-slate-800/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-300/50'
+                ? 'text-green-400'
+                : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
             }`}
             title={voiceEnabled ? "Voice On - Click to Turn Off" : "Voice Off - Click to Turn On"}
           >
             <span className="text-lg">{voiceEnabled ? '🔊' : '🔇'}</span>
-            <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-lg ${theme === 'dark' ? 'bg-slate-700 text-white' : 'bg-gray-800 text-white'}`}>
-              {voiceEnabled ? 'Voice ON - Click to mute' : 'Voice OFF - Click to enable'}
+            <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 ${tooltipClasses}`}>
+              {voiceEnabled ? 'Voice On' : 'Voice Off'}
             </div>
           </button>
           
@@ -1215,19 +1196,19 @@ const App: React.FC = () => {
           {/* Theme toggle */}
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all group relative ${theme === 'dark' ? 'text-slate-500 hover:text-white hover:bg-slate-800/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-300/50'}`}
+            className={`w-10 h-10 flex items-center justify-center transition-all group relative ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'}`}
             title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
           >
-            <span className="text-lg">{theme === 'dark' ? '🌙' : '☀️'}</span>
-            <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-lg ${theme === 'dark' ? 'bg-slate-700 text-white' : 'bg-gray-800 text-white'}`}>
-              {theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            <span className="text-lg">{theme === 'dark' ? '☀️' : '🌙'}</span>
+            <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 ${tooltipClasses}`}>
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
             </div>
           </button>
         </div>
         
         {/* Right Panel Content */}
         {rightSidebarOpen && (
-          <div className={`relative flex flex-col ${panelClasses}`} style={{ width: rightPanelWidth, minWidth: 280, maxWidth: 600 }}>
+          <div className={`relative flex flex-col border-l ${panelClasses}`} style={{ width: rightPanelWidth, minWidth: 280, maxWidth: 600 }}>
             {/* Resizable Sash on left edge */}
             <Sash
               direction="vertical"
@@ -1237,17 +1218,17 @@ const App: React.FC = () => {
             />
             
             {/* Panel Header */}
-            <div className={`h-10 flex items-center justify-between px-4 border-b ${theme === 'dark' ? 'border-slate-700' : 'border-gray-200'}`}>
-              <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-gray-600'} uppercase tracking-wider`}>
+            <div className={`h-7 flex items-center justify-between px-3 border-b ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
+              <span className={`text-[10px] font-medium ${theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500'} uppercase tracking-wide`}>
                 {rightSidebarItems.find(i => i.id === rightTab)?.label}
               </span>
               <button
                 onClick={() => setRightSidebarOpen(false)}
-                className={`p-1 ${theme === 'dark' ? 'text-slate-500 hover:text-white' : 'text-gray-500 hover:text-gray-900'} rounded transition-colors`}
+                className={`p-0.5 ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
                 title="Close Panel"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
@@ -1267,20 +1248,20 @@ const App: React.FC = () => {
       
       {/* Camera Preview Modal */}
       {cameraActive && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className={`${theme === 'dark' ? 'bg-slate-800' : 'bg-white'} rounded-xl p-4 max-w-2xl w-full mx-4 shadow-2xl`}>
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className={`${theme === 'dark' ? 'bg-vscode-sidebar border-vscode-border' : 'bg-white border-gray-200'} border rounded-lg p-4 max-w-2xl w-full mx-4 shadow-xl`}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>📷 Camera Preview</h3>
+              <h3 className={`text-lg font-medium ${theme === 'dark' ? 'text-vscode-text' : 'text-gray-800'}`}>Camera Feed</h3>
               <button
                 onClick={handleCameraToggle}
-                className="p-2 rounded-lg hover:bg-red-500 hover:text-white transition-colors"
+                className="p-2 text-gray-400 hover:text-white hover:bg-red-500/20 rounded transition-colors"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+            <div className={`relative aspect-video ${theme === 'dark' ? 'bg-black border-vscode-border' : 'bg-gray-900 border-gray-300'} border rounded overflow-hidden`}>
               <video
                 ref={videoRef}
                 autoPlay
@@ -1288,18 +1269,25 @@ const App: React.FC = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="flex justify-center gap-4 mt-4">
+            <div className="flex justify-center gap-3 mt-4">
               <button
                 onClick={capturePhoto}
-                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                className={`px-4 py-2 ${theme === 'dark' ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'} rounded font-medium transition-all hover:opacity-90 flex items-center gap-2`}
               >
-                <span>📸</span> Capture Photo
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Capture
               </button>
               <button
                 onClick={handleCameraToggle}
-                className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-red-600 text-white rounded font-medium transition-all hover:bg-red-700 flex items-center gap-2"
               >
-                <span>⏹️</span> Stop Camera
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Stop
               </button>
             </div>
           </div>
