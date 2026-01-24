@@ -1024,10 +1024,10 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
             
             {/* Agent dropdown */}
             {showAgentSelector && (
-              <div className={`absolute bottom-full left-0 mb-2 w-56 shadow-xl rounded-lg border ${
-                theme === 'dark' ? 'bg-vscode-sidebar border-vscode-border' : 'bg-white border-gray-200'
+              <div className={`absolute bottom-full left-0 mb-2 w-56 shadow-2xl rounded-lg border ${
+                theme === 'dark' ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'
               } max-h-80 overflow-y-auto z-50`}>
-                <div className={`px-3 py-2 text-xs font-semibold ${theme === 'dark' ? 'text-vscode-textMuted bg-vscode-bg' : 'text-gray-500 bg-gray-50'} border-b ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
+                <div className={`px-3 py-2 text-xs font-semibold ${theme === 'dark' ? 'text-[#808080] bg-[#1e1e1e]' : 'text-gray-500 bg-gray-50'} border-b ${theme === 'dark' ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
                   Select Agent
                 </div>
                 {AGENTS.map((agent) => (
@@ -1037,10 +1037,10 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                       setSelectedAgent(agent.id);
                       setShowAgentSelector(false);
                     }}
-                    className={`w-full px-3 py-2 text-left flex items-center gap-2 transition-colors border-b border-vscode-border/30 ${
+                    className={`w-full px-3 py-2 text-left flex items-center gap-2 transition-colors border-b ${theme === 'dark' ? 'border-[#3c3c3c]/50' : 'border-gray-100'} ${
                       selectedAgent === agent.id
-                        ? 'bg-vscode-accent text-white'
-                        : theme === 'dark' ? 'hover:bg-vscode-input text-vscode-text' : 'hover:bg-gray-100 text-gray-700'
+                        ? 'bg-blue-600 text-white'
+                        : theme === 'dark' ? 'bg-[#252526] hover:bg-[#37373d] text-[#cccccc]' : 'bg-white hover:bg-gray-100 text-gray-700'
                     }`}
                   >
                     <span className="text-lg">{agent.icon}</span>
