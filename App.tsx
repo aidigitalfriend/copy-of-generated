@@ -840,22 +840,58 @@ const App: React.FC = () => {
     }
   };
 
-  // Left sidebar items
+  // Left sidebar items with SVG icons
   const leftSidebarItems = [
-    { id: 'files' as LeftTab, icon: '📁', label: 'Explorer', tooltip: 'File Explorer (Ctrl+Shift+E)' },
-    { id: 'search' as LeftTab, icon: '🔍', label: 'Search', tooltip: 'Search (Ctrl+Shift+F)' },
-    { id: 'templates' as LeftTab, icon: '📋', label: 'Templates', tooltip: 'Project Templates' },
-    { id: 'prebuilt' as LeftTab, icon: '🎨', label: 'Prebuilt', tooltip: 'Prebuilt App Templates' },
-    { id: 'extensions' as LeftTab, icon: '🧩', label: 'Extensions', tooltip: 'Extensions (Ctrl+Shift+X)' },
-    { id: 'history' as LeftTab, icon: '📜', label: 'History', tooltip: 'Project History (Ctrl+H)' },
+    { id: 'files' as LeftTab, label: 'Explorer', tooltip: 'File Explorer (Ctrl+Shift+E)' },
+    { id: 'search' as LeftTab, label: 'Search', tooltip: 'Search (Ctrl+Shift+F)' },
+    { id: 'templates' as LeftTab, label: 'Templates', tooltip: 'Project Templates' },
+    { id: 'prebuilt' as LeftTab, label: 'Prebuilt', tooltip: 'Prebuilt App Templates' },
+    { id: 'extensions' as LeftTab, label: 'Extensions', tooltip: 'Extensions (Ctrl+Shift+X)' },
+    { id: 'history' as LeftTab, label: 'History', tooltip: 'Project History (Ctrl+H)' },
   ];
 
-  // Right sidebar items
+  // Right sidebar items with SVG icons
   const rightSidebarItems = [
-    { id: 'ai' as RightTab, icon: '🤖', label: 'AI Chat', tooltip: 'AI Assistant (Ctrl+Shift+A)' },
-    { id: 'deploy' as RightTab, icon: '🚀', label: 'Deploy', tooltip: 'Deploy to Cloud' },
-    { id: 'settings' as RightTab, icon: '⚙️', label: 'Settings', tooltip: 'Settings (Ctrl+,)' },
+    { id: 'ai' as RightTab, label: 'AI Chat', tooltip: 'AI Assistant (Ctrl+Shift+A)' },
+    { id: 'deploy' as RightTab, label: 'Deploy', tooltip: 'Deploy to Cloud' },
+    { id: 'settings' as RightTab, label: 'Settings', tooltip: 'Settings (Ctrl+,)' },
   ];
+
+  // SVG icon renderer for left sidebar
+  const renderLeftIcon = (id: LeftTab) => {
+    const iconClass = "w-5 h-5";
+    switch(id) {
+      case 'files':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" /></svg>;
+      case 'search':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>;
+      case 'templates':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>;
+      case 'prebuilt':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>;
+      case 'extensions':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 01-.657.643 48.39 48.39 0 01-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 01-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 00-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 01-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 00.657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 01-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.4.604-.4.959v0c0 .333.277.599.61.58a48.1 48.1 0 005.427-.63 48.05 48.05 0 00.582-4.717.532.532 0 00-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.96.401v0a.656.656 0 00.658-.663 48.422 48.422 0 00-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 01-.61-.58z" /></svg>;
+      case 'history':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+      default:
+        return null;
+    }
+  };
+
+  // SVG icon renderer for right sidebar
+  const renderRightIcon = (id: RightTab) => {
+    const iconClass = "w-5 h-5";
+    switch(id) {
+      case 'ai':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>;
+      case 'deploy':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" /></svg>;
+      case 'settings':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
+      default:
+        return null;
+    }
+  };
 
   // VS Code Theme classes
   const themeClasses = theme === 'dark' 
@@ -894,7 +930,7 @@ const App: React.FC = () => {
         <div className={`w-12 border-r flex flex-col items-center py-2 gap-0.5 ${sidebarClasses}`}>
           {/* Logo */}
           <div className="w-10 h-10 flex items-center justify-center mb-2">
-            <span className="text-2xl" title="AI Digital Friend Zone">⚡</span>
+            <svg className="w-6 h-6 text-vscode-accent" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
           </div>
           
           <div className={`w-8 h-px ${theme === 'dark' ? 'bg-vscode-border' : 'bg-gray-300'} my-2`} />
@@ -918,7 +954,7 @@ const App: React.FC = () => {
                 }`}
               title={item.tooltip}
             >
-              <span className="text-lg">{item.icon}</span>
+              {renderLeftIcon(item.id)}
               {/* Tooltip */}
               <div className={`absolute left-full ml-2 px-2 py-1 ${tooltipClasses} text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity`}>
                 {item.tooltip}
@@ -1136,7 +1172,7 @@ const App: React.FC = () => {
                 }`}
               title={item.tooltip}
             >
-              <span className="text-lg">{item.icon}</span>
+              {renderRightIcon(item.id)}
               {/* Tooltip */}
               <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity ${tooltipClasses}`}>
                 {item.tooltip}
@@ -1156,7 +1192,7 @@ const App: React.FC = () => {
             }`}
             title={cameraActive ? "Stop Camera" : "Start Camera"}
           >
-            <span className="text-lg">{cameraActive ? '◉' : '📷'}</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" /></svg>
             <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 ${tooltipClasses}`}>
               {cameraActive ? 'Stop Camera' : 'Start Camera'}
             </div>
@@ -1171,7 +1207,7 @@ const App: React.FC = () => {
             }`}
             title="Screenshot"
           >
-            <span className="text-lg">{isCapturing ? '⏳' : '🖥️'}</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" /></svg>
             <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 ${tooltipClasses}`}>
               {isCapturing ? 'Capturing...' : 'Screenshot'}
             </div>
@@ -1185,7 +1221,10 @@ const App: React.FC = () => {
             }`}
             title={voiceEnabled ? "Voice On - Click to Turn Off" : "Voice Off - Click to Turn On"}
           >
-            <span className="text-lg">{voiceEnabled ? '🔊' : '🔇'}</span>
+            {voiceEnabled 
+              ? <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+              : <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6l4.72-4.72a.75.75 0 011.28.531V19.94a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.506-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.395C2.806 8.757 3.63 8.25 4.51 8.25H6.75z" /></svg>
+            }
             <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 ${tooltipClasses}`}>
               {voiceEnabled ? 'Voice On' : 'Voice Off'}
             </div>
@@ -1199,7 +1238,10 @@ const App: React.FC = () => {
             className={`w-10 h-10 flex items-center justify-center transition-all group relative ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'}`}
             title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
           >
-            <span className="text-lg">{theme === 'dark' ? '☀️' : '🌙'}</span>
+            {theme === 'dark' 
+              ? <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg>
+              : <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>
+            }
             <div className={`absolute right-full mr-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 ${tooltipClasses}`}>
               {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
             </div>
