@@ -100,6 +100,9 @@ const HistoryPanel: React.FC = () => {
   const [renameMode, setRenameMode] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
   
+  // Check if theme is dark variant (all themes except 'light' are dark)
+  const isDarkTheme = theme !== 'light';
+  
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = () => setMenuOpen(null);
@@ -109,12 +112,12 @@ const HistoryPanel: React.FC = () => {
     }
   }, [menuOpen]);
   
-  const bgCard = theme === 'dark' ? 'bg-vscode-sidebar border border-vscode-border rounded-md' : 'bg-white border border-gray-200 rounded-md';
-  const bgCardHover = theme === 'dark' ? 'hover:bg-vscode-hover' : 'hover:bg-gray-50';
-  const textPrimary = theme === 'dark' ? 'text-white' : 'text-gray-900';
-  const textSecondary = theme === 'dark' ? 'text-vscode-text' : 'text-gray-700';
-  const textMuted = theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500';
-  const borderColor = theme === 'dark' ? 'border-vscode-border' : 'border-gray-200';
+  const bgCard = isDarkTheme ? 'bg-vscode-sidebar border border-vscode-border rounded-md' : 'bg-gray-100 border border-gray-300 rounded-md';
+  const bgCardHover = isDarkTheme ? 'hover:bg-vscode-hover' : 'hover:bg-gray-200';
+  const textPrimary = isDarkTheme ? 'text-white' : 'text-gray-900';
+  const textSecondary = isDarkTheme ? 'text-vscode-text' : 'text-gray-700';
+  const textMuted = isDarkTheme ? 'text-vscode-textMuted' : 'text-gray-600';
+  const borderColor = isDarkTheme ? 'border-vscode-border' : 'border-gray-300';
 
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -191,13 +194,13 @@ const HistoryPanel: React.FC = () => {
     setMenuOpen(null);
   };
 
-  const menuBg = theme === 'dark' ? 'bg-vscode-panel' : 'bg-white';
-  const menuHover = theme === 'dark' ? 'hover:bg-vscode-hover' : 'hover:bg-gray-100';
+  const menuBg = isDarkTheme ? 'bg-vscode-panel' : 'bg-white';
+  const menuHover = isDarkTheme ? 'hover:bg-vscode-hover' : 'hover:bg-gray-200';
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* Header */}
-      <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-200 bg-gray-50'}`}>
+      <div className={`px-4 py-3 border-b ${isDarkTheme ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-300 bg-gray-100'}`}>
         <h3 className={`text-xs font-semibold ${textPrimary} uppercase tracking-wide`}>Project History</h3>
         <p className={`text-xs ${textMuted} mt-1`}>{projects.length} project{projects.length !== 1 ? 's' : ''}</p>
       </div>
@@ -205,7 +208,7 @@ const HistoryPanel: React.FC = () => {
       {/* Projects List */}
       <div className="flex-1 overflow-auto p-3">
         {projects.length === 0 ? (
-          <div className={`text-center py-8 border border-dashed rounded-lg ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-300'}`}>
+          <div className={`text-center py-8 border border-dashed rounded-lg ${isDarkTheme ? 'border-vscode-border' : 'border-gray-400'}`}>
             <div className="text-4xl mb-3">📭</div>
             <p className={`text-sm ${textMuted}`}>No projects yet</p>
             <p className={`text-xs ${textMuted} mt-1`}>Create one from templates</p>
@@ -217,7 +220,7 @@ const HistoryPanel: React.FC = () => {
                 key={project.id}
                 className={`relative w-full text-left p-3 transition-all duration-200 rounded-md ${bgCard} ${
                   currentProject?.id === project.id 
-                    ? theme === 'dark' ? 'border-vscode-accent bg-vscode-selection/30' : 'border-blue-500 bg-blue-50'
+                    ? isDarkTheme ? 'border-vscode-accent bg-vscode-selection/30' : 'border-blue-500 bg-blue-50'
                     : ''
                 }`}
               >
@@ -226,7 +229,7 @@ const HistoryPanel: React.FC = () => {
                   onClick={() => handleOpenProject(project)}
                 >
                   <div className={`w-9 h-9 flex items-center justify-center text-base rounded-md ${
-                    theme === 'dark' ? 'bg-vscode-bg' : 'bg-gray-100'
+                    isDarkTheme ? 'bg-vscode-bg' : 'bg-gray-200'
                   }`}>
                     {getTemplateIcon(project.template)}
                   </div>
@@ -243,7 +246,7 @@ const HistoryPanel: React.FC = () => {
                         }}
                         onClick={(e) => e.stopPropagation()}
                         autoFocus
-                        className={`w-full px-2 py-1 text-sm rounded ${theme === 'dark' ? 'bg-vscode-input border border-vscode-inputBorder text-white' : 'bg-white border border-blue-500 text-gray-900'} focus:outline-none`}
+                        className={`w-full px-2 py-1 text-sm rounded ${isDarkTheme ? 'bg-vscode-bg border border-vscode-border text-white' : 'bg-white border border-blue-500 text-gray-900'} focus:outline-none`}
                       />
                     ) : (
                       <div className="flex items-center gap-2">
@@ -268,7 +271,7 @@ const HistoryPanel: React.FC = () => {
                         e.stopPropagation();
                         setMenuOpen(menuOpen === project.id ? null : project.id);
                       }}
-                      className={`p-1.5 rounded ${theme === 'dark' ? 'hover:bg-slate-600 text-slate-400' : 'hover:bg-gray-200 text-gray-500'}`}
+                      className={`p-1.5 rounded ${isDarkTheme ? 'hover:bg-vscode-hover text-vscode-textMuted' : 'hover:bg-gray-300 text-gray-600'}`}
                       title="More options"
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -628,7 +631,7 @@ const App: React.FC = () => {
     { id: 'search.focus', label: 'Search: Focus on Search', shortcut: 'Ctrl+Shift+F', action: () => { setLeftTab('search'); setLeftSidebarOpen(true); } },
     { id: 'ai.focus', label: 'AI: Focus on AI Chat', shortcut: 'Ctrl+Shift+A', action: () => { setRightTab('ai'); setRightSidebarOpen(true); } },
     { id: 'settings.open', label: 'Preferences: Open Settings', shortcut: 'Ctrl+,', action: () => { setRightTab('settings'); setRightSidebarOpen(true); } },
-    { id: 'theme.toggle', label: 'Theme: Toggle Dark/Light', action: () => setTheme(theme === 'dark' ? 'light' : 'dark') },
+    { id: 'theme.toggle', label: 'Theme: Toggle Dark/Light', action: () => setTheme(isDark ? 'light' : 'dark') },
   ], [terminalOpen, leftSidebarOpen, rightSidebarOpen, splitEditorOpen, theme, setTheme]);
 
   const filteredCommands = useMemo(() => {
@@ -832,34 +835,42 @@ const App: React.FC = () => {
     }
   };
 
-  // VS Code Theme classes
-  const themeClasses = theme === 'dark' 
+  // VS Code Theme classes - use isDark for all dark theme variants
+  const isDark = theme !== 'light';
+  
+  const themeClasses = isDark 
     ? 'bg-vscode-bg text-vscode-text' 
     : 'bg-white text-gray-900';
   
-  const sidebarClasses = theme === 'dark'
+  const sidebarClasses = isDark
     ? 'bg-vscode-sidebar border-vscode-border border-r'
-    : 'bg-gray-100 border-gray-200 border-r';
+    : 'bg-gray-100 border-gray-300 border-r';
   
-  const panelClasses = theme === 'dark'
+  const panelClasses = isDark
     ? 'bg-vscode-sidebar border-vscode-border'
-    : 'bg-white border-gray-200';
+    : 'bg-gray-100 border-gray-300';
   
-  const headerClasses = theme === 'dark'
+  const headerClasses = isDark
     ? 'bg-vscode-sidebar border-vscode-border border-b'
-    : 'bg-white border-gray-200 border-b';
+    : 'bg-gray-100 border-gray-300 border-b';
   
-  const iconBarBtnActive = theme === 'dark'
+  const iconBarBtnActive = isDark
     ? 'text-white border-l-2 border-l-vscode-accent'
     : 'text-blue-600 border-l-2 border-l-blue-600';
   
-  const iconBarBtnInactive = theme === 'dark'
+  const iconBarBtnInactive = isDark
     ? 'text-vscode-textMuted hover:text-white'
-    : 'text-gray-400 hover:text-gray-600';
+    : 'text-gray-500 hover:text-gray-900';
   
-  const tooltipClasses = theme === 'dark'
+  const tooltipClasses = isDark
     ? 'bg-vscode-panel text-vscode-text border border-vscode-border shadow-vscode'
-    : 'bg-white text-gray-900 border border-gray-200 shadow-lg';
+    : 'bg-white text-gray-900 border border-gray-300 shadow-lg';
+  
+  const dividerClasses = isDark ? 'bg-vscode-border' : 'bg-gray-300';
+  const textMutedClass = isDark ? 'text-vscode-textMuted' : 'text-gray-500';
+  const textHoverClass = isDark ? 'hover:text-white' : 'hover:text-gray-900';
+  const bgHoverClass = isDark ? 'hover:bg-vscode-hover' : 'hover:bg-gray-200';
+  const borderClass = isDark ? 'border-vscode-border' : 'border-gray-300';
 
   return (
     <div className={`flex h-screen w-full overflow-hidden ${themeClasses}`}>
@@ -872,7 +883,7 @@ const App: React.FC = () => {
             <svg className="w-6 h-6 text-vscode-accent" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
           </div>
           
-          <div className={`w-8 h-px ${theme === 'dark' ? 'bg-vscode-border' : 'bg-gray-300'} my-2`} />
+          <div className={`w-8 h-px ${dividerClasses} my-2`} />
           
           {/* Left Tab Icons */}
           {leftSidebarItems.map((item) => (
@@ -904,7 +915,7 @@ const App: React.FC = () => {
           <div className="flex-1" />
           
           {/* View Mode Icons */}
-          <div className={`w-8 h-px ${theme === 'dark' ? 'bg-vscode-border' : 'bg-gray-300'} my-2`} />
+          <div className={`w-8 h-px ${isDark ? 'bg-vscode-border' : 'bg-gray-300'} my-2`} />
           
           <button
             onClick={() => setViewMode('code')}
@@ -954,13 +965,13 @@ const App: React.FC = () => {
         {leftSidebarOpen && (
           <div className={`relative flex flex-col border-r ${panelClasses}`} style={{ width: leftPanelWidth, minWidth: 180, maxWidth: 500 }}>
             {/* Panel Header */}
-            <div className={`h-7 flex items-center justify-between px-3 border-b ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
-              <span className={`text-[10px] font-medium ${theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500'} uppercase tracking-wide`}>
+            <div className={`h-7 flex items-center justify-between px-3 border-b ${isDark ? 'border-vscode-border' : 'border-gray-200'}`}>
+              <span className={`text-[10px] font-medium ${isDark ? 'text-vscode-textMuted' : 'text-gray-500'} uppercase tracking-wide`}>
                 {leftSidebarItems.find(i => i.id === leftTab)?.label}
               </span>
               <button
                 onClick={() => setLeftSidebarOpen(false)}
-                className={`p-0.5 ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
+                className={`p-0.5 ${isDark ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
                 title="Close Panel"
               >
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -1008,8 +1019,8 @@ const App: React.FC = () => {
             
             {/* Project Info */}
             {currentProject && (
-              <div className={`p-3 border-t ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
-                <div className={`flex items-center gap-2 text-xs ${theme === 'dark' ? 'text-vscode-text' : 'text-gray-600'}`}>
+              <div className={`p-3 border-t ${isDark ? 'border-vscode-border' : 'border-gray-200'}`}>
+                <div className={`flex items-center gap-2 text-xs ${isDark ? 'text-vscode-text' : 'text-gray-600'}`}>
                   <span className="text-vscode-accent">▶</span>
                   <span className="truncate">{currentProject.name}</span>
                 </div>
@@ -1068,17 +1079,17 @@ const App: React.FC = () => {
         {/* Bottom Panel - Terminal & Problems */}
         {(terminalOpen || problemsPanelOpen) && (
           <div 
-            className={`flex flex-col border-t ${theme === 'dark' ? 'border-vscode-border bg-vscode-panel' : 'border-gray-200 bg-white'}`}
+            className={`flex flex-col border-t ${isDark ? 'border-vscode-border bg-vscode-panel' : 'border-gray-200 bg-white'}`}
             style={{ height: terminalMaximized ? 'calc(100vh - 100px)' : terminalHeight }}
           >
             {/* Bottom Panel Tabs */}
-            <div className={`flex items-center gap-0 border-b ${theme === 'dark' ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-200 bg-gray-50'}`}>
+            <div className={`flex items-center gap-0 border-b ${isDark ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-200 bg-gray-50'}`}>
               <button
                 onClick={() => { setBottomPanelTab('problems'); setProblemsPanelOpen(true); }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
                   bottomPanelTab === 'problems' && problemsPanelOpen
-                    ? theme === 'dark' ? 'text-white border-b-2 border-vscode-accent bg-vscode-panel' : 'text-blue-600 border-b-2 border-blue-500 bg-white'
-                    : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                    ? isDark ? 'text-white border-b-2 border-vscode-accent bg-vscode-panel' : 'text-blue-600 border-b-2 border-blue-500 bg-white'
+                    : isDark ? 'text-vscode-textMuted hover:text-white' : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -1091,7 +1102,7 @@ const App: React.FC = () => {
                       ? 'bg-red-500 text-white'
                       : currentDiagnostics.some(d => d.severity === 'warning')
                         ? 'bg-yellow-500 text-black'
-                        : theme === 'dark' ? 'bg-vscode-hover text-vscode-text' : 'bg-gray-200 text-gray-600'
+                        : isDark ? 'bg-vscode-hover text-vscode-text' : 'bg-gray-200 text-gray-600'
                   }`}>
                     {currentDiagnostics.length}
                   </span>
@@ -1101,8 +1112,8 @@ const App: React.FC = () => {
                 onClick={() => { setBottomPanelTab('terminal'); setTerminalOpen(true); }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
                   bottomPanelTab === 'terminal' && terminalOpen
-                    ? theme === 'dark' ? 'text-white border-b-2 border-vscode-accent bg-vscode-panel' : 'text-blue-600 border-b-2 border-blue-500 bg-white'
-                    : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                    ? isDark ? 'text-white border-b-2 border-vscode-accent bg-vscode-panel' : 'text-blue-600 border-b-2 border-blue-500 bg-white'
+                    : isDark ? 'text-vscode-textMuted hover:text-white' : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -1113,7 +1124,7 @@ const App: React.FC = () => {
               <div className="flex-1" />
               <button
                 onClick={() => setTerminalMaximized(!terminalMaximized)}
-                className={`p-1.5 ${theme === 'dark' ? 'hover:bg-vscode-hover text-vscode-textMuted hover:text-white' : 'hover:bg-gray-200 text-gray-500 hover:text-gray-700'}`}
+                className={`p-1.5 ${isDark ? 'hover:bg-vscode-hover text-vscode-textMuted hover:text-white' : 'hover:bg-gray-200 text-gray-500 hover:text-gray-700'}`}
                 title={terminalMaximized ? 'Restore Panel' : 'Maximize Panel'}
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -1126,7 +1137,7 @@ const App: React.FC = () => {
               </button>
               <button
                 onClick={() => { setTerminalOpen(false); setProblemsPanelOpen(false); }}
-                className={`p-1.5 ${theme === 'dark' ? 'hover:bg-vscode-hover text-vscode-textMuted hover:text-white' : 'hover:bg-gray-200 text-gray-500 hover:text-gray-700'}`}
+                className={`p-1.5 ${isDark ? 'hover:bg-vscode-hover text-vscode-textMuted hover:text-white' : 'hover:bg-gray-200 text-gray-500 hover:text-gray-700'}`}
                 title="Close Panel"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -1155,7 +1166,7 @@ const App: React.FC = () => {
         )}
 
         {/* Status Bar */}
-        <footer className={`h-6 border-t flex items-center justify-between px-3 text-xs ${theme === 'dark' ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'}`}>
+        <footer className={`h-6 border-t flex items-center justify-between px-3 text-xs ${isDark ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'}`}>
           <div className="flex items-center gap-3">
             <button 
               onClick={() => { setTerminalOpen(!terminalOpen); setBottomPanelTab('terminal'); }}
@@ -1230,8 +1241,8 @@ const App: React.FC = () => {
               }}
               className={`w-10 h-10 flex items-center justify-center transition-all relative group
                 ${rightTab === item.id && rightSidebarOpen
-                  ? theme === 'dark' ? 'text-white border-r-2 border-r-vscode-accent' : 'text-blue-600 border-r-2 border-r-blue-600'
-                  : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
+                  ? isDark ? 'text-white border-r-2 border-r-vscode-accent' : 'text-blue-600 border-r-2 border-r-blue-600'
+                  : isDark ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
                 }`}
               title={item.tooltip}
             >
@@ -1243,7 +1254,7 @@ const App: React.FC = () => {
             </button>
           ))}
           
-          <div className={`w-8 h-px ${theme === 'dark' ? 'bg-vscode-border' : 'bg-gray-300'} my-2`} />
+          <div className={`w-8 h-px ${isDark ? 'bg-vscode-border' : 'bg-gray-300'} my-2`} />
           
           {/* Media buttons - Camera, Screenshot, Voice */}
           <button
@@ -1251,7 +1262,7 @@ const App: React.FC = () => {
             className={`w-10 h-10 flex items-center justify-center transition-all group relative ${
               cameraActive 
                 ? 'text-red-400' 
-                : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
+                : isDark ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
             }`}
             title={cameraActive ? "Stop Camera" : "Start Camera"}
           >
@@ -1266,7 +1277,7 @@ const App: React.FC = () => {
             className={`w-10 h-10 flex items-center justify-center transition-all group relative ${
               isCapturing 
                 ? 'text-blue-400 animate-pulse' 
-                : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
+                : isDark ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
             }`}
             title="Screenshot"
           >
@@ -1280,7 +1291,7 @@ const App: React.FC = () => {
             className={`w-10 h-10 flex items-center justify-center transition-all group relative ${
               voiceEnabled 
                 ? 'text-green-400'
-                : theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
+                : isDark ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'
             }`}
             title={voiceEnabled ? "Voice On - Click to Turn Off" : "Voice Off - Click to Turn On"}
           >
@@ -1308,13 +1319,13 @@ const App: React.FC = () => {
             />
             
             {/* Panel Header */}
-            <div className={`h-7 flex items-center justify-between px-3 border-b ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
-              <span className={`text-[10px] font-medium ${theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500'} uppercase tracking-wide`}>
+            <div className={`h-7 flex items-center justify-between px-3 border-b ${isDark ? 'border-vscode-border' : 'border-gray-200'}`}>
+              <span className={`text-[10px] font-medium ${isDark ? 'text-vscode-textMuted' : 'text-gray-500'} uppercase tracking-wide`}>
                 {rightSidebarItems.find(i => i.id === rightTab)?.label}
               </span>
               <button
                 onClick={() => setRightSidebarOpen(false)}
-                className={`p-0.5 ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
+                className={`p-0.5 ${isDark ? 'text-vscode-textMuted hover:text-white' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
                 title="Close Panel"
               >
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -1347,9 +1358,9 @@ const App: React.FC = () => {
       {/* Camera Preview Modal */}
       {cameraActive && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className={`${theme === 'dark' ? 'bg-vscode-sidebar border-vscode-border' : 'bg-white border-gray-200'} border rounded-lg p-4 max-w-2xl w-full mx-4 shadow-xl`}>
+          <div className={`${isDark ? 'bg-vscode-sidebar border-vscode-border' : 'bg-white border-gray-200'} border rounded-lg p-4 max-w-2xl w-full mx-4 shadow-xl`}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className={`text-lg font-medium ${theme === 'dark' ? 'text-vscode-text' : 'text-gray-800'}`}>Camera Feed</h3>
+              <h3 className={`text-lg font-medium ${isDark ? 'text-vscode-text' : 'text-gray-800'}`}>Camera Feed</h3>
               <button
                 onClick={handleCameraToggle}
                 className="p-2 text-gray-400 hover:text-white hover:bg-red-500/20 rounded transition-colors"
@@ -1359,7 +1370,7 @@ const App: React.FC = () => {
                 </svg>
               </button>
             </div>
-            <div className={`relative aspect-video ${theme === 'dark' ? 'bg-black border-vscode-border' : 'bg-gray-900 border-gray-300'} border rounded overflow-hidden`}>
+            <div className={`relative aspect-video ${isDark ? 'bg-black border-vscode-border' : 'bg-gray-900 border-gray-300'} border rounded overflow-hidden`}>
               <video
                 ref={videoRef}
                 autoPlay
@@ -1370,7 +1381,7 @@ const App: React.FC = () => {
             <div className="flex justify-center gap-3 mt-4">
               <button
                 onClick={capturePhoto}
-                className={`px-4 py-2 ${theme === 'dark' ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'} rounded font-medium transition-all hover:opacity-90 flex items-center gap-2`}
+                className={`px-4 py-2 ${isDark ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'} rounded font-medium transition-all hover:opacity-90 flex items-center gap-2`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -1403,12 +1414,12 @@ const App: React.FC = () => {
           
           {/* Palette */}
           <div 
-            className={`relative w-full max-w-xl mx-4 ${theme === 'dark' ? 'bg-vscode-sidebar border-vscode-border' : 'bg-white border-gray-200'} border rounded-lg shadow-2xl overflow-hidden`}
+            className={`relative w-full max-w-xl mx-4 ${isDark ? 'bg-vscode-sidebar border-vscode-border' : 'bg-white border-gray-200'} border rounded-lg shadow-2xl overflow-hidden`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Search Input */}
-            <div className={`flex items-center gap-2 px-3 py-2 border-b ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
-              <svg className={`w-4 h-4 ${theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <div className={`flex items-center gap-2 px-3 py-2 border-b ${isDark ? 'border-vscode-border' : 'border-gray-200'}`}>
+              <svg className={`w-4 h-4 ${isDark ? 'text-vscode-textMuted' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
               </svg>
               <input
@@ -1417,7 +1428,7 @@ const App: React.FC = () => {
                 value={commandSearch}
                 onChange={(e) => setCommandSearch(e.target.value)}
                 placeholder="Type a command or search..."
-                className={`flex-1 bg-transparent border-none outline-none text-sm ${theme === 'dark' ? 'text-white placeholder-vscode-textMuted' : 'text-gray-900 placeholder-gray-400'}`}
+                className={`flex-1 bg-transparent border-none outline-none text-sm ${isDark ? 'text-white placeholder-vscode-textMuted' : 'text-gray-900 placeholder-gray-400'}`}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && filteredCommands.length > 0) {
                     filteredCommands[0].action();
@@ -1425,13 +1436,13 @@ const App: React.FC = () => {
                   }
                 }}
               />
-              <kbd className={`px-1.5 py-0.5 text-[10px] rounded ${theme === 'dark' ? 'bg-vscode-bg text-vscode-textMuted' : 'bg-gray-100 text-gray-500'}`}>ESC</kbd>
+              <kbd className={`px-1.5 py-0.5 text-[10px] rounded ${isDark ? 'bg-vscode-bg text-vscode-textMuted' : 'bg-gray-100 text-gray-500'}`}>ESC</kbd>
             </div>
             
             {/* Command List */}
             <div className="max-h-80 overflow-y-auto">
               {filteredCommands.length === 0 ? (
-                <div className={`px-4 py-8 text-center ${theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500'}`}>
+                <div className={`px-4 py-8 text-center ${isDark ? 'text-vscode-textMuted' : 'text-gray-500'}`}>
                   <p className="text-sm">No commands found</p>
                 </div>
               ) : (
@@ -1444,13 +1455,13 @@ const App: React.FC = () => {
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 text-left transition-colors
                       ${index === 0 
-                        ? theme === 'dark' ? 'bg-vscode-selection' : 'bg-blue-50' 
-                        : theme === 'dark' ? 'hover:bg-vscode-hover' : 'hover:bg-gray-50'
+                        ? isDark ? 'bg-vscode-selection' : 'bg-blue-50' 
+                        : isDark ? 'hover:bg-vscode-hover' : 'hover:bg-gray-50'
                       }`}
                   >
-                    <span className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{cmd.label}</span>
+                    <span className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{cmd.label}</span>
                     {cmd.shortcut && (
-                      <kbd className={`px-1.5 py-0.5 text-[10px] rounded ${theme === 'dark' ? 'bg-vscode-bg text-vscode-textMuted' : 'bg-gray-100 text-gray-500'}`}>
+                      <kbd className={`px-1.5 py-0.5 text-[10px] rounded ${isDark ? 'bg-vscode-bg text-vscode-textMuted' : 'bg-gray-100 text-gray-500'}`}>
                         {cmd.shortcut}
                       </kbd>
                     )}
@@ -1460,7 +1471,7 @@ const App: React.FC = () => {
             </div>
             
             {/* Footer hint */}
-            <div className={`px-3 py-2 border-t text-[10px] ${theme === 'dark' ? 'border-vscode-border text-vscode-textMuted bg-vscode-bg/50' : 'border-gray-200 text-gray-500 bg-gray-50'}`}>
+            <div className={`px-3 py-2 border-t text-[10px] ${isDark ? 'border-vscode-border text-vscode-textMuted bg-vscode-bg/50' : 'border-gray-200 text-gray-500 bg-gray-50'}`}>
               <span>↑↓ to navigate • Enter to select • Esc to close</span>
             </div>
           </div>
