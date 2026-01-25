@@ -67,8 +67,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     terminals.push(terminalId);
     this.clientTerminals.set(client.id, terminals);
 
-    // Set up data listener
+    // Set up data listener - emit as both 'terminal:output' and 'terminal:data' for compatibility
     this.terminalService.onData(terminalId, (output) => {
+      client.emit('terminal:output', { terminalId, data: output });
       client.emit('terminal:data', { terminalId, data: output });
     });
 
@@ -85,9 +86,12 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('terminal:input')
   handleTerminalInput(
-    @MessageBody() data: { terminalId: string; data: string },
+    @MessageBody() data: { terminalId: string; input?: string; data?: string },
   ) {
-    this.terminalService.write(data.terminalId, data.data);
+    const input = data.input || data.data;
+    if (input) {
+      this.terminalService.write(data.terminalId, input);
+    }
   }
 
   @SubscribeMessage('terminal:resize')
