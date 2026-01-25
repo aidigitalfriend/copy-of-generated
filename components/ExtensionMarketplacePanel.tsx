@@ -1,9 +1,12 @@
 /**
  * Extension Marketplace Panel - Full-featured extension management UI
+ * Now with realtime extension integration
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
+import { useExtensions, ExtensionInfo, Notification, MARKETPLACE_EXTENSIONS } from '../services/useExtensions';
+import { extensionHost, ExtensionStatus } from '../services/extensionHost';
 
 // Types
 interface MarketplaceExtension {
@@ -23,24 +26,21 @@ interface MarketplaceExtension {
 
 type ExtensionCategory = 'all' | 'AI' | 'Formatters' | 'Linters' | 'Languages' | 'Themes' | 'Tools' | 'SCM' | 'API' | 'Visual' | 'Other';
 
-// Built-in extensions data
-const EXTENSIONS: MarketplaceExtension[] = [
-  { id: 'prettier', name: 'Prettier - Code Formatter', description: 'Code formatter using Prettier with support for JavaScript, TypeScript, CSS, HTML, JSON', version: '10.4.0', author: 'Prettier', icon: '✨', category: 'Formatters', downloads: 45000000, rating: 4.8, verified: true, tags: ['formatter', 'beautify'], permissions: ['files:write'] },
-  { id: 'eslint', name: 'ESLint', description: 'Integrates ESLint JavaScript linting into VS Code', version: '3.0.5', author: 'Microsoft', icon: '🔍', category: 'Linters', downloads: 32000000, rating: 4.7, verified: true, tags: ['linter', 'javascript'], permissions: ['files:read'] },
-  { id: 'git-lens', name: 'GitLens — Git supercharged', description: 'Supercharge Git with blame annotations, code lens, and more', version: '15.0.4', author: 'GitKraken', icon: '🔀', category: 'SCM', downloads: 28000000, rating: 4.9, verified: true, tags: ['git', 'blame'], permissions: ['git:read'] },
-  { id: 'auto-rename-tag', name: 'Auto Rename Tag', description: 'Automatically rename paired HTML/XML tags', version: '0.1.10', author: 'Jun Han', icon: '🏷️', category: 'Languages', downloads: 15000000, rating: 4.5, verified: true, tags: ['html', 'xml'], permissions: ['editor:edit'] },
-  { id: 'bracket-pair', name: 'Bracket Pair Colorizer', description: 'Colorizes matching brackets for better code readability', version: '2.0.2', author: 'CoenraadS', icon: '🌈', category: 'Visual', downloads: 12000000, rating: 4.6, verified: true, tags: ['brackets', 'colors'], permissions: ['editor:decorate'] },
-  { id: 'live-server', name: 'Live Server', description: 'Launch a development local server with live reload', version: '5.7.9', author: 'Ritwick Dey', icon: '📡', category: 'Tools', downloads: 42000000, rating: 4.7, verified: true, tags: ['server', 'live-reload'], permissions: ['terminal:execute'] },
-  { id: 'path-intellisense', name: 'Path Intellisense', description: 'Autocompletes filenames in your code', version: '2.8.5', author: 'Christian Kohler', icon: '📁', category: 'Languages', downloads: 11000000, rating: 4.4, verified: true, tags: ['autocomplete', 'path'], permissions: ['files:list'] },
-  { id: 'material-icons', name: 'Material Icon Theme', description: 'Material Design icons for your files and folders', version: '5.0.0', author: 'Philipp Kief', icon: '🎨', category: 'Themes', downloads: 20000000, rating: 4.9, verified: true, tags: ['icons', 'theme'], permissions: ['ui:icons'] },
-  { id: 'github-copilot', name: 'GitHub Copilot', description: 'AI pair programmer that suggests code completions', version: '1.150.0', author: 'GitHub', icon: '🤖', category: 'AI', downloads: 15000000, rating: 4.8, verified: true, tags: ['ai', 'copilot'], permissions: ['editor:complete'] },
-  { id: 'tailwind', name: 'Tailwind CSS IntelliSense', description: 'Intelligent Tailwind CSS tooling for VS Code', version: '0.12.0', author: 'Tailwind Labs', icon: '💨', category: 'Languages', downloads: 9000000, rating: 4.8, verified: true, tags: ['tailwind', 'css'], permissions: ['editor:complete'] },
-  { id: 'docker', name: 'Docker', description: 'Makes it easy to build, manage, and deploy containerized applications', version: '1.28.0', author: 'Microsoft', icon: '🐳', category: 'Tools', downloads: 25000000, rating: 4.6, verified: true, tags: ['docker', 'containers'], permissions: ['terminal:execute'] },
-  { id: 'python', name: 'Python', description: 'Rich Python language support with IntelliSense, linting, debugging', version: '2024.2.1', author: 'Microsoft', icon: '🐍', category: 'Languages', downloads: 95000000, rating: 4.7, verified: true, tags: ['python', 'intellisense'], permissions: ['editor:complete'] },
-  { id: 'thunder-client', name: 'Thunder Client', description: 'Lightweight REST API Client for VS Code', version: '2.17.0', author: 'Thunder Client', icon: '⚡', category: 'API', downloads: 7000000, rating: 4.9, verified: true, tags: ['api', 'rest'], permissions: ['network:fetch'] },
-  { id: 'spell-checker', name: 'Code Spell Checker', description: 'Spelling checker for source code', version: '3.0.1', author: 'Street Side Software', icon: '📝', category: 'Linters', downloads: 8000000, rating: 4.5, verified: true, tags: ['spell', 'checker'], permissions: ['editor:diagnostics'] },
-  { id: 'import-cost', name: 'Import Cost', description: 'Display import/require package size inline', version: '3.3.0', author: 'Wix', icon: '📦', category: 'Tools', downloads: 4000000, rating: 4.3, verified: true, tags: ['import', 'bundle'], permissions: ['editor:decorate'] }
-];
+// Convert MARKETPLACE_EXTENSIONS to MarketplaceExtension format
+const EXTENSIONS: MarketplaceExtension[] = MARKETPLACE_EXTENSIONS.map(ext => ({
+  id: ext.id,
+  name: ext.name,
+  description: ext.description,
+  version: ext.version,
+  author: ext.author,
+  icon: ext.icon,
+  category: ext.category,
+  downloads: ext.downloads,
+  rating: ext.rating,
+  verified: ext.verified,
+  tags: ext.tags,
+  permissions: ext.permissions
+}));
 
 // Format downloads
 const formatDownloads = (count: number): string => {
@@ -278,13 +278,28 @@ const ExtensionDetailsModal: React.FC<{
 // Main Panel
 export const ExtensionMarketplacePanel: React.FC = () => {
   const { theme } = useStore();
+  const {
+    extensions: installedExtensions,
+    notifications,
+    installExtension,
+    uninstallExtension,
+    toggleExtension,
+    reloadExtension,
+    executeCommand,
+    dismissNotification,
+    clearNotifications
+  } = useExtensions();
+  
   const [activeTab, setActiveTab] = useState<'marketplace' | 'installed' | 'recommendations'>('marketplace');
   const [selectedCategory, setSelectedCategory] = useState<ExtensionCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedExtension, setSelectedExtension] = useState<MarketplaceExtension | null>(null);
-  const [installedIds, setInstalledIds] = useState<Set<string>>(new Set(['prettier', 'eslint']));
-  const [enabledIds, setEnabledIds] = useState<Set<string>>(new Set(['prettier', 'eslint']));
   const [sortBy, setSortBy] = useState<'downloads' | 'rating' | 'name'>('downloads');
+  const [installing, setInstalling] = useState<Set<string>>(new Set());
+  
+  // Convert installed extensions to sets for quick lookup
+  const installedIds = new Set(installedExtensions.map(e => e.id));
+  const enabledIds = new Set(installedExtensions.filter(e => e.enabled).map(e => e.id));
   
   const categories: ExtensionCategory[] = ['all', 'AI', 'Formatters', 'Linters', 'Languages', 'Themes', 'Tools', 'SCM', 'API', 'Visual', 'Other'];
   
@@ -308,26 +323,54 @@ export const ExtensionMarketplacePanel: React.FC = () => {
       ? EXTENSIONS.filter(e => ['github-copilot', 'tailwind', 'git-lens', 'docker'].includes(e.id) && !installedIds.has(e.id))
       : filteredExtensions;
 
-  const install = (id: string) => {
-    setInstalledIds(prev => new Set([...prev, id]));
-    setEnabledIds(prev => new Set([...prev, id]));
+  // Real install/uninstall/toggle with extension host
+  const install = async (id: string) => {
+    setInstalling(prev => new Set([...prev, id]));
+    const ext = MARKETPLACE_EXTENSIONS.find(e => e.id === id);
+    if (ext) {
+      await installExtension(ext);
+    }
+    setInstalling(prev => { const s = new Set(prev); s.delete(id); return s; });
   };
   
-  const uninstall = (id: string) => {
-    setInstalledIds(prev => { const s = new Set(prev); s.delete(id); return s; });
-    setEnabledIds(prev => { const s = new Set(prev); s.delete(id); return s; });
+  const uninstall = async (id: string) => {
+    await uninstallExtension(id);
   };
   
-  const toggle = (id: string) => {
-    setEnabledIds(prev => {
-      const s = new Set(prev);
-      if (s.has(id)) s.delete(id); else s.add(id);
-      return s;
-    });
+  const toggle = async (id: string) => {
+    await toggleExtension(id);
+  };
+  
+  // Get extension status from host
+  const getExtensionStatus = (id: string): ExtensionStatus | null => {
+    return extensionHost.getStatus(id);
   };
 
   return (
     <div className="flex flex-col h-full bg-[#1e1e1e] text-white">
+      {/* Notifications */}
+      {notifications.length > 0 && (
+        <div className="p-2 bg-[#252526] border-b border-[#3c3c3c] space-y-1">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[10px] text-gray-500">Notifications</span>
+            <button onClick={clearNotifications} className="text-[10px] text-gray-500 hover:text-white">Clear all</button>
+          </div>
+          {notifications.slice(0, 3).map(notif => (
+            <div 
+              key={notif.id} 
+              className={`flex items-center gap-2 p-2 rounded text-xs ${
+                notif.type === 'error' ? 'bg-red-500/20 text-red-300' :
+                notif.type === 'warning' ? 'bg-yellow-500/20 text-yellow-300' :
+                'bg-blue-500/20 text-blue-300'
+              }`}
+            >
+              <span className="flex-1">[{notif.extensionId}] {notif.message}</span>
+              <button onClick={() => dismissNotification(notif.id)} className="text-white/50 hover:text-white">×</button>
+            </div>
+          ))}
+        </div>
+      )}
+      
       {/* Header */}
       <div className="p-4 border-b border-[#3c3c3c]">
         <div className="flex items-center justify-between mb-3">
@@ -417,10 +460,17 @@ export const ExtensionMarketplacePanel: React.FC = () => {
                           <button onClick={() => toggle(ext.id)} className={`px-2 py-1 text-[10px] rounded ${enabledIds.has(ext.id) ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}>
                             {enabledIds.has(ext.id) ? 'Enabled' : 'Disabled'}
                           </button>
+                          <button onClick={() => reloadExtension(ext.id)} className="px-2 py-1 text-[10px] bg-blue-500/20 text-blue-400 rounded" title="Reload extension">↻</button>
                           <button onClick={() => uninstall(ext.id)} className="px-2 py-1 text-[10px] bg-red-500/20 text-red-400 rounded">Uninstall</button>
                         </>
                       ) : (
-                        <button onClick={() => install(ext.id)} className="px-3 py-1 text-[10px] bg-[#007acc] text-white rounded">Install</button>
+                        <button 
+                          onClick={() => install(ext.id)} 
+                          disabled={installing.has(ext.id)}
+                          className="px-3 py-1 text-[10px] bg-[#007acc] text-white rounded disabled:opacity-50"
+                        >
+                          {installing.has(ext.id) ? '...' : 'Install'}
+                        </button>
                       )}
                     </div>
                   </div>

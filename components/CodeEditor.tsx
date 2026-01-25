@@ -11,6 +11,7 @@
  * - Code folding
  * - Find & Replace with regex
  * - Go to line/symbol
+ * - Extension system integration
  */
 
 import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react';
@@ -27,6 +28,8 @@ import {
   SignatureHelp,
   getLanguageFromFilename 
 } from '../services/codeIntelligence';
+import { extensionHost, connectEditorToExtensions } from '../services/extensionHost';
+import { extensionEvents } from '../services/extensions';
 
 interface CodeEditorProps {
   className?: string;
@@ -348,6 +351,71 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF, () => {
       editor.trigger('keyboard', 'editor.action.formatDocument', null);
+    });
+
+    // ============================================================================
+    // Extension System Integration
+    // ============================================================================
+    
+    // Connect editor to extension host for realtime extension events
+    connectEditorToExtensions(editor, monaco);
+    
+    // Emit editor.textChanged events for extensions
+    editor.onDidChangeModelContent((e) => {
+      const model = editor.getModel();
+      if (model) {
+        extensionEvents.emit('editor:textChanged', {
+          content: model.getValue(),
+          changes: e.changes.map(c => ({
+            range: {
+              startLine: c.range.startLineNumber,
+              startColumn: c.range.startColumn,
+              endLine: c.range.endLineNumber,
+              endColumn: c.range.endColumn
+            },
+            text: c.text
+          })),
+          languageId: model.getLanguageId(),
+          uri: model.uri.toString()
+        });
+      }
+    });
+    
+    // Emit selection change events for extensions
+    editor.onDidChangeCursorSelection((e) => {
+      extensionEvents.emit('editor:selectionChanged', {
+        selection: {
+          startLine: e.selection.startLineNumber,
+          startColumn: e.selection.startColumn,
+          endLine: e.selection.endLineNumber,
+          endColumn: e.selection.endColumn
+        },
+        secondarySelections: e.secondarySelections.map(s => ({
+          startLine: s.startLineNumber,
+          startColumn: s.startColumn,
+          endLine: s.endLineNumber,
+          endColumn: s.endColumn
+        }))
+      });
+    });
+    
+    // Emit focus events for extensions
+    editor.onDidFocusEditorText(() => {
+      extensionEvents.emit('editor:focus', { focused: true });
+    });
+    
+    editor.onDidBlurEditorText(() => {
+      extensionEvents.emit('editor:focus', { focused: false });
+    });
+    
+    // Emit scroll events for extensions (for features like minimap sync)
+    editor.onDidScrollChange((e) => {
+      extensionEvents.emit('editor:scroll', {
+        scrollTop: e.scrollTop,
+        scrollLeft: e.scrollLeft,
+        scrollWidth: e.scrollWidth,
+        scrollHeight: e.scrollHeight
+      });
     });
 
     // ============================================================================
