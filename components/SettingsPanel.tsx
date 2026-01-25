@@ -91,9 +91,14 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
   // Select/dropdown specific styling with solid background
   const selectBg = isDarkTheme
     ? isHighContrast
-      ? 'bg-black border-2 border-white text-white rounded [&>option]:bg-black [&>option]:text-white'
-      : 'bg-vscode-bg border border-vscode-border text-white rounded [&>option]:bg-vscode-sidebar [&>option]:text-white'
-    : 'bg-white border border-gray-400 text-gray-900 rounded [&>option]:bg-white [&>option]:text-gray-900';
+      ? 'bg-black border-2 border-white text-white rounded'
+      : 'bg-[#1e1e1e] border border-[#3c3c3c] text-white rounded'
+    : 'bg-white border border-gray-400 text-gray-900 rounded';
+  
+  // Style object for select options (native selects need inline styles)
+  const selectStyle = isDarkTheme
+    ? { backgroundColor: '#1e1e1e', color: '#ffffff' }
+    : { backgroundColor: '#ffffff', color: '#111827' };
 
   const currentProvider = AI_PROVIDERS[aiConfig.provider as AIProviderKey] || AI_PROVIDERS.openai;
   
@@ -170,12 +175,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                     value={editorSettings.iconTheme || 'material'}
                     onChange={(e) => setEditorSettings({ iconTheme: e.target.value as any })}
                     className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                    style={selectStyle}
                   >
-                    <option value="default">📁 Default</option>
-                    <option value="material">🎨 Material Icons</option>
-                    <option value="seti">📂 Seti</option>
-                    <option value="minimal">▫️ Minimal</option>
-                    <option value="vscode">💙 VS Code</option>
+                    <option style={selectStyle} value="default">📁 Default</option>
+                    <option style={selectStyle} value="material">🎨 Material Icons</option>
+                    <option style={selectStyle} value="seti">📂 Seti</option>
+                    <option style={selectStyle} value="minimal">▫️ Minimal</option>
+                    <option style={selectStyle} value="vscode">💙 VS Code</option>
                   </select>
                 </div>
               </div>
@@ -190,17 +196,18 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                     value={editorSettings.theme}
                     onChange={(e) => setEditorSettings({ theme: e.target.value as any })}
                     className={`${selectBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                    style={selectStyle}
                   >
-                    <option value="vs-dark">VS Dark</option>
-                    <option value="vs-light">VS Light</option>
-                    <option value="hc-black">High Contrast Black</option>
-                    <option value="hc-light">High Contrast Light</option>
-                    <option value="monokai">Monokai</option>
-                    <option value="dracula">Dracula</option>
-                    <option value="github-dark">GitHub Dark</option>
-                    <option value="one-dark-pro">One Dark Pro</option>
-                    <option value="nord">Nord</option>
-                    <option value="solarized-dark">Solarized Dark</option>
+                    <option style={selectStyle} value="vs-dark">VS Dark</option>
+                    <option style={selectStyle} value="vs-light">VS Light</option>
+                    <option style={selectStyle} value="hc-black">High Contrast Black</option>
+                    <option style={selectStyle} value="hc-light">High Contrast Light</option>
+                    <option style={selectStyle} value="monokai">Monokai</option>
+                    <option style={selectStyle} value="dracula">Dracula</option>
+                    <option style={selectStyle} value="github-dark">GitHub Dark</option>
+                    <option style={selectStyle} value="one-dark-pro">One Dark Pro</option>
+                    <option style={selectStyle} value="nord">Nord</option>
+                    <option style={selectStyle} value="solarized-dark">Solarized Dark</option>
                   </select>
                 </div>
               </div>
