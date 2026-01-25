@@ -986,10 +986,10 @@ const App: React.FC = () => {
               {leftTab === 'templates' && <TemplateGallery />}
               {leftTab === 'prebuilt' && (
                 <PrebuiltTemplatesGallery 
-                  onSelectTemplate={(template: ProjectTemplate, templateFiles: FileNode[]) => {
+                  onSelectTemplate={async (template: ProjectTemplate, templateFiles: FileNode[]) => {
                     // Create project with template files
                     const { createProject, setSidebarTab, setFiles, openFile } = useStore.getState();
-                    createProject(template.name, template.id, templateFiles);
+                    await createProject(template.name, template.id, templateFiles);
                     setSidebarTab('files');
                     setLeftTab('files');
                     

@@ -119,7 +119,7 @@ export const WorkspaceManager: React.FC<WorkspaceManagerProps> = ({ isOpen, onCl
   }, [deleteProject]);
 
   // Create new project
-  const handleCreateProject = useCallback(() => {
+  const handleCreateProject = useCallback(async () => {
     if (!newProjectName.trim()) return;
     
     const defaultFiles: FileNode[] = [
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     ];
 
-    createProject(newProjectName.trim(), selectedTemplate, defaultFiles);
+    await createProject(newProjectName.trim(), selectedTemplate, defaultFiles);
     setNewProjectName('');
     setActiveTab('recent');
   }, [newProjectName, selectedTemplate, createProject]);

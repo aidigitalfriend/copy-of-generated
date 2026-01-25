@@ -10,7 +10,7 @@ interface TemplateGalleryProps {
 export const TemplateGallery: React.FC<TemplateGalleryProps> = ({ onTemplateSelect }) => {
   const { createProject, setSidebarTab, theme, openFile } = useStore();
 
-  const handleSelectTemplate = (template: ProjectTemplate) => {
+  const handleSelectTemplate = async (template: ProjectTemplate) => {
     // Convert template files to FileNode structure
     const files: FileNode[] = [];
     
@@ -93,7 +93,7 @@ export const TemplateGallery: React.FC<TemplateGalleryProps> = ({ onTemplateSele
       }
     });
 
-    createProject(template.name, template.id, rootFiles);
+    await createProject(template.name, template.id, rootFiles);
     setSidebarTab('files');
     
     // Open the main file automatically
@@ -172,8 +172,8 @@ export const TemplateGallery: React.FC<TemplateGalleryProps> = ({ onTemplateSele
         <h4 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-1`}>Start from Scratch</h4>
         <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'} mb-3`}>Create an empty project or describe what you want to build</p>
         <button
-          onClick={() => {
-            createProject('My Project', 'custom', []);
+          onClick={async () => {
+            await createProject('My Project', 'custom', []);
             setSidebarTab('files');
           }}
           className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors"

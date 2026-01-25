@@ -367,7 +367,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   };
   
   // Save current project to history
-  const saveProjectToHistory = useCallback((prompt: string) => {
+  const saveProjectToHistory = useCallback(async (prompt: string) => {
     // Get current files from store
     const currentFiles = useStore.getState().files;
     if (currentFiles.length === 0) return;
@@ -376,7 +376,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
     const projectName = prompt.slice(0, 50).trim() || 'AI Generated Project';
     
     // Create project with current files
-    createProject(projectName, 'ai-generated', currentFiles);
+    await createProject(projectName, 'ai-generated', currentFiles);
     
     console.log(`[AI] Project saved to history: ${projectName}`);
   }, [createProject]);

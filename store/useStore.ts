@@ -15,6 +15,7 @@ import {
   Workspace,
   RecentProject
 } from '../types';
+import { filesApiService } from '../services/filesApi';
 
 interface StoreState {
   // Project
@@ -56,7 +57,7 @@ interface StoreState {
   
   // Actions - Project
   setCurrentProject: (project: Project | null) => void;
-  createProject: (name: string, template: string, files: FileNode[]) => void;
+  createProject: (name: string, template: string, files: FileNode[]) => Promise<void>;
   deleteProject: (projectId: string) => void;
   renameProject: (projectId: string, newName: string) => void;
   
@@ -1157,15 +1158,46 @@ export const useStore = create<StoreState>()(
         }
       },
       
-      createProject: (name, template, files) => {
+      createProject: async (name, template, files) => {
+        // First try to create on backend
+        let backendProject: any = null;
+        try {
+          backendProject = await filesApiService.createProject({
+            name,
+            description: '',
+            template,
+          });
+          console.log('[Store] Project created on backend:', backendProject.id);
+          
+          // Sync files to backend
+          for (const file of files) {
+            if (file.type === 'file') {
+              try {
+                await filesApiService.createFile({
+                  projectId: backendProject.id,
+                  path: file.path.startsWith('/') ? file.path : '/' + file.path,
+                  name: file.name,
+                  content: file.content || '',
+                  type: 'FILE',
+                });
+              } catch (e) {
+                console.warn('[Store] Failed to sync file:', file.path, e);
+              }
+            }
+          }
+        } catch (error) {
+          console.warn('[Store] Backend sync failed, using local project:', error);
+        }
+        
         const project: Project = {
-          id: crypto.randomUUID(),
+          id: backendProject?.id || crypto.randomUUID(),
           name,
           description: '',
           template,
           files,
           createdAt: Date.now(),
           updatedAt: Date.now(),
+          path: backendProject?.path, // Server-side path for terminal
         };
         set((state) => ({
           projects: [...state.projects, project],
