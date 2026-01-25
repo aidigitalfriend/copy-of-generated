@@ -12,6 +12,7 @@
  * - Find & Replace with regex
  * - Go to line/symbol
  * - Extension system integration
+ * - AI Copilot realtime suggestions
  */
 
 import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react';
@@ -30,6 +31,8 @@ import {
 } from '../services/codeIntelligence';
 import { extensionHost, connectEditorToExtensions } from '../services/extensionHost';
 import { extensionEvents } from '../services/extensions';
+import { aiCopilot, connectCopilotToEditor, injectCopilotStyles } from '../services/aiCopilotExtension';
+import { CopilotStatus } from './CopilotStatus';
 
 interface CodeEditorProps {
   className?: string;
@@ -359,6 +362,16 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     
     // Connect editor to extension host for realtime extension events
     connectEditorToExtensions(editor, monaco);
+    
+    // ============================================================================
+    // AI Copilot Integration (Realtime Suggestions)
+    // ============================================================================
+    
+    // Inject copilot CSS styles
+    injectCopilotStyles();
+    
+    // Connect AI Copilot to editor
+    connectCopilotToEditor(editor, monaco);
     
     // Emit editor.textChanged events for extensions
     editor.onDidChangeModelContent((e) => {
@@ -1089,6 +1102,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
                 </svg>
                 LSP
               </span>
+              <CopilotStatus />
             </>
           )}
         </div>
