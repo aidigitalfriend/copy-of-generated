@@ -42,7 +42,7 @@ export interface Notification {
 }
 
 // Default marketplace extensions with executable code
-const MARKETPLACE_EXTENSIONS: ExtensionInfo[] = [
+export const MARKETPLACE_EXTENSIONS: ExtensionInfo[] = [
   {
     id: 'prettier',
     name: 'Prettier - Code Formatter',
