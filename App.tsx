@@ -731,14 +731,12 @@ const App: React.FC = () => {
     }
   }, [commandPaletteOpen]);
 
-  // Sync theme on mount
+  // Sync theme on mount and when theme changes
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
+    // Re-apply the theme when the component mounts or theme changes
+    // This ensures CSS variables and classes are properly set
+    setTheme(theme);
+  }, [theme, setTheme]);
 
   const handleFileSelect = (node: FileNode) => {
     if (node.type === 'file') {
