@@ -1424,97 +1424,194 @@ export const useStore = create<StoreState>()(
         // Remove all theme classes first
         root.classList.remove('dark', 'high-contrast', 'theme-github-dark', 'theme-dracula', 'theme-nord', 'theme-monokai', 'theme-solarized-dark', 'theme-one-dark');
         
+        // Helper function to set all CSS variables at once
+        const setThemeVars = (vars: {
+          bg: string;
+          sidebar: string;
+          panel: string;
+          border: string;
+          accent: string;
+          accentHover: string;
+          text: string;
+          textMuted: string;
+          selection: string;
+          hover: string;
+          active: string;
+        }) => {
+          root.style.setProperty('--vscode-bg', vars.bg);
+          root.style.setProperty('--vscode-sidebar', vars.sidebar);
+          root.style.setProperty('--vscode-panel', vars.panel);
+          root.style.setProperty('--vscode-border', vars.border);
+          root.style.setProperty('--vscode-accent', vars.accent);
+          root.style.setProperty('--vscode-accent-hover', vars.accentHover);
+          root.style.setProperty('--vscode-text', vars.text);
+          root.style.setProperty('--vscode-text-muted', vars.textMuted);
+          root.style.setProperty('--vscode-selection', vars.selection);
+          root.style.setProperty('--vscode-hover', vars.hover);
+          root.style.setProperty('--vscode-active', vars.active);
+        };
+        
         // Apply theme-specific classes and CSS variables
         switch (theme) {
           case 'dark':
             root.classList.add('dark');
-            root.style.setProperty('--bg-primary', '#1e1e1e');
-            root.style.setProperty('--bg-secondary', '#252526');
-            root.style.setProperty('--bg-sidebar', '#252526');
-            root.style.setProperty('--text-primary', '#cccccc');
-            root.style.setProperty('--text-muted', '#808080');
-            root.style.setProperty('--accent', '#0078d4');
-            root.style.setProperty('--border', '#3c3c3c');
+            setThemeVars({
+              bg: '#1e1e1e',
+              sidebar: '#252526',
+              panel: '#1e1e1e',
+              border: '#3c3c3c',
+              accent: '#0078d4',
+              accentHover: '#1c8ae0',
+              text: '#cccccc',
+              textMuted: '#858585',
+              selection: '#264f78',
+              hover: '#2a2d2e',
+              active: '#37373d',
+            });
             break;
           case 'light':
-            root.style.setProperty('--bg-primary', '#ffffff');
-            root.style.setProperty('--bg-secondary', '#f3f3f3');
-            root.style.setProperty('--bg-sidebar', '#f3f3f3');
-            root.style.setProperty('--text-primary', '#333333');
-            root.style.setProperty('--text-muted', '#666666');
-            root.style.setProperty('--accent', '#0078d4');
-            root.style.setProperty('--border', '#e0e0e0');
+            setThemeVars({
+              bg: '#ffffff',
+              sidebar: '#f3f3f3',
+              panel: '#f3f3f3',
+              border: '#e0e0e0',
+              accent: '#0078d4',
+              accentHover: '#106ebe',
+              text: '#333333',
+              textMuted: '#666666',
+              selection: '#add6ff',
+              hover: '#e8e8e8',
+              active: '#dddddd',
+            });
             break;
           case 'high-contrast':
             root.classList.add('dark', 'high-contrast');
-            root.style.setProperty('--bg-primary', '#000000');
-            root.style.setProperty('--bg-secondary', '#000000');
-            root.style.setProperty('--bg-sidebar', '#000000');
-            root.style.setProperty('--text-primary', '#ffffff');
-            root.style.setProperty('--text-muted', '#ffffff');
-            root.style.setProperty('--accent', '#ffff00');
-            root.style.setProperty('--border', '#ffffff');
+            setThemeVars({
+              bg: '#000000',
+              sidebar: '#000000',
+              panel: '#000000',
+              border: '#ffffff',
+              accent: '#ffff00',
+              accentHover: '#ffff00',
+              text: '#ffffff',
+              textMuted: '#ffffff',
+              selection: '#ffff00',
+              hover: '#333333',
+              active: '#444444',
+            });
             break;
           case 'github-dark':
             root.classList.add('dark', 'theme-github-dark');
-            root.style.setProperty('--bg-primary', '#0d1117');
-            root.style.setProperty('--bg-secondary', '#161b22');
-            root.style.setProperty('--bg-sidebar', '#161b22');
-            root.style.setProperty('--text-primary', '#c9d1d9');
-            root.style.setProperty('--text-muted', '#8b949e');
-            root.style.setProperty('--accent', '#58a6ff');
-            root.style.setProperty('--border', '#30363d');
+            setThemeVars({
+              bg: '#0d1117',
+              sidebar: '#161b22',
+              panel: '#161b22',
+              border: '#30363d',
+              accent: '#58a6ff',
+              accentHover: '#79c0ff',
+              text: '#c9d1d9',
+              textMuted: '#8b949e',
+              selection: '#388bfd33',
+              hover: '#21262d',
+              active: '#30363d',
+            });
             break;
           case 'dracula':
             root.classList.add('dark', 'theme-dracula');
-            root.style.setProperty('--bg-primary', '#282a36');
-            root.style.setProperty('--bg-secondary', '#21222c');
-            root.style.setProperty('--bg-sidebar', '#21222c');
-            root.style.setProperty('--text-primary', '#f8f8f2');
-            root.style.setProperty('--text-muted', '#6272a4');
-            root.style.setProperty('--accent', '#bd93f9');
-            root.style.setProperty('--border', '#44475a');
+            setThemeVars({
+              bg: '#282a36',
+              sidebar: '#21222c',
+              panel: '#21222c',
+              border: '#44475a',
+              accent: '#bd93f9',
+              accentHover: '#caa9fa',
+              text: '#f8f8f2',
+              textMuted: '#6272a4',
+              selection: '#44475a',
+              hover: '#343746',
+              active: '#44475a',
+            });
             break;
           case 'nord':
             root.classList.add('dark', 'theme-nord');
-            root.style.setProperty('--bg-primary', '#2e3440');
-            root.style.setProperty('--bg-secondary', '#3b4252');
-            root.style.setProperty('--bg-sidebar', '#3b4252');
-            root.style.setProperty('--text-primary', '#eceff4');
-            root.style.setProperty('--text-muted', '#d8dee9');
-            root.style.setProperty('--accent', '#88c0d0');
-            root.style.setProperty('--border', '#4c566a');
+            setThemeVars({
+              bg: '#2e3440',
+              sidebar: '#3b4252',
+              panel: '#3b4252',
+              border: '#4c566a',
+              accent: '#88c0d0',
+              accentHover: '#8fbcbb',
+              text: '#eceff4',
+              textMuted: '#d8dee9',
+              selection: '#434c5e',
+              hover: '#434c5e',
+              active: '#4c566a',
+            });
             break;
           case 'monokai':
             root.classList.add('dark', 'theme-monokai');
-            root.style.setProperty('--bg-primary', '#272822');
-            root.style.setProperty('--bg-secondary', '#1e1f1c');
-            root.style.setProperty('--bg-sidebar', '#1e1f1c');
-            root.style.setProperty('--text-primary', '#f8f8f2');
-            root.style.setProperty('--text-muted', '#75715e');
-            root.style.setProperty('--accent', '#a6e22e');
-            root.style.setProperty('--border', '#49483e');
+            setThemeVars({
+              bg: '#272822',
+              sidebar: '#1e1f1c',
+              panel: '#1e1f1c',
+              border: '#49483e',
+              accent: '#a6e22e',
+              accentHover: '#b8f340',
+              text: '#f8f8f2',
+              textMuted: '#75715e',
+              selection: '#49483e',
+              hover: '#3e3d32',
+              active: '#49483e',
+            });
             break;
           case 'solarized-dark':
             root.classList.add('dark', 'theme-solarized-dark');
-            root.style.setProperty('--bg-primary', '#002b36');
-            root.style.setProperty('--bg-secondary', '#073642');
-            root.style.setProperty('--bg-sidebar', '#073642');
-            root.style.setProperty('--text-primary', '#839496');
-            root.style.setProperty('--text-muted', '#657b83');
-            root.style.setProperty('--accent', '#268bd2');
-            root.style.setProperty('--border', '#094959');
+            setThemeVars({
+              bg: '#002b36',
+              sidebar: '#073642',
+              panel: '#073642',
+              border: '#094959',
+              accent: '#268bd2',
+              accentHover: '#2aa198',
+              text: '#839496',
+              textMuted: '#657b83',
+              selection: '#073642',
+              hover: '#073642',
+              active: '#094959',
+            });
             break;
           case 'one-dark':
             root.classList.add('dark', 'theme-one-dark');
-            root.style.setProperty('--bg-primary', '#282c34');
-            root.style.setProperty('--bg-secondary', '#21252b');
-            root.style.setProperty('--bg-sidebar', '#21252b');
-            root.style.setProperty('--text-primary', '#abb2bf');
-            root.style.setProperty('--text-muted', '#5c6370');
-            root.style.setProperty('--accent', '#61afef');
-            root.style.setProperty('--border', '#3e4451');
+            setThemeVars({
+              bg: '#282c34',
+              sidebar: '#21252b',
+              panel: '#21252b',
+              border: '#3e4451',
+              accent: '#61afef',
+              accentHover: '#528bff',
+              text: '#abb2bf',
+              textMuted: '#5c6370',
+              selection: '#3e4451',
+              hover: '#2c323c',
+              active: '#3e4451',
+            });
             break;
+          default:
+            // Default to dark theme
+            root.classList.add('dark');
+            setThemeVars({
+              bg: '#1e1e1e',
+              sidebar: '#252526',
+              panel: '#1e1e1e',
+              border: '#3c3c3c',
+              accent: '#0078d4',
+              accentHover: '#1c8ae0',
+              text: '#cccccc',
+              textMuted: '#858585',
+              selection: '#264f78',
+              hover: '#2a2d2e',
+              active: '#37373d',
+            });
         }
       },
       
