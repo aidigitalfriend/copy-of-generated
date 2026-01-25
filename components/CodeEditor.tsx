@@ -13,6 +13,7 @@
  * - Go to line/symbol
  * - Extension system integration
  * - AI Copilot realtime suggestions
+ * - AI Extension tool-based control
  */
 
 import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react';
@@ -32,6 +33,7 @@ import {
 import { extensionHost, connectEditorToExtensions } from '../services/extensionHost';
 import { extensionEvents } from '../services/extensions';
 import { aiCopilot, connectCopilotToEditor, injectCopilotStyles } from '../services/aiCopilotExtension';
+import { aiExtension, createEditorCapabilities } from '../services/aiExtension';
 import { CopilotStatus } from './CopilotStatus';
 
 interface CodeEditorProps {
@@ -372,6 +374,69 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     
     // Connect AI Copilot to editor
     connectCopilotToEditor(editor, monaco);
+    
+    // ============================================================================
+    // AI Extension Integration (Tool-based Control)
+    // ============================================================================
+    
+    // Create editor capabilities for AI Extension
+    const editorCapabilities = createEditorCapabilities(
+      editor,
+      monaco,
+      // File operations (simplified - connect to your file store)
+      {
+        openFile: async (path: string) => {
+          extensionEvents.emit('file:open', { path });
+          return true;
+        },
+        createFile: async (path: string, content: string) => {
+          extensionEvents.emit('file:create', { path, content });
+          return true;
+        },
+        deleteFile: async (path: string) => {
+          extensionEvents.emit('file:delete', { path });
+          return true;
+        },
+        renameFile: async (oldPath: string, newPath: string) => {
+          extensionEvents.emit('file:rename', { oldPath, newPath });
+          return true;
+        },
+        readFile: async (path: string) => {
+          // This would read from your file store
+          return null;
+        },
+        listFiles: async (pattern?: string) => {
+          // This would list files from your store
+          return [];
+        },
+        getActiveFilePath: () => {
+          const model = editor.getModel();
+          return model?.uri?.path || null;
+        },
+      },
+      // Terminal operations
+      {
+        executeCommand: async (command: string, cwd?: string) => {
+          extensionEvents.emit('terminal:execute', { command, cwd });
+          // Return dummy result - real impl would wait for terminal output
+          return { stdout: '', stderr: '', exitCode: 0 };
+        },
+      },
+      // UI operations
+      {
+        showNotification: (message: string, type: 'info' | 'warning' | 'error') => {
+          extensionEvents.emit('ui:notification', { message, type });
+        },
+        showConfirmDialog: async (message: string, options?: string[]) => {
+          // This would show a real dialog
+          return confirm(message);
+        },
+      }
+    );
+    
+    // Connect AI Extension to editor capabilities
+    aiExtension.connect(editorCapabilities);
+    console.log('[AI Extension] Connected to editor');
     
     // Emit editor.textChanged events for extensions
     editor.onDidChangeModelContent((e) => {
