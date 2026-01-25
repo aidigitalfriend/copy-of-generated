@@ -62,28 +62,38 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
   const { editorSettings, setEditorSettings, aiConfig, setAiConfig, uiLayout, setUILayout } = useStore();
   const [activeTab, setActiveTab] = useState<'appearance' | 'editor' | 'fonts' | 'terminal' | 'layout' | 'ai'>('appearance');
   
-  const bgCard = theme === 'dark' 
-    ? 'bg-vscode-bg border border-vscode-border rounded-md' 
-    : theme === 'high-contrast' 
-      ? 'bg-black border-2 border-white rounded-md' 
-      : 'bg-white border border-gray-200 rounded-md';
+  // Check if current theme is a dark variant
+  const isDarkTheme = theme !== 'light';
+  const isHighContrast = theme === 'high-contrast';
+  
+  const bgCard = isDarkTheme
+    ? isHighContrast
+      ? 'bg-black border-2 border-white rounded-md'
+      : 'bg-vscode-sidebar border border-vscode-border rounded-md'
+    : 'bg-gray-100 border border-gray-300 rounded-md';
       
-  const textPrimary = theme === 'dark' ? 'text-white' : theme === 'high-contrast' ? 'text-white' : 'text-gray-900';
-  const textSecondary = theme === 'dark' ? 'text-vscode-text' : theme === 'high-contrast' ? 'text-gray-200' : 'text-gray-700';
-  const textMuted = theme === 'dark' ? 'text-vscode-textMuted' : theme === 'high-contrast' ? 'text-gray-300' : 'text-gray-500';
-  const borderColor = theme === 'dark' ? 'border-vscode-border' : theme === 'high-contrast' ? 'border-white' : 'border-gray-200';
-  const inputBg = theme === 'dark' 
-    ? 'bg-[#3c3c3c] border border-[#5c5c5c] text-white rounded' 
-    : theme === 'high-contrast' 
+  const textPrimary = isDarkTheme ? 'text-white' : 'text-gray-900';
+  const textSecondary = isDarkTheme 
+    ? isHighContrast ? 'text-gray-200' : 'text-vscode-text' 
+    : 'text-gray-700';
+  const textMuted = isDarkTheme 
+    ? isHighContrast ? 'text-gray-300' : 'text-vscode-textMuted' 
+    : 'text-gray-600';
+  const borderColor = isDarkTheme 
+    ? isHighContrast ? 'border-white' : 'border-vscode-border' 
+    : 'border-gray-300';
+  const inputBg = isDarkTheme
+    ? isHighContrast 
       ? 'bg-black border-2 border-white text-white rounded' 
-      : 'bg-white border border-gray-300 text-gray-900 rounded';
+      : 'bg-vscode-bg border border-vscode-border text-white rounded'
+    : 'bg-white border border-gray-400 text-gray-900 rounded';
   
   // Select/dropdown specific styling with solid background
-  const selectBg = theme === 'dark'
-    ? 'bg-[#3c3c3c] border border-[#5c5c5c] text-white rounded [&>option]:bg-[#252526] [&>option]:text-white'
-    : theme === 'high-contrast'
+  const selectBg = isDarkTheme
+    ? isHighContrast
       ? 'bg-black border-2 border-white text-white rounded [&>option]:bg-black [&>option]:text-white'
-      : 'bg-white border border-gray-300 text-gray-900 rounded [&>option]:bg-white [&>option]:text-gray-900';
+      : 'bg-vscode-bg border border-vscode-border text-white rounded [&>option]:bg-vscode-sidebar [&>option]:text-white'
+    : 'bg-white border border-gray-400 text-gray-900 rounded [&>option]:bg-white [&>option]:text-gray-900';
 
   const currentProvider = AI_PROVIDERS[aiConfig.provider as AIProviderKey] || AI_PROVIDERS.openai;
   
@@ -101,7 +111,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
   return (
     <div className="flex flex-col h-full">
       {/* Tabs */}
-      <div className={`flex border-b ${borderColor} ${theme === 'dark' ? 'bg-vscode-sidebar' : theme === 'high-contrast' ? 'bg-black' : 'bg-gray-50'}`}>
+      <div className={`flex border-b ${borderColor} ${isDarkTheme ? 'bg-vscode-sidebar' : 'bg-gray-100'}`}>
         {(['appearance', 'editor', 'fonts', 'terminal', 'layout', 'ai'] as const).map(tab => (
           <button
             key={tab}
