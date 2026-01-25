@@ -20,6 +20,13 @@ import {
 import { GitService } from './git.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+// Utility to safely extract error message from unknown error type
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return getErrorMessage(error);
+  if (typeof error === 'string') return error;
+  return 'Unknown error occurred';
+}
+
 // ==================== DTOs ====================
 
 class CloneDto {
@@ -117,8 +124,8 @@ export class GitController {
     try {
       return await this.gitService.initRepository(body.path);
     } catch (error) {
-      this.logger.error(`Init failed: ${error.message}`);
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      this.logger.error(`Init failed: ${getErrorMessage(error)}`);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -137,8 +144,8 @@ export class GitController {
         } : undefined,
       });
     } catch (error) {
-      this.logger.error(`Clone failed: ${error.message}`);
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      this.logger.error(`Clone failed: ${getErrorMessage(error)}`);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -149,8 +156,8 @@ export class GitController {
       const decodedPath = decodeURIComponent(repoPath);
       return await this.gitService.getStatus(decodedPath);
     } catch (error) {
-      this.logger.error(`Status failed: ${error.message}`);
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      this.logger.error(`Status failed: ${getErrorMessage(error)}`);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -174,7 +181,7 @@ export class GitController {
       await this.gitService.stageFiles(decodedPath, body.files);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -186,7 +193,7 @@ export class GitController {
       await this.gitService.stageAll(decodedPath);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -201,7 +208,7 @@ export class GitController {
       await this.gitService.unstageFiles(decodedPath, body.files);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -216,7 +223,7 @@ export class GitController {
       await this.gitService.discardChanges(decodedPath, body.files);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -241,8 +248,8 @@ export class GitController {
         } : undefined,
       });
     } catch (error) {
-      this.logger.error(`Commit failed: ${error.message}`);
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      this.logger.error(`Commit failed: ${getErrorMessage(error)}`);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -261,7 +268,7 @@ export class GitController {
         branch,
       );
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -275,7 +282,7 @@ export class GitController {
       const decodedPath = decodeURIComponent(repoPath);
       return await this.gitService.show(decodedPath, ref);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -288,7 +295,7 @@ export class GitController {
       const decodedPath = decodeURIComponent(repoPath);
       return await this.gitService.getBranches(decodedPath);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -306,7 +313,7 @@ export class GitController {
       });
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -321,7 +328,7 @@ export class GitController {
       await this.gitService.checkoutBranch(decodedPath, body.branch, body.create);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -337,7 +344,7 @@ export class GitController {
       await this.gitService.deleteBranch(decodedPath, branch, force === 'true');
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -353,7 +360,7 @@ export class GitController {
       await this.gitService.renameBranch(decodedPath, oldName, body.newName);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -366,7 +373,7 @@ export class GitController {
       const decodedPath = decodeURIComponent(repoPath);
       return await this.gitService.getRemotes(decodedPath);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -381,7 +388,7 @@ export class GitController {
       await this.gitService.addRemote(decodedPath, dto.name, dto.url);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -396,7 +403,7 @@ export class GitController {
       await this.gitService.removeRemote(decodedPath, name);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -415,7 +422,7 @@ export class GitController {
       );
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -438,7 +445,7 @@ export class GitController {
         } : undefined,
       });
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -463,7 +470,7 @@ export class GitController {
       });
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -482,7 +489,7 @@ export class GitController {
         ...dto,
       });
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -494,7 +501,7 @@ export class GitController {
       await this.gitService.abortMerge(decodedPath);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -511,7 +518,7 @@ export class GitController {
         ...dto,
       });
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -523,7 +530,7 @@ export class GitController {
       await this.gitService.abortRebase(decodedPath);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -535,7 +542,7 @@ export class GitController {
       await this.gitService.continueRebase(decodedPath);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -548,7 +555,7 @@ export class GitController {
       const decodedPath = decodeURIComponent(repoPath);
       return await this.gitService.getStashes(decodedPath);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -563,7 +570,7 @@ export class GitController {
       await this.gitService.stash(decodedPath, dto.message, dto.includeUntracked);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -578,7 +585,7 @@ export class GitController {
       await this.gitService.stashPop(decodedPath, parseInt(index));
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -593,7 +600,7 @@ export class GitController {
       await this.gitService.stashApply(decodedPath, parseInt(index));
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -608,7 +615,7 @@ export class GitController {
       await this.gitService.stashDrop(decodedPath, parseInt(index));
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -631,7 +638,7 @@ export class GitController {
         stat: stat === 'true',
       }) };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -642,7 +649,7 @@ export class GitController {
       const decodedPath = decodeURIComponent(repoPath);
       return { diff: await this.gitService.getStagedDiff(decodedPath) };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -661,7 +668,7 @@ export class GitController {
         staged === 'true',
       ) };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -674,7 +681,7 @@ export class GitController {
       const decodedPath = decodeURIComponent(repoPath);
       return await this.gitService.getTags(decodedPath);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -689,7 +696,7 @@ export class GitController {
       await this.gitService.createTag(decodedPath, dto.name, dto.message, dto.ref);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -705,7 +712,7 @@ export class GitController {
       await this.gitService.deleteTag(decodedPath, name, remote);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -722,7 +729,7 @@ export class GitController {
       await this.gitService.reset(decodedPath, dto.ref, dto.mode);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -738,7 +745,7 @@ export class GitController {
       await this.gitService.revert(decodedPath, commit, noCommit === 'true');
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -755,7 +762,7 @@ export class GitController {
       await this.gitService.cherryPick(decodedPath, body.commits, body.noCommit);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -771,7 +778,7 @@ export class GitController {
       const decodedPath = decodeURIComponent(repoPath);
       return await this.gitService.blame(decodedPath, filePath);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -788,7 +795,7 @@ export class GitController {
       const value = await this.gitService.getConfig(decodedPath, key);
       return { value };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -803,7 +810,7 @@ export class GitController {
       await this.gitService.setConfig(decodedPath, dto.key, dto.value, dto.global);
       return { success: true };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(getErrorMessage(error), HttpStatus.BAD_REQUEST);
     }
   }
 }

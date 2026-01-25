@@ -28,6 +28,13 @@ import { ConfigService } from '@nestjs/config';
 import { TerminalService } from '../terminal/terminal.service';
 import { AIService } from '../ai/ai.service';
 
+// Utility to safely extract error message from unknown error type
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return getErrorMessage(error);
+  if (typeof error === 'string') return error;
+  return 'Unknown error occurred';
+}
+
 // ==================== Types ====================
 
 interface AuthenticatedSocket extends Socket {
@@ -151,7 +158,7 @@ export class ProductionAppGateway implements OnGatewayInit, OnGatewayConnection,
         // Allow anonymous connections with limited capabilities
         next();
       } catch (error) {
-        this.logger.warn(`Auth error: ${error.message}`);
+        this.logger.warn(`Auth error: ${getErrorMessage(error)}`);
         next(); // Allow connection but mark as unauthenticated
       }
     });
@@ -263,7 +270,7 @@ export class ProductionAppGateway implements OnGatewayInit, OnGatewayConnection,
       
       return { success: false, error: 'Invalid token' };
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: getErrorMessage(error) };
     }
   }
 
@@ -560,8 +567,8 @@ export class ProductionAppGateway implements OnGatewayInit, OnGatewayConnection,
       
       client.emit('ai:chat:done', {});
     } catch (error) {
-      this.logger.error(`AI chat error: ${error.message}`);
-      client.emit('ai:chat:error', { error: error.message });
+      this.logger.error(`AI chat error: ${getErrorMessage(error)}`);
+      client.emit('ai:chat:error', { error: getErrorMessage(error) });
     }
   }
 
@@ -583,8 +590,8 @@ export class ProductionAppGateway implements OnGatewayInit, OnGatewayConnection,
       client.emit('ai:complete:result', { completion });
       return { completion };
     } catch (error) {
-      this.logger.error(`AI completion error: ${error.message}`);
-      return { completion: '', error: error.message };
+      this.logger.error(`AI completion error: ${getErrorMessage(error)}`);
+      return { completion: '', error: getErrorMessage(error) };
     }
   }
 

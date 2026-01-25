@@ -1,8 +1,11 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(PrismaService.name);
+  private isConnected = false;
+
   constructor() {
     super({
       log: process.env.NODE_ENV === 'development' 
@@ -12,7 +15,18 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   }
 
   async onModuleInit() {
-    await this.$connect();
+    try {
+      await this.$connect();
+      this.isConnected = true;
+      this.logger.log('Database connected successfully');
+    } catch (error) {
+      this.logger.warn('Database connection failed - running in limited mode. Some features may not work.');
+      this.isConnected = false;
+    }
+  }
+
+  get connected(): boolean {
+    return this.isConnected;
   }
 
   async onModuleDestroy() {

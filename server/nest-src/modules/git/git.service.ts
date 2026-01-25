@@ -351,10 +351,10 @@ export class GitService implements OnModuleInit {
     
     return Object.entries(branches.branches).map(([name, info]) => ({
       name,
-      current: info.current,
-      commit: info.commit,
+      current: (info as any).current,
+      commit: (info as any).commit,
       remote: name.startsWith('remotes/') ? name.split('/')[1] : undefined,
-      tracking: info.label,
+      tracking: (info as any).label,
     }));
   }
 
@@ -661,8 +661,11 @@ export class GitService implements OnModuleInit {
   async revert(repoPath: string, commit: string, noCommit = false): Promise<void> {
     const git = this.getGit(repoPath);
     
-    const options = noCommit ? ['--no-commit', commit] : [commit];
-    await git.revert(options);
+    if (noCommit) {
+      await git.raw(['revert', '--no-commit', commit]);
+    } else {
+      await git.revert(commit);
+    }
     
     this.logger.log(`Reverted ${commit}`);
   }

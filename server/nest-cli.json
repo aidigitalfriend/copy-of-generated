@@ -8,8 +8,8 @@
     "tsConfigPath": "tsconfig.json",
     "assets": [
       {
-        "include": "grpc/protos/**/*.proto",
-        "outDir": "dist/grpc/protos"
+        "include": "grpc/protos/*.proto",
+        "watchAssets": true
       }
     ]
   }

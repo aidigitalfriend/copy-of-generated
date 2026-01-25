@@ -80,14 +80,19 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   // Connect gRPC microservice
+  // Use source proto files path (they don't need to be compiled)
+  const protoBasePath = process.env.NODE_ENV === 'production'
+    ? join(__dirname, 'grpc/protos')
+    : join(__dirname, '../../nest-src/grpc/protos');
+  
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
       package: ['ai', 'project', 'file'],
       protoPath: [
-        join(__dirname, 'grpc/protos/ai.proto'),
-        join(__dirname, 'grpc/protos/project.proto'),
-        join(__dirname, 'grpc/protos/file.proto'),
+        join(protoBasePath, 'ai.proto'),
+        join(protoBasePath, 'project.proto'),
+        join(protoBasePath, 'file.proto'),
       ],
       url: process.env.GRPC_URL || '0.0.0.0:50051',
     },

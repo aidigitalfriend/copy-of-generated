@@ -216,6 +216,55 @@ export class AIService {
     }
   }
 
+  /**
+   * Code completion for autocomplete features
+   */
+  async complete(data: { prefix: string; suffix: string; language: string }): Promise<string> {
+    const prompt = `Complete the following ${data.language} code. Only return the completion, no explanation.
+
+Code before cursor:
+${data.prefix}
+
+Code after cursor:
+${data.suffix}
+
+Complete the code at the cursor position:`;
+
+    // Use OpenAI for completion if available
+    if (this.openai) {
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          { role: 'system', content: 'You are a code completion assistant. Return only the code that should be inserted at the cursor position. No explanations.' },
+          { role: 'user', content: prompt }
+        ],
+        max_tokens: 150,
+        temperature: 0.1,
+      });
+      return response.choices[0]?.message?.content?.trim() || '';
+    }
+
+    // Fallback to Anthropic
+    if (this.anthropic) {
+      const response = await this.anthropic.messages.create({
+        model: 'claude-3-haiku-20240307',
+        max_tokens: 150,
+        messages: [{ role: 'user', content: prompt }],
+      });
+      const content = response.content[0];
+      return content.type === 'text' ? content.text.trim() : '';
+    }
+
+    // Fallback to Gemini
+    if (this.gemini) {
+      const model = this.gemini.getGenerativeModel({ model: 'gemini-pro' });
+      const result = await model.generateContent(prompt);
+      return result.response.text().trim();
+    }
+
+    return '';
+  }
+
   getAvailableProviders(): string[] {
     const providers: string[] = [];
     if (this.openai) providers.push('openai');
