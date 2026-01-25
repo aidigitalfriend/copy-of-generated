@@ -34,7 +34,7 @@ interface IntegratedTerminalProps {
   className?: string;
   defaultHeight?: number;
   onHeightChange?: (height: number) => void;
-  projectPath?: string; // Project directory to cd into
+  projectId?: string; // Project ID to start terminal in its workspace
 }
 
 // Shell icons and labels
@@ -51,12 +51,12 @@ export const IntegratedTerminal: React.FC<IntegratedTerminalProps> = ({
   className = '',
   defaultHeight = 250,
   onHeightChange,
-  projectPath,
+  projectId,
 }) => {
   const { theme, editorSettings, currentProject } = useStore();
   
-  // Get the effective project path from prop or store
-  const effectiveProjectPath = projectPath || currentProject?.path;
+  // Get the effective project ID from prop or store
+  const effectiveProjectId = projectId || currentProject?.id;
   
   // Terminal tabs state
   const [tabs, setTabs] = useState<TerminalTab[]>([]);
@@ -147,7 +147,7 @@ export const IntegratedTerminal: React.FC<IntegratedTerminalProps> = ({
   }, [editorSettings.fontFamily, editorSettings.fontSize, editorSettings.lineHeight, getTerminalTheme]);
 
   // Connect terminal to backend
-  const connectTerminal = useCallback(async (tabId: string, xterm: XTerminal, initialProjectPath?: string) => {
+  const connectTerminal = useCallback(async (tabId: string, xterm: XTerminal, projectId?: string) => {
     const tab = tabs.find(t => t.id === tabId);
     if (!tab) return;
 
@@ -156,10 +156,14 @@ export const IntegratedTerminal: React.FC<IntegratedTerminalProps> = ({
     try {
       await socketService.connect();
       
+      // Pass projectId to the server - it will start the terminal in the project's workspace directory
       const terminalId = await socketService.createTerminal({
         cols: xterm.cols,
         rows: xterm.rows,
+        projectId: projectId,
       });
+
+      console.log(`[Terminal] Created terminal ${terminalId} for project ${projectId || 'default'}`);
 
       const termData = terminalsRef.current.get(tabId);
       if (termData) {
@@ -196,14 +200,6 @@ export const IntegratedTerminal: React.FC<IntegratedTerminalProps> = ({
           socketService.sendTerminalInput(termData.terminalId, data);
         }
       });
-
-      // CD to project directory if provided
-      if (initialProjectPath) {
-        // Give terminal time to initialize, then cd to project directory
-        setTimeout(() => {
-          socketService.sendTerminalInput(terminalId, `cd "${initialProjectPath}" && clear\n`);
-        }, 500);
-      }
 
     } catch (error: any) {
       console.error('Terminal connection failed:', error);
@@ -798,7 +794,7 @@ export const IntegratedTerminal: React.FC<IntegratedTerminalProps> = ({
               isActive={tab.id === activeTabId}
               onMount={(container) => {
                 const { xterm, fitAddon } = createTerminalInstance(tab.id, container);
-                connectTerminal(tab.id, xterm, effectiveProjectPath);
+                connectTerminal(tab.id, xterm, effectiveProjectId);
               }}
               theme={theme}
             />

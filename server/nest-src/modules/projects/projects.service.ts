@@ -2,10 +2,139 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+
+// Base directory for all project workspaces
+const WORKSPACES_DIR = process.env.WORKSPACES_DIR || '/tmp/workspaces';
 
 @Injectable()
 export class ProjectsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  // Get the filesystem path for a project
+  getProjectPath(projectId: string): string {
+    return path.join(WORKSPACES_DIR, projectId);
+  }
+
+  // Ensure the workspaces directory exists
+  async ensureWorkspacesDir(): Promise<void> {
+    try {
+      await fs.mkdir(WORKSPACES_DIR, { recursive: true });
+    } catch (error) {
+      // Directory already exists
+    }
+  }
+
+  // Create project directory on filesystem
+  async createProjectDirectory(projectId: string): Promise<string> {
+    await this.ensureWorkspacesDir();
+    const projectPath = this.getProjectPath(projectId);
+    await fs.mkdir(projectPath, { recursive: true });
+    return projectPath;
+  }
+
+  // Sync files from database to filesystem
+  async syncFilesToDisk(projectId: string): Promise<void> {
+    const projectPath = this.getProjectPath(projectId);
+    await fs.mkdir(projectPath, { recursive: true });
+
+    const files = await this.prisma.file.findMany({
+      where: { projectId },
+    });
+
+    for (const file of files) {
+      const filePath = path.join(projectPath, file.path);
+      const dirPath = path.dirname(filePath);
+
+      if (file.type === 'FOLDER') {
+        await fs.mkdir(filePath, { recursive: true });
+      } else {
+        await fs.mkdir(dirPath, { recursive: true });
+        await fs.writeFile(filePath, file.content || '', 'utf-8');
+      }
+    }
+  }
+
+  // Sync files from filesystem to database
+  async syncFilesFromDisk(projectId: string): Promise<void> {
+    const projectPath = this.getProjectPath(projectId);
+    
+    try {
+      await this.syncDirectory(projectId, projectPath, '');
+    } catch (error) {
+      console.error('Error syncing files from disk:', error);
+    }
+  }
+
+  private async syncDirectory(projectId: string, basePath: string, relativePath: string): Promise<void> {
+    const fullPath = path.join(basePath, relativePath);
+    const entries = await fs.readdir(fullPath, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const entryRelativePath = relativePath ? `${relativePath}/${entry.name}` : entry.name;
+      const entryFullPath = path.join(fullPath, entry.name);
+
+      if (entry.isDirectory()) {
+        // Skip node_modules and other large directories
+        if (['node_modules', '.git', 'dist', 'build', '.next'].includes(entry.name)) {
+          continue;
+        }
+
+        // Upsert folder
+        await this.prisma.file.upsert({
+          where: {
+            projectId_path: { projectId, path: '/' + entryRelativePath },
+          },
+          create: {
+            projectId,
+            path: '/' + entryRelativePath,
+            name: entry.name,
+            type: 'FOLDER',
+          },
+          update: {},
+        });
+
+        // Recurse into subdirectory
+        await this.syncDirectory(projectId, basePath, entryRelativePath);
+      } else {
+        // Read file content
+        const content = await fs.readFile(entryFullPath, 'utf-8').catch(() => '');
+        const size = (await fs.stat(entryFullPath)).size;
+
+        // Upsert file
+        await this.prisma.file.upsert({
+          where: {
+            projectId_path: { projectId, path: '/' + entryRelativePath },
+          },
+          create: {
+            projectId,
+            path: '/' + entryRelativePath,
+            name: entry.name,
+            content,
+            type: 'FILE',
+            size,
+            language: this.getLanguageFromFilename(entry.name),
+          },
+          update: {
+            content,
+            size,
+          },
+        });
+      }
+    }
+  }
+
+  private getLanguageFromFilename(filename: string): string {
+    const ext = filename.split('.').pop()?.toLowerCase() || '';
+    const langMap: Record<string, string> = {
+      ts: 'typescript', tsx: 'typescript', js: 'javascript', jsx: 'javascript',
+      py: 'python', rb: 'ruby', go: 'go', rs: 'rust', java: 'java',
+      html: 'html', css: 'css', scss: 'scss', json: 'json', md: 'markdown',
+      yml: 'yaml', yaml: 'yaml', sql: 'sql', sh: 'bash', dockerfile: 'dockerfile',
+    };
+    return langMap[ext] || 'plaintext';
+  }
 
   async findAll(userId: string) {
     return this.prisma.project.findMany({
@@ -33,7 +162,11 @@ export class ProjectsService {
       throw new NotFoundException('Project not found');
     }
 
-    return project;
+    // Include the filesystem path
+    return {
+      ...project,
+      path: this.getProjectPath(id),
+    };
   }
 
   async create(userId: string, dto: CreateProjectDto) {
@@ -46,12 +179,22 @@ export class ProjectsService {
       },
     });
 
+    // Create project directory on filesystem
+    const projectPath = await this.createProjectDirectory(project.id);
+    console.log(`[Projects] Created project directory: ${projectPath}`);
+
     // Create template files if specified
     if (dto.template) {
       await this.createTemplateFiles(project.id, dto.template);
+      // Sync to filesystem
+      await this.syncFilesToDisk(project.id);
     }
 
-    return project;
+    // Return project with path
+    return {
+      ...project,
+      path: projectPath,
+    };
   }
 
   async update(id: string, userId: string, dto: UpdateProjectDto) {

@@ -58,9 +58,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('terminal:create')
   handleTerminalCreate(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { cols?: number; rows?: number },
+    @MessageBody() data: { cols?: number; rows?: number; projectId?: string; cwd?: string },
   ) {
-    const terminalId = this.terminalService.createSession(client.id, data);
+    const terminalId = this.terminalService.createSession(client.id, {
+      cols: data.cols,
+      rows: data.rows,
+      projectId: data.projectId,
+      cwd: data.cwd,
+    });
     
     // Track terminal for cleanup
     const terminals = this.clientTerminals.get(client.id) || [];

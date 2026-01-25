@@ -5,6 +5,7 @@ import { useStore } from '../store/useStore';
 import { ChatMessage } from '../types';
 import { voiceInput, voiceOutput, speechSupport } from '../services/speech';
 import { aiAgentService, FileOperation } from '../services/aiAgent';
+import { filesApiService } from '../services/filesApi';
 import { socketService } from '../services/socket';
 import { StreamingParser, StreamingFileOperation, StreamingCommand } from '../services/streamingParser';
 import { webContainerService } from '../services/webcontainer';
@@ -252,7 +253,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   }, [updateFileContent]);
 
   // Finalize file when complete
-  const handleFileComplete = useCallback((file: StreamingFileOperation) => {
+  const handleFileComplete = useCallback(async (file: StreamingFileOperation) => {
     // Skip if file wasn't started (limit reached)
     if (!createdFilePaths.current.has(file.path)) {
       console.log('[AI] ⏭️ Skipping completion for non-started file:', file.path);
@@ -267,6 +268,26 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
     if (file.content) {
       updateFileContent(file.path, file.content);
     }
+
+    // Sync file to backend server if we have a project
+    if (currentProject?.id) {
+      try {
+        const pathParts = file.path.split('/').filter(p => p);
+        const fileName = pathParts.pop() || file.path;
+        
+        await filesApiService.createFile({
+          projectId: currentProject.id,
+          path: file.path.startsWith('/') ? file.path : '/' + file.path,
+          name: fileName,
+          content: file.content || '',
+          type: 'FILE',
+        });
+        console.log('[AI] 📁 File synced to backend:', file.path);
+      } catch (error) {
+        console.error('[AI] Failed to sync file to backend:', error);
+        // Don't throw - local file is still created
+      }
+    }
     
     // Also call the external handler if provided
     if (onFileOperation) {
@@ -276,7 +297,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
         content: file.content,
       });
     }
-  }, [updateFileContent, onFileOperation]);
+  }, [updateFileContent, onFileOperation, currentProject]);
 
   // Handle terminal command from AI
   const handleTerminalCommand = useCallback((command: string) => {

@@ -403,7 +403,7 @@ export class ProductionAppGateway implements OnGatewayInit, OnGatewayConnection,
   @SubscribeMessage('terminal:create')
   handleTerminalCreate(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { cols?: number; rows?: number; name?: string },
+    @MessageBody() data: { cols?: number; rows?: number; name?: string; projectId?: string; cwd?: string },
   ) {
     if (!this.checkRateLimit(client.id, 'default')) {
       throw new WsException('Rate limit exceeded');
@@ -413,6 +413,8 @@ export class ProductionAppGateway implements OnGatewayInit, OnGatewayConnection,
     const terminalId = this.terminalService.createSession(userId, {
       cols: data.cols,
       rows: data.rows,
+      projectId: data.projectId,
+      cwd: data.cwd,
     });
     
     // Track session

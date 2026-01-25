@@ -150,6 +150,7 @@ class SocketService {
     args?: string[];
     env?: Record<string, string>;
     cwd?: string;
+    projectId?: string;
   }): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
@@ -164,8 +165,10 @@ class SocketService {
         args: options?.args,
         env: options?.env,
         cwd: options?.cwd,
+        projectId: options?.projectId,
       };
 
+      console.log('[Socket] Creating terminal with options:', terminalOptions);
       this.socket.emit('terminal:create', terminalOptions);
       
       this.socket.once('terminal:created', (data: { terminalId: string }) => {

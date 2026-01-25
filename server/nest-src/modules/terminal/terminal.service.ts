@@ -1,33 +1,54 @@
 import { Injectable } from '@nestjs/common';
 import * as pty from 'node-pty';
 import { v4 as uuidv4 } from 'uuid';
+import * as fs from 'fs';
 
 interface TerminalSession {
   id: string;
   pty: pty.IPty;
   userId: string;
+  projectPath?: string;
 }
 
 @Injectable()
 export class TerminalService {
   private sessions: Map<string, TerminalSession> = new Map();
 
-  createSession(userId: string, options?: { cols?: number; rows?: number }): string {
+  createSession(userId: string, options?: { cols?: number; rows?: number; cwd?: string; projectId?: string }): string {
     const id = uuidv4();
     const shell = process.platform === 'win32' ? 'powershell.exe' : 'bash';
+
+    // Determine working directory
+    let cwd = options?.cwd || process.cwd();
+    
+    // If projectId provided, use the project workspace directory
+    if (options?.projectId) {
+      const workspacesDir = process.env.WORKSPACES_DIR || '/tmp/workspaces';
+      const projectPath = `${workspacesDir}/${options.projectId}`;
+      if (fs.existsSync(projectPath)) {
+        cwd = projectPath;
+      }
+    }
+
+    console.log(`[Terminal] Creating session in directory: ${cwd}`);
 
     const ptyProcess = pty.spawn(shell, [], {
       name: 'xterm-color',
       cols: options?.cols || 80,
       rows: options?.rows || 24,
-      cwd: process.cwd(),
-      env: process.env as Record<string, string>,
+      cwd,
+      env: {
+        ...process.env as Record<string, string>,
+        TERM: 'xterm-256color',
+        COLORTERM: 'truecolor',
+      },
     });
 
     this.sessions.set(id, {
       id,
       pty: ptyProcess,
       userId,
+      projectPath: cwd,
     });
 
     return id;
