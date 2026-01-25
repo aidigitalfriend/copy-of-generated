@@ -279,6 +279,7 @@ export interface Project {
   files: FileNode[];
   createdAt: number;
   updatedAt: number;
+  path?: string; // Server-side project directory path
 }
 
 // Workspace Types - Multiple project management

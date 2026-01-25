@@ -40,6 +40,37 @@ const CloseIcon = () => (
   </svg>
 );
 
+// Message action icons
+const RefreshIcon = () => (
+  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+  </svg>
+);
+
+const CopyIcon = () => (
+  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+  </svg>
+);
+
+const ThumbsUpIcon = ({ filled }: { filled?: boolean }) => (
+  <svg className="w-3.5 h-3.5" fill={filled ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+  </svg>
+);
+
+const ThumbsDownIcon = ({ filled }: { filled?: boolean }) => (
+  <svg className="w-3.5 h-3.5" fill={filled ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+  </svg>
+);
+
 interface AgenticAIChatProps {
   voiceEnabled?: boolean;
   onFileOperation?: (operation: FileOperation) => void;
@@ -94,6 +125,8 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
+  const [messageFeedback, setMessageFeedback] = useState<Record<string, 'up' | 'down' | null>>({});
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   
   // Available agents
   const AGENTS = [
@@ -156,9 +189,26 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
     return map[ext] || 'plaintext';
   };
 
+  // Track created file paths to avoid duplicates
+  const createdFilePaths = useRef<Set<string>>(new Set());
+  const MAX_FILES_PER_SESSION = 25; // Limit files to prevent runaway creation
+
   // Create file immediately when streaming starts
   const handleFileStart = useCallback((file: StreamingFileOperation) => {
+    // Check if we've hit the file limit
+    if (createdFilePaths.current.size >= MAX_FILES_PER_SESSION) {
+      console.warn('[AI] ⚠️ File limit reached, skipping:', file.path);
+      return;
+    }
+    
+    // Check if file was already created in this session
+    if (createdFilePaths.current.has(file.path)) {
+      console.log('[AI] ⏭️ File already created, skipping:', file.path);
+      return;
+    }
+    
     console.log('[AI] 📄 File started:', file.path);
+    createdFilePaths.current.add(file.path);
     setCurrentStreamingFile(file);
     
     // Create folders if needed
@@ -192,6 +242,9 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
 
   // Update file content as it streams
   const handleFileProgress = useCallback((file: StreamingFileOperation) => {
+    // Skip if file wasn't started (limit reached)
+    if (!createdFilePaths.current.has(file.path)) return;
+    
     // Update the file content in real-time
     if (file.content) {
       updateFileContent(file.path, file.content);
@@ -200,6 +253,12 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
 
   // Finalize file when complete
   const handleFileComplete = useCallback((file: StreamingFileOperation) => {
+    // Skip if file wasn't started (limit reached)
+    if (!createdFilePaths.current.has(file.path)) {
+      console.log('[AI] ⏭️ Skipping completion for non-started file:', file.path);
+      return;
+    }
+    
     console.log('[AI] ✅ File completed:', file.path);
     setCurrentStreamingFile(null);
     setCreatedFilesCount(prev => prev + 1);
@@ -395,6 +454,9 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   // Send message with REAL-TIME streaming
   const handleSend = async () => {
     if ((!input.trim() && uploadedFiles.length === 0) || isAiLoading || isStreaming) return;
+
+    // Reset file tracking for new message
+    createdFilePaths.current.clear();
 
     // Separate images from text files
     const imageFiles = uploadedFiles.filter(f => f.isImage);
@@ -912,21 +974,90 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
           </div>
         )}
         
-        {chatHistory.map((msg) => (
+        {chatHistory.map((msg, msgIndex) => (
           <div
             key={msg.id}
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            <div className={`max-w-[85%] px-4 py-3 rounded-lg ${
+            <div className={`max-w-[85%] ${
               msg.role === 'user'
-                ? 'bg-vscode-accent text-white shadow-lg'
-                : theme === 'dark' ? 'bg-vscode-sidebar border border-vscode-border text-vscode-text' : 'bg-white border border-gray-200 text-gray-800 shadow-sm'
+                ? 'bg-vscode-accent text-white shadow-lg px-4 py-3 rounded-lg'
+                : ''
             }`}>
               {msg.role === 'user' ? (
                 <p className="whitespace-pre-wrap font-medium">{msg.content}</p>
               ) : (
-                <div className="prose prose-sm max-w-none dark:prose-invert">
-                  {renderContent(msg.content)}
+                <div className={`px-4 py-3 rounded-lg ${theme === 'dark' ? 'bg-vscode-sidebar border border-vscode-border text-vscode-text' : 'bg-white border border-gray-200 text-gray-800 shadow-sm'}`}>
+                  <div className="prose prose-sm max-w-none dark:prose-invert">
+                    {renderContent(msg.content)}
+                  </div>
+                  
+                  {/* Message Action Icons */}
+                  <div className={`flex items-center gap-1 mt-3 pt-2 border-t ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-100'}`}>
+                    {/* Regenerate */}
+                    <button
+                      onClick={() => {
+                        // Find the user message before this one and regenerate
+                        const userMsgIndex = chatHistory.slice(0, msgIndex).reverse().findIndex(m => m.role === 'user');
+                        if (userMsgIndex !== -1) {
+                          const actualIndex = msgIndex - 1 - userMsgIndex;
+                          const userMsg = chatHistory[actualIndex];
+                          if (userMsg) {
+                            setInput(userMsg.content);
+                          }
+                        }
+                      }}
+                      className={`p-1.5 rounded transition-colors ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
+                      title="Regenerate response"
+                    >
+                      <RefreshIcon />
+                    </button>
+                    
+                    {/* Copy */}
+                    <button
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(msg.content);
+                          setCopiedMessageId(msg.id);
+                          setTimeout(() => setCopiedMessageId(null), 2000);
+                        } catch (err) {
+                          console.error('Failed to copy:', err);
+                        }
+                      }}
+                      className={`p-1.5 rounded transition-colors ${copiedMessageId === msg.id ? 'text-green-500' : theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
+                      title={copiedMessageId === msg.id ? 'Copied!' : 'Copy response'}
+                    >
+                      {copiedMessageId === msg.id ? <CheckIcon /> : <CopyIcon />}
+                    </button>
+                    
+                    {/* Thumbs Up */}
+                    <button
+                      onClick={() => {
+                        setMessageFeedback(prev => ({
+                          ...prev,
+                          [msg.id]: prev[msg.id] === 'up' ? null : 'up'
+                        }));
+                      }}
+                      className={`p-1.5 rounded transition-colors ${messageFeedback[msg.id] === 'up' ? 'text-green-500' : theme === 'dark' ? 'text-vscode-textMuted hover:text-green-400 hover:bg-white/10' : 'text-gray-400 hover:text-green-500 hover:bg-gray-100'}`}
+                      title="Good response"
+                    >
+                      <ThumbsUpIcon filled={messageFeedback[msg.id] === 'up'} />
+                    </button>
+                    
+                    {/* Thumbs Down */}
+                    <button
+                      onClick={() => {
+                        setMessageFeedback(prev => ({
+                          ...prev,
+                          [msg.id]: prev[msg.id] === 'down' ? null : 'down'
+                        }));
+                      }}
+                      className={`p-1.5 rounded transition-colors ${messageFeedback[msg.id] === 'down' ? 'text-red-500' : theme === 'dark' ? 'text-vscode-textMuted hover:text-red-400 hover:bg-white/10' : 'text-gray-400 hover:text-red-500 hover:bg-gray-100'}`}
+                      title="Bad response"
+                    >
+                      <ThumbsDownIcon filled={messageFeedback[msg.id] === 'down'} />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

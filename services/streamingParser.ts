@@ -30,6 +30,7 @@ export class StreamingParser {
   private completedFiles: StreamingFileOperation[] = [];
   private currentFile: StreamingFileOperation | null = null;
   private executedCommands: Set<string> = new Set();
+  private startedFilePaths: Set<string> = new Set(); // Track files we've already started
   private onFileStart: (file: StreamingFileOperation) => void;
   private onFileProgress: (file: StreamingFileOperation) => void;
   private onFileComplete: (file: StreamingFileOperation) => void;
@@ -105,14 +106,18 @@ export class StreamingParser {
     // Check for dyad-write tag
     const writeMatch = this.rawContent.match(/<dyad-write\s+path="([^"]+)"[^>]*>(?![\s\S]*<\/dyad-write>)/);
     if (writeMatch) {
-      const path = writeMatch[1];
+      const path = this.normalizePath(writeMatch[1]);
+      // Skip if we've already started this file
+      if (this.startedFilePaths.has(path)) return;
+      this.startedFilePaths.add(path);
+      
       const tagEnd = this.rawContent.indexOf('>', this.rawContent.indexOf('<dyad-write'));
       const contentStart = tagEnd + 1;
       const content = this.rawContent.substring(contentStart);
       
       this.currentFile = {
         type: 'create',
-        path: this.normalizePath(path),
+        path: path,
         content: this.cleanCodeContent(content),
         isComplete: false,
       };
@@ -123,14 +128,18 @@ export class StreamingParser {
     // Check for file_create tag (legacy)
     const createMatch = this.rawContent.match(/<file_create\s+path="([^"]+)"[^>]*>(?![\s\S]*<\/file_create>)/);
     if (createMatch) {
-      const path = createMatch[1];
+      const path = this.normalizePath(createMatch[1]);
+      // Skip if we've already started this file
+      if (this.startedFilePaths.has(path)) return;
+      this.startedFilePaths.add(path);
+      
       const tagEnd = this.rawContent.indexOf('>', this.rawContent.indexOf('<file_create'));
       const contentStart = tagEnd + 1;
       const content = this.rawContent.substring(contentStart);
       
       this.currentFile = {
         type: 'create',
-        path: this.normalizePath(path),
+        path: path,
         content: this.cleanCodeContent(content),
         isComplete: false,
       };
@@ -141,14 +150,18 @@ export class StreamingParser {
     // Check for dyad-search-replace tag
     const editMatch = this.rawContent.match(/<dyad-search-replace\s+path="([^"]+)"[^>]*>(?![\s\S]*<\/dyad-search-replace>)/);
     if (editMatch) {
-      const path = editMatch[1];
+      const path = this.normalizePath(editMatch[1]);
+      // Skip if we've already started this file
+      if (this.startedFilePaths.has(path)) return;
+      this.startedFilePaths.add(path);
+      
       const tagEnd = this.rawContent.indexOf('>', this.rawContent.indexOf('<dyad-search-replace'));
       const contentStart = tagEnd + 1;
       const content = this.rawContent.substring(contentStart);
       
       this.currentFile = {
         type: 'edit',
-        path: this.normalizePath(path),
+        path: path,
         content: this.cleanCodeContent(content),
         isComplete: false,
       };
@@ -159,14 +172,18 @@ export class StreamingParser {
     // Check for file_edit tag (legacy)
     const fileEditMatch = this.rawContent.match(/<file_edit\s+path="([^"]+)"[^>]*>(?![\s\S]*<\/file_edit>)/);
     if (fileEditMatch) {
-      const path = fileEditMatch[1];
+      const path = this.normalizePath(fileEditMatch[1]);
+      // Skip if we've already started this file
+      if (this.startedFilePaths.has(path)) return;
+      this.startedFilePaths.add(path);
+      
       const tagEnd = this.rawContent.indexOf('>', this.rawContent.indexOf('<file_edit'));
       const contentStart = tagEnd + 1;
       const content = this.rawContent.substring(contentStart);
       
       this.currentFile = {
         type: 'edit',
-        path: this.normalizePath(path),
+        path: path,
         content: this.cleanCodeContent(content),
         isComplete: false,
       };
@@ -318,6 +335,7 @@ export class StreamingParser {
     this.completedFiles = [];
     this.currentFile = null;
     this.executedCommands = new Set();
+    this.startedFilePaths = new Set();
   }
 
   /**

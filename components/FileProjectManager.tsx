@@ -325,8 +325,23 @@ export const FileProjectManager: React.FC<FileProjectManagerProps> = ({
       }
     } else {
       setSelectedPaths(new Set([path]));
+      
+      // Single click on a file - open it in editor and set as active
+      const node = flattenedFiles.find(f => f.path === path);
+      if (node && node.type === 'file') {
+        const fileData: OpenFile = {
+          id: node.id,
+          name: node.name,
+          path: node.path,
+          content: node.content || '',
+          language: node.language || 'plaintext',
+          isDirty: false,
+        };
+        openFile(fileData);
+        onFileSelect?.(node);
+      }
     }
-  }, [focusedPath, flattenedFiles]);
+  }, [focusedPath, flattenedFiles, openFile, onFileSelect]);
 
   const handleDoubleClick = useCallback((node: FileTreeNode) => {
     if (node.type === 'folder') {
