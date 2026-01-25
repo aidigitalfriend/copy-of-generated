@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useStore } from '../store/useStore';
 import { FileNode, OpenFile, Project, Workspace, RecentProject } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
+import { filesApiService } from '../services/filesApi';
 
 // ============================================================================
 // Types
@@ -228,12 +229,83 @@ export const FileProjectManager: React.FC<FileProjectManagerProps> = ({
   const [activeTab, setActiveTab] = useState<'explorer' | 'open' | 'recent' | 'workspaces'>('explorer');
   const [showNewItemInput, setShowNewItemInput] = useState<{ type: 'file' | 'folder'; parentPath: string } | null>(null);
   const [newItemName, setNewItemName] = useState('');
+  const [isSyncing, setIsSyncing] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const renameInputRef = useRef<HTMLInputElement>(null);
   const newItemInputRef = useRef<HTMLInputElement>(null);
 
   const isDark = theme === 'dark' || theme === 'high-contrast';
+
+  // ============================================================================
+  // Sync Files from Server
+  // ============================================================================
+
+  const syncFilesFromServer = useCallback(async () => {
+    if (!currentProject?.id || isSyncing) return;
+    
+    setIsSyncing(true);
+    try {
+      console.log('[FileManager] Syncing files from server for project:', currentProject.id);
+      const projectData = await filesApiService.syncProjectFromDisk(currentProject.id);
+      
+      if (projectData?.files) {
+        // Convert backend file format to FileNode format
+        const convertedFiles: FileNode[] = projectData.files.map((f: any) => ({
+          id: f.id,
+          name: f.name,
+          path: f.path,
+          type: f.type === 'FOLDER' ? 'folder' : 'file',
+          content: f.content || '',
+          language: f.language || 'plaintext',
+          children: [],
+        }));
+        
+        // Build tree structure from flat list
+        const fileTree = buildFileTree(convertedFiles);
+        setFiles(fileTree);
+        console.log('[FileManager] Synced', convertedFiles.length, 'files from server');
+      }
+    } catch (error) {
+      console.error('[FileManager] Failed to sync files:', error);
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [currentProject?.id, isSyncing, setFiles]);
+
+  // Build a tree structure from a flat list of files
+  const buildFileTree = (flatFiles: FileNode[]): FileNode[] => {
+    const root: FileNode[] = [];
+    const pathMap = new Map<string, FileNode>();
+    
+    // Sort by path depth (shorter paths first)
+    const sorted = [...flatFiles].sort((a, b) => 
+      (a.path.match(/\//g) || []).length - (b.path.match(/\//g) || []).length
+    );
+    
+    for (const file of sorted) {
+      const pathParts = file.path.split('/').filter(p => p);
+      const parentPath = '/' + pathParts.slice(0, -1).join('/');
+      
+      // Create file node with children array
+      const node: FileNode = { ...file, children: file.type === 'folder' ? [] : undefined };
+      pathMap.set(file.path, node);
+      
+      if (parentPath === '/' || parentPath === '') {
+        root.push(node);
+      } else {
+        const parent = pathMap.get(parentPath);
+        if (parent && parent.children) {
+          parent.children.push(node);
+        } else {
+          // Parent not found, add to root
+          root.push(node);
+        }
+      }
+    }
+    
+    return root;
+  };
 
   // ============================================================================
   // Flatten Files for Display
@@ -813,6 +885,16 @@ export const FileProjectManager: React.FC<FileProjectManagerProps> = ({
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+          <button
+            onClick={syncFilesFromServer}
+            disabled={isSyncing || !currentProject?.id}
+            className={`p-1 rounded ${textMuted} ${hoverBg} ${isSyncing ? 'animate-spin' : ''} ${!currentProject?.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+            title="Refresh from Server (Sync terminal changes)"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </button>
           <button

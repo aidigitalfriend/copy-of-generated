@@ -131,6 +131,24 @@ class FilesApiService {
   // ==================== Sync Operations ====================
 
   /**
+   * Sync files FROM the server filesystem TO the database, then return them
+   * This picks up files created via terminal
+   */
+  async syncProjectFromDisk(projectId: string): Promise<ProjectDto & { files: FileDto[] }> {
+    const response = await fetch(`${API_URL}/projects/${projectId}/sync`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to sync project: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.project || data;
+  }
+
+  /**
    * Sync files to the server - creates files that don't exist, updates those that do
    */
   async syncProjectFiles(projectId: string, files: FileDto[]): Promise<void> {

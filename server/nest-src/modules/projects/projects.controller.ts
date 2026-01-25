@@ -76,4 +76,20 @@ export class ProjectsController {
   ) {
     return this.projectsService.remove(id, userId);
   }
+
+  @Post(':id/sync')
+  @ApiOperation({ summary: 'Sync project files from filesystem to database' })
+  @ApiResponse({ status: 200, description: 'Files synced' })
+  @ApiResponse({ status: 404, description: 'Project not found' })
+  async syncFromDisk(
+    @Param('id') id: string,
+    @CurrentUser('userId') userId: string,
+  ) {
+    // First verify ownership
+    await this.projectsService.findOne(id, userId);
+    // Sync files from disk to database
+    await this.projectsService.syncFilesFromDisk(id);
+    // Return updated project with files
+    return this.projectsService.findOne(id, userId);
+  }
 }
