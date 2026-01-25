@@ -201,10 +201,10 @@ class AIAgentService {
     provider: string = 'openai',
     model: string = 'gpt-4o-mini'
   ): Promise<{ response: string; operations: FileOperation[]; commands: string[] }> {
-    // Use same origin in production, localhost in development
+    // Use api subdomain in production, localhost in development
     const API_URL = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-      ? `${window.location.origin}/api`
-      : 'http://localhost:4000/api';
+      ? 'https://api.maula.dev/api/v1'
+      : 'http://localhost:4000/api/v1';
     
     const messagesWithSystem = [
       { role: 'system', content: AGENTIC_SYSTEM_PROMPT },

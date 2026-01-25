@@ -227,7 +227,11 @@ class CollaborationService {
 
   // Initialize collaboration service
   async initialize(serverUrl?: string): Promise<void> {
-    const url = serverUrl || process.env.VITE_COLLABORATION_URL || 'ws://localhost:3001';
+    // Use api subdomain in production, localhost in development
+    const defaultUrl = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+      ? 'wss://api.maula.dev'
+      : 'ws://localhost:3001';
+    const url = serverUrl || process.env.VITE_COLLABORATION_URL || defaultUrl;
     
     this.socket = io(`${url}/collaboration`, {
       transports: ['websocket'],

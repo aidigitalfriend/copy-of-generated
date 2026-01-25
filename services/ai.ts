@@ -40,10 +40,10 @@ const PROVIDER_CONFIGS: Record<AIProvider, { baseUrl: string; models: string[] }
   },
 };
 
-// Backend API URL - use same origin in production
+// Backend API URL - use api subdomain in production
 const API_URL = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-  ? `${window.location.origin}/api`
-  : 'http://localhost:4000/api';
+  ? 'https://api.maula.dev/api/v1'
+  : 'http://localhost:4000/api/v1';
 
 // Internal API key - users don't need to configure this
 // In production, this should be handled by a backend proxy

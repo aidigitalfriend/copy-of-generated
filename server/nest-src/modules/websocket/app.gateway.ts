@@ -130,7 +130,34 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       stream?: boolean;
     },
   ) {
+    await this.processAIChat(client, data);
+  }
+
+  @SubscribeMessage('ai:chat:stream')
+  async handleAIChatStream(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: {
+      messages: Array<{ role: string; content: string }>;
+      provider?: string;
+      model?: string;
+      stream?: boolean;
+    },
+  ) {
+    await this.processAIChat(client, data);
+  }
+
+  private async processAIChat(
+    client: Socket,
+    data: {
+      messages: Array<{ role: string; content: string }>;
+      provider?: string;
+      model?: string;
+      stream?: boolean;
+    },
+  ) {
     try {
+      this.logger.log(`AI chat request from ${client.id}: provider=${data.provider}, model=${data.model}, messages=${data.messages?.length}`);
+      
       if (data.stream !== false) {
         // Streaming response
         for await (const chunk of this.aiService.streamChat({
@@ -138,9 +165,13 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
           provider: data.provider,
           model: data.model,
         })) {
+          // Emit both event names for compatibility
           client.emit('ai:chunk', { content: chunk });
+          client.emit('ai:chat:chunk', { content: chunk });
         }
         client.emit('ai:done', {});
+        client.emit('ai:chat:done', {});
+        this.logger.log(`AI chat completed for ${client.id}`);
       } else {
         // Non-streaming response
         const response = await this.aiService.chat({
@@ -151,7 +182,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.emit('ai:response', { content: response });
       }
     } catch (error) {
-      client.emit('ai:error', { error: (error as Error).message });
+      const errorMsg = (error as Error).message;
+      this.logger.error(`AI chat error for ${client.id}: ${errorMsg}`);
+      client.emit('ai:error', { error: errorMsg });
+      client.emit('ai:chat:error', { error: errorMsg });
     }
   }
 

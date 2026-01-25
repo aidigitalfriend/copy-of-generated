@@ -509,53 +509,72 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
         });
       }
 
-      // Stream via WebSocket
+      // Try WebSocket streaming first with timeout, then fallback to REST API
+      let useRestFallback = false;
+      
       if (socketService.isConnected()) {
-        await new Promise<void>((resolve, reject) => {
-          aiAgentService.streamChat(
-            messagesForAI,
-            {
-              onToken: (token) => {
-                // Process token through streaming parser
-                const displayContent = parserRef.current?.processToken(token) || '';
-                setStreamingContent(displayContent);
-              },
-              onComplete: (response) => {
-                setStreamingContent('');
-                setIsStreaming(false);
-                setAgentStatus(null);
-                
-                const assistantMessage: ChatMessage = {
-                  id: crypto.randomUUID(),
-                  role: 'assistant',
-                  content: response,
-                  timestamp: Date.now(),
-                };
-                addMessage(assistantMessage);
-                
-                // Reset parser
-                parserRef.current?.reset();
-                
-                if (externalVoiceEnabled && speechSupport.synthesis) {
-                  handleSpeak(response);
-                }
-                
-                resolve();
-              },
-              onError: (error) => {
-                reject(error);
-              },
-              onFileOperation: (op) => {
-                // Backup handler for any missed operations
-                console.log('[AI] Backup file operation:', op);
-              },
-              onTerminalCommand: handleTerminalCommand,
-            },
-            'openai',
-            'gpt-4o-mini'
-          );
-        });
+        try {
+          await Promise.race([
+            new Promise<void>((resolve, reject) => {
+              let hasResponse = false;
+              
+              aiAgentService.streamChat(
+                messagesForAI,
+                {
+                  onToken: (token) => {
+                    hasResponse = true;
+                    // Process token through streaming parser
+                    const displayContent = parserRef.current?.processToken(token) || '';
+                    setStreamingContent(displayContent);
+                  },
+                  onComplete: (response) => {
+                    setStreamingContent('');
+                    setIsStreaming(false);
+                    setAgentStatus(null);
+                    
+                    const assistantMessage: ChatMessage = {
+                      id: crypto.randomUUID(),
+                      role: 'assistant',
+                      content: response,
+                      timestamp: Date.now(),
+                    };
+                    addMessage(assistantMessage);
+                    
+                    // Reset parser
+                    parserRef.current?.reset();
+                    
+                    if (externalVoiceEnabled && speechSupport.synthesis) {
+                      handleSpeak(response);
+                    }
+                    
+                    resolve();
+                  },
+                  onError: (error) => {
+                    reject(error);
+                  },
+                  onFileOperation: (op) => {
+                    // Backup handler for any missed operations
+                    console.log('[AI] Backup file operation:', op);
+                  },
+                  onTerminalCommand: handleTerminalCommand,
+                },
+                'openai',
+                'gpt-4o-mini'
+              );
+            }),
+            new Promise<void>((_, reject) => 
+              setTimeout(() => reject(new Error('WebSocket timeout')), 10000)
+            ),
+          ]);
+        } catch (wsError) {
+          console.log('[AI] WebSocket failed, falling back to REST:', wsError);
+          useRestFallback = true;
+        }
       } else {
+        useRestFallback = true;
+      }
+      
+      if (useRestFallback) {
         // Fallback to REST API
         const result = await aiAgentService.sendMessage(messagesForAI, 'openai', 'gpt-4o-mini');
         
