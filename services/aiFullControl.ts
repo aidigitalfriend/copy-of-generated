@@ -1223,10 +1223,13 @@ class AIFullControlService {
     // Execute deploy operations
     for (const op of operations.deployOperations) {
       if (op.platform === 'vercel') {
-        // Get files from store or API
-        const files: Record<string, string> = {};
-        // This would need to be connected to actual file content
-        deployResults.push(await this.deployToVercel(op.project, files));
+        // Note: Deploy operations require files to be passed from the caller
+        // The executeOperations method should be called with the current project files
+        // For now, return a result indicating files need to be provided
+        deployResults.push({
+          success: false,
+          error: 'Deployment requires files to be provided. Use deployToVercel() directly with project files.',
+        });
       }
     }
 

@@ -29,6 +29,9 @@ interface AIFullControlPanelProps {
   onTerminalCommand?: (command: string) => void;
 }
 
+// Constants
+const FILE_CONTENT_TRUNCATION_LIMIT = 2000;
+
 export const AIFullControlPanel: React.FC<AIFullControlPanelProps> = ({
   voiceEnabled: externalVoiceEnabled = false,
   onFileOperation,
@@ -283,8 +286,8 @@ export const AIFullControlPanel: React.FC<AIFullControlPanelProps> = ({
       if (files.length > 0) {
         const projectContext = files.map(f => {
           if (f.type === 'file' && f.content) {
-            const truncatedContent = f.content.length > 2000
-              ? f.content.substring(0, 2000) + '\n... (truncated)'
+            const truncatedContent = f.content.length > FILE_CONTENT_TRUNCATION_LIMIT
+              ? f.content.substring(0, FILE_CONTENT_TRUNCATION_LIMIT) + '\n... (truncated)'
               : f.content;
             return `[File: ${f.path}]\n\`\`\`\n${truncatedContent}\n\`\`\``;
           }
@@ -293,14 +296,18 @@ export const AIFullControlPanel: React.FC<AIFullControlPanelProps> = ({
         fullMessage += `\n\n--- EXISTING PROJECT FILES ---\n${projectContext}\n--- END PROJECT FILES ---`;
       }
 
-      // Add permission context
-      const permissionContext = `\n\n--- AI PERMISSIONS ---
-Terminal: ${permissions.terminal ? 'ENABLED' : 'DISABLED'}
-File Operations: ${permissions.fileOperations ? 'ENABLED' : 'DISABLED'}
-Build/Run: ${permissions.build ? 'ENABLED' : 'DISABLED'}
-Deploy: ${permissions.deploy ? 'ENABLED' : 'DISABLED'}
-Git: ${permissions.git ? 'ENABLED' : 'DISABLED'}
---- END PERMISSIONS ---`;
+      // Add permission context using helper function
+      const permissionItems = [
+        { name: 'Terminal', enabled: permissions.terminal },
+        { name: 'File Operations', enabled: permissions.fileOperations },
+        { name: 'Build/Run', enabled: permissions.build },
+        { name: 'Deploy', enabled: permissions.deploy },
+        { name: 'Git', enabled: permissions.git },
+      ];
+      const permissionLines = permissionItems
+        .map(p => `${p.name}: ${p.enabled ? 'ENABLED' : 'DISABLED'}`)
+        .join('\n');
+      const permissionContext = `\n\n--- AI PERMISSIONS ---\n${permissionLines}\n--- END PERMISSIONS ---`;
       
       fullMessage += permissionContext;
 
