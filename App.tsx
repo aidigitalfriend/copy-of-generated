@@ -6,6 +6,7 @@ import { CodeEditor } from './components/CodeEditor';
 import { Terminal } from './components/Terminal';
 import { RealTerminal } from './components/RealTerminal';
 import { IntegratedTerminal, IntegratedTerminalAdvanced } from './components/IntegratedTerminal';
+import { RealtimeTerminal } from './components/RealtimeTerminal';
 import { AIChat } from './components/AIChat';
 import { AgenticAIChat } from './components/AgenticAIChat';
 import { TemplateGallery } from './components/TemplateGallery';
@@ -386,6 +387,7 @@ const App: React.FC = () => {
   const [terminalHeight, setTerminalHeight] = useState(250);
   const [terminalMaximized, setTerminalMaximized] = useState(false);
   const [useRealTerminal, setUseRealTerminal] = useState(true); // Use real terminal by default
+  const [terminalType, setTerminalType] = useState<'realtime' | 'advanced' | 'integrated'>('realtime'); // Use new realtime terminal by default
   
   // Code Intelligence panel state
   const [problemsPanelOpen, setProblemsPanelOpen] = useState(false);
@@ -1149,14 +1151,25 @@ const App: React.FC = () => {
             {/* Panel Content */}
             <div className="flex-1 overflow-hidden">
               {bottomPanelTab === 'terminal' && terminalOpen && (
-                <IntegratedTerminalAdvanced
-                  defaultHeight={terminalHeight - 32}
-                  onHeightChange={setTerminalHeight}
-                  onMinimize={() => setTerminalOpen(false)}
-                  onMaximize={() => setTerminalMaximized(!terminalMaximized)}
-                  isMaximized={terminalMaximized}
-                  hideHeader={true}
-                />
+                terminalType === 'realtime' ? (
+                  <RealtimeTerminal
+                    defaultHeight={terminalHeight - 32}
+                    onHeightChange={setTerminalHeight}
+                    onMinimize={() => setTerminalOpen(false)}
+                    onMaximize={() => setTerminalMaximized(!terminalMaximized)}
+                    isMaximized={terminalMaximized}
+                    projectId={currentProject?.id}
+                  />
+                ) : (
+                  <IntegratedTerminalAdvanced
+                    defaultHeight={terminalHeight - 32}
+                    onHeightChange={setTerminalHeight}
+                    onMinimize={() => setTerminalOpen(false)}
+                    onMaximize={() => setTerminalMaximized(!terminalMaximized)}
+                    isMaximized={terminalMaximized}
+                    hideHeader={true}
+                  />
+                )
               )}
               {bottomPanelTab === 'problems' && problemsPanelOpen && (
                 <CodeIntelligencePanel className="h-full" />
