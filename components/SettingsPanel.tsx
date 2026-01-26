@@ -152,6 +152,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                       { value: 'monokai', label: '🎨 Monokai', desc: 'Classic colorful' },
                       { value: 'solarized-dark', label: '🌅 Solarized', desc: 'Warm dark theme' },
                       { value: 'one-dark', label: '💜 One Dark', desc: 'Atom inspired' },
+                      { value: 'steel', label: '⚙️ Steel', desc: 'Metallic industrial' },
                     ].map(t => (
                       <button
                         key={t.value}

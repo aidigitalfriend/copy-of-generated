@@ -1454,7 +1454,7 @@ export const useStore = create<StoreState>()(
         const root = document.documentElement;
         
         // Remove all theme classes first
-        root.classList.remove('dark', 'high-contrast', 'theme-github-dark', 'theme-dracula', 'theme-nord', 'theme-monokai', 'theme-solarized-dark', 'theme-one-dark');
+        root.classList.remove('dark', 'high-contrast', 'theme-github-dark', 'theme-dracula', 'theme-nord', 'theme-monokai', 'theme-solarized-dark', 'theme-one-dark', 'theme-steel');
         
         // Helper function to set all CSS variables at once
         const setThemeVars = (vars: {
@@ -1626,6 +1626,22 @@ export const useStore = create<StoreState>()(
               selection: '#3e4451',
               hover: '#2c323c',
               active: '#3e4451',
+            });
+            break;
+          case 'steel':
+            root.classList.add('dark', 'theme-steel');
+            setThemeVars({
+              bg: '#16181d',
+              sidebar: '#1c1f26',
+              panel: '#1c1f26',
+              border: '#3a3f4a',
+              accent: '#7b8a9e',
+              accentHover: '#95a5bb',
+              text: '#d0d6de',
+              textMuted: '#6d7585',
+              selection: '#3a4555',
+              hover: '#252932',
+              active: '#323844',
             });
             break;
           default:

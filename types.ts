@@ -346,7 +346,7 @@ export interface GitFileStatus {
 
 // Layout Types
 export type PanelLayout = 'default' | 'zen' | 'preview-focus' | 'terminal-focus';
-export type Theme = 'light' | 'dark' | 'high-contrast' | 'github-dark' | 'dracula' | 'nord' | 'monokai' | 'solarized-dark' | 'one-dark';
+export type Theme = 'light' | 'dark' | 'high-contrast' | 'github-dark' | 'dracula' | 'nord' | 'monokai' | 'solarized-dark' | 'one-dark' | 'steel';
 export type IconTheme = 'default' | 'material' | 'seti' | 'minimal' | 'vscode';
 
 // Custom Color Scheme
