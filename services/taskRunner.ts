@@ -274,6 +274,15 @@ const TASK_TEMPLATES: TaskTemplate[] = [
   { id: 'docker-compose', name: 'Docker Compose Up', description: 'Start with Docker Compose', icon: '🐳', type: 'custom', command: 'docker-compose', args: ['up'], category: 'deploy' },
 ];
 
+// Task server connection settings
+export interface TaskServerConfig {
+  url: string;
+  enabled: boolean;
+  autoConnect: boolean;
+  reconnectAttempts: number;
+  reconnectDelay: number;
+}
+
 class TaskRunnerService {
   private tasks: Map<string, Task> = new Map();
   private executions: Map<string, TaskExecution> = new Map();
@@ -282,9 +291,240 @@ class TaskRunnerService {
   private eventListeners: Map<string, EventCallback[]> = new Map();
   private activeTestRun: TestRun | null = null;
 
+  // WebSocket connection to task server
+  private socket: any = null;
+  private serverConfig: TaskServerConfig = {
+    url: 'http://localhost:4003',
+    enabled: true,
+    autoConnect: true,
+    reconnectAttempts: 5,
+    reconnectDelay: 1000,
+  };
+  private connected: boolean = false;
+  private useServerMode: boolean = false; // Toggle between server and simulation mode
+
   constructor() {
     // Load default tasks
     this.loadDefaultTasks();
+    
+    // Try to connect to server on init if autoConnect is enabled
+    if (this.serverConfig.autoConnect) {
+      this.connectToServer();
+    }
+  }
+
+  // Connect to the task server
+  connectToServer(): void {
+    if (!this.serverConfig.enabled || this.socket) return;
+
+    try {
+      // Dynamic import for socket.io-client
+      import('socket.io-client').then(({ io }) => {
+        this.socket = io(this.serverConfig.url, {
+          reconnectionAttempts: this.serverConfig.reconnectAttempts,
+          reconnectionDelay: this.serverConfig.reconnectDelay,
+          transports: ['websocket', 'polling'],
+        });
+
+        this.socket.on('connect', () => {
+          console.log('🚀 Connected to task runner server');
+          this.connected = true;
+          this.useServerMode = true;
+        });
+
+        this.socket.on('disconnect', () => {
+          console.log('🚀 Disconnected from task runner server');
+          this.connected = false;
+        });
+
+        this.socket.on('connect_error', () => {
+          // Fall back to simulation mode
+          console.log('🚀 Task server not available, using simulation mode');
+          this.useServerMode = false;
+        });
+
+        // Listen for task events from server
+        this.socket.on('task:started', (data: any) => {
+          const execution = this.executions.get(data.executionId);
+          if (execution) {
+            execution.status = 'running';
+            execution.startTime = new Date(data.startTime);
+            this.emit({ type: 'taskStart', data: { execution, task: execution.task } });
+          }
+        });
+
+        this.socket.on('task:output', (data: any) => {
+          const execution = this.executions.get(data.executionId);
+          if (execution) {
+            if (data.type === 'stderr') {
+              execution.errors.push(data.data);
+            } else {
+              execution.output.push(data.data);
+            }
+            this.emit({ type: 'taskOutput', data: { executionId: data.executionId, line: data.data } });
+          }
+        });
+
+        this.socket.on('task:completed', (data: any) => {
+          const execution = this.executions.get(data.id);
+          if (execution) {
+            execution.status = data.status;
+            execution.endTime = new Date(data.endTime);
+            execution.exitCode = data.exitCode;
+            execution.output = data.output || execution.output;
+            execution.errors = data.errors || execution.errors;
+            this.emit({ type: 'taskEnd', data: { execution } });
+          }
+        });
+
+        this.socket.on('task:cancelled', (data: any) => {
+          const execution = this.executions.get(data.executionId);
+          if (execution) {
+            execution.status = 'cancelled';
+            execution.endTime = new Date();
+            this.emit({ type: 'taskEnd', data: { execution } });
+          }
+        });
+
+        this.socket.on('task:error', (data: any) => {
+          console.error('Task error:', data.error);
+        });
+
+        // Listen for test events from server
+        this.socket.on('test:started', (data: any) => {
+          const testRun = this.testRuns.get(data.runId);
+          if (testRun) {
+            testRun.status = 'running';
+            testRun.startTime = new Date(data.startTime);
+            this.emit({ type: 'testStart', data: { testRun } });
+          }
+        });
+
+        this.socket.on('test:output', (data: any) => {
+          const testRun = this.testRuns.get(data.runId);
+          if (testRun) {
+            testRun.output.push(data.data);
+            this.emit({ type: 'testResult', data: { testRun, output: data.data } });
+          }
+        });
+
+        this.socket.on('test:result', (data: any) => {
+          const testRun = this.testRuns.get(data.runId);
+          if (testRun) {
+            // Update summary based on result
+            if (data.status === 'passed') {
+              testRun.summary.passed++;
+            } else if (data.status === 'failed') {
+              testRun.summary.failed++;
+            }
+            testRun.summary.total++;
+            this.emit({ type: 'testResult', data: { testRun } });
+          }
+        });
+
+        this.socket.on('test:completed', (data: any) => {
+          const testRun = this.testRuns.get(data.runId);
+          if (testRun) {
+            testRun.status = data.status;
+            testRun.endTime = new Date();
+            testRun.summary.duration = data.duration;
+            if (data.coverage) {
+              testRun.coverage = data.coverage;
+            }
+            if (data.results) {
+              // Parse Jest results if available
+              this.parseTestResults(testRun, data.results);
+            }
+            this.emit({ type: 'testEnd', data: { testRun } });
+          }
+        });
+
+        this.socket.on('test:cancelled', (data: any) => {
+          const testRun = this.testRuns.get(data.runId);
+          if (testRun) {
+            testRun.status = 'cancelled';
+            testRun.endTime = new Date();
+            if (this.activeTestRun?.id === data.runId) {
+              this.activeTestRun = null;
+            }
+            this.emit({ type: 'testEnd', data: { testRun } });
+          }
+        });
+
+        this.socket.on('test:error', (data: any) => {
+          console.error('Test error:', data.error);
+        });
+      }).catch(() => {
+        console.log('🚀 Socket.io-client not available, using simulation mode');
+        this.useServerMode = false;
+      });
+    } catch (error) {
+      console.error('Failed to connect to task server:', error);
+      this.useServerMode = false;
+    }
+  }
+
+  // Parse test results from Jest JSON output
+  private parseTestResults(testRun: TestRun, results: any): void {
+    if (results.testResults) {
+      testRun.suites = results.testResults.map((suite: any) => ({
+        id: `suite-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: suite.name.split('/').pop() || suite.name,
+        file: suite.name,
+        framework: testRun.framework,
+        status: suite.status === 'passed' ? 'passed' : 'failed',
+        duration: suite.endTime - suite.startTime,
+        tests: (suite.assertionResults || []).map((test: any) => ({
+          id: `test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          name: test.title,
+          fullName: test.fullName,
+          status: test.status,
+          duration: test.duration,
+          error: test.failureMessages?.length ? {
+            message: test.failureMessages[0],
+            stack: test.failureMessages.join('\n'),
+          } : undefined,
+        })),
+      }));
+      
+      testRun.summary = {
+        total: results.numTotalTests,
+        passed: results.numPassedTests,
+        failed: results.numFailedTests,
+        skipped: results.numPendingTests,
+        pending: 0,
+        duration: testRun.summary.duration,
+      };
+    }
+  }
+
+  // Disconnect from server
+  disconnectFromServer(): void {
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+      this.connected = false;
+    }
+  }
+
+  // Update server configuration
+  updateServerConfig(config: Partial<TaskServerConfig>): void {
+    this.serverConfig = { ...this.serverConfig, ...config };
+  }
+
+  // Get server config
+  getServerConfig(): TaskServerConfig {
+    return { ...this.serverConfig };
+  }
+
+  // Check if connected to server
+  isConnected(): boolean {
+    return this.connected;
+  }
+
+  // Toggle between server and simulation mode
+  setServerMode(enabled: boolean): void {
+    this.useServerMode = enabled && this.connected;
   }
 
   private loadDefaultTasks(): void {
@@ -371,8 +611,21 @@ class TaskRunnerService {
       data: { execution, task },
     });
 
-    // Simulate task execution
-    await this.simulateTaskExecution(execution);
+    // Use server mode if connected, otherwise simulate
+    if (this.useServerMode && this.socket) {
+      // Execute task on server
+      this.socket.emit('task:execute', {
+        executionId: execution.id,
+        command: task.command,
+        args: task.args,
+        cwd: task.cwd,
+        env: task.env,
+        templateId: task.id,
+      });
+    } else {
+      // Simulate task execution
+      await this.simulateTaskExecution(execution);
+    }
 
     return execution;
   }
@@ -505,15 +758,20 @@ class TaskRunnerService {
   cancelTask(executionId: string): void {
     const execution = this.executions.get(executionId);
     if (execution && execution.status === 'running') {
-      execution.status = 'cancelled';
-      execution.endTime = new Date();
-      execution.output.push('');
-      execution.output.push('Task cancelled by user');
+      // Cancel on server if connected
+      if (this.useServerMode && this.socket) {
+        this.socket.emit('task:cancel', { executionId });
+      } else {
+        execution.status = 'cancelled';
+        execution.endTime = new Date();
+        execution.output.push('');
+        execution.output.push('Task cancelled by user');
 
-      this.emit({
-        type: 'taskEnd',
-        data: { execution },
-      });
+        this.emit({
+          type: 'taskEnd',
+          data: { execution },
+        });
+      }
     }
   }
 
@@ -562,8 +820,21 @@ class TaskRunnerService {
       data: { testRun },
     });
 
-    // Simulate test execution
-    await this.simulateTestRun(testRun, options);
+    // Use server mode if connected, otherwise simulate
+    if (this.useServerMode && this.socket) {
+      // Run tests on server
+      this.socket.emit('test:run', {
+        runId: testRun.id,
+        framework,
+        coverage: options?.coverage,
+        watch: options?.watch,
+        filter: options?.filter,
+        files: options?.files,
+      });
+    } else {
+      // Simulate test execution
+      await this.simulateTestRun(testRun, options);
+    }
 
     return testRun;
   }
@@ -713,12 +984,17 @@ class TaskRunnerService {
   cancelTestRun(runId: string): void {
     const run = this.testRuns.get(runId);
     if (run && run.status === 'running') {
-      run.status = 'cancelled';
-      run.endTime = new Date();
-      if (this.activeTestRun?.id === runId) {
-        this.activeTestRun = null;
+      // Cancel on server if connected
+      if (this.useServerMode && this.socket) {
+        this.socket.emit('test:cancel', { runId });
+      } else {
+        run.status = 'cancelled';
+        run.endTime = new Date();
+        if (this.activeTestRun?.id === runId) {
+          this.activeTestRun = null;
+        }
+        this.emit({ type: 'testEnd', data: { testRun: run } });
       }
-      this.emit({ type: 'testEnd', data: { testRun: run } });
     }
   }
 

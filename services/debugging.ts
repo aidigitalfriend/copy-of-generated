@@ -1,7 +1,19 @@
 // Debugging Service - Debug Adapter Protocol (DAP) Implementation
 // Supports multiple languages with breakpoints, call stack, variables, and watch expressions
+// Now with real-time WebSocket connection to debug server
+
+import { io, Socket } from 'socket.io-client';
 
 export type DebugLanguage = 'javascript' | 'typescript' | 'python' | 'java' | 'csharp' | 'cpp' | 'go' | 'rust' | 'ruby' | 'php';
+
+// Debug server connection settings
+export interface DebugServerConfig {
+  url: string;
+  enabled: boolean;
+  autoConnect: boolean;
+  reconnectAttempts: number;
+  reconnectDelay: number;
+}
 
 export interface DebugAdapter {
   id: string;
@@ -316,6 +328,162 @@ class DebuggingService {
     { filter: 'userUnhandled', label: 'User-Unhandled Exceptions', enabled: false },
   ];
 
+  // WebSocket connection to debug server
+  private socket: Socket | null = null;
+  private serverConfig: DebugServerConfig = {
+    url: 'http://localhost:4002',
+    enabled: true,
+    autoConnect: true,
+    reconnectAttempts: 5,
+    reconnectDelay: 1000,
+  };
+  private connected: boolean = false;
+  private useServerMode: boolean = false; // Toggle between server and simulation mode
+
+  constructor() {
+    // Try to connect to server on init if autoConnect is enabled
+    if (this.serverConfig.autoConnect) {
+      this.connectToServer();
+    }
+  }
+
+  // Connect to the debug server
+  connectToServer(): void {
+    if (!this.serverConfig.enabled || this.socket) return;
+
+    try {
+      this.socket = io(this.serverConfig.url, {
+        reconnectionAttempts: this.serverConfig.reconnectAttempts,
+        reconnectionDelay: this.serverConfig.reconnectDelay,
+        transports: ['websocket', 'polling'],
+      });
+
+      this.socket.on('connect', () => {
+        console.log('🐛 Connected to debug server');
+        this.connected = true;
+        this.useServerMode = true;
+      });
+
+      this.socket.on('disconnect', () => {
+        console.log('🐛 Disconnected from debug server');
+        this.connected = false;
+      });
+
+      this.socket.on('connect_error', () => {
+        // Fall back to simulation mode
+        console.log('🐛 Debug server not available, using simulation mode');
+        this.useServerMode = false;
+      });
+
+      // Listen for debug events from server
+      this.socket.on('debug:created', (data) => {
+        console.log('Debug session created:', data);
+        this.emit({ type: 'process', data, sessionId: data.sessionId });
+      });
+
+      this.socket.on('debug:started', (data) => {
+        const session = this.sessions.get(data.sessionId);
+        if (session) {
+          session.status = data.status;
+          this.emit({ type: 'process', data, sessionId: data.sessionId });
+        }
+      });
+
+      this.socket.on('debug:output', (data) => {
+        const session = this.sessions.get(data.sessionId);
+        if (session) {
+          session.consoleMessages.push({
+            id: `msg-${Date.now()}`,
+            timestamp: new Date(),
+            type: data.type === 'stderr' ? 'error' : 'output',
+            message: data.message,
+            category: data.type,
+          });
+          this.emit({ type: 'output', data, sessionId: data.sessionId });
+        }
+      });
+
+      this.socket.on('debug:stopped', (data) => {
+        const session = this.sessions.get(data.sessionId);
+        if (session) {
+          session.status = 'paused';
+          session.callStack = data.callStack || [];
+          if (data.variables) {
+            // Convert variables to scopes
+            session.scopes = [{
+              name: 'Locals',
+              variablesReference: 1,
+              expensive: false,
+              variables: data.variables.locals || [],
+            }];
+          }
+          this.emit({ type: 'stopped', data, sessionId: data.sessionId });
+        }
+      });
+
+      this.socket.on('debug:continued', (data) => {
+        const session = this.sessions.get(data.sessionId);
+        if (session) {
+          session.status = 'running';
+          this.emit({ type: 'continued', data, sessionId: data.sessionId });
+        }
+      });
+
+      this.socket.on('debug:terminated', (data) => {
+        const session = this.sessions.get(data.sessionId);
+        if (session) {
+          session.status = 'terminated';
+          this.emit({ type: 'terminated', data, sessionId: data.sessionId });
+        }
+      });
+
+      this.socket.on('debug:error', (data) => {
+        console.error('Debug error:', data.error);
+      });
+
+      this.socket.on('debug:evaluated', (data) => {
+        console.log('Evaluation result:', data);
+      });
+
+      this.socket.on('debug:breakpointSet', (data) => {
+        this.globalBreakpoints.push(data.breakpoint);
+        this.emit({ type: 'breakpoint', data: { reason: 'new', breakpoint: data.breakpoint }, sessionId: this.activeSessionId || '' });
+      });
+    } catch (error) {
+      console.error('Failed to connect to debug server:', error);
+      this.useServerMode = false;
+    }
+  }
+
+  // Disconnect from server
+  disconnectFromServer(): void {
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+      this.connected = false;
+    }
+  }
+
+  // Update server configuration
+  updateServerConfig(config: Partial<DebugServerConfig>): void {
+    this.serverConfig = { ...this.serverConfig, ...config };
+  }
+
+  // Get server config
+  getServerConfig(): DebugServerConfig {
+    return { ...this.serverConfig };
+  }
+
+  // Check if connected to server
+  isConnected(): boolean {
+    return this.connected;
+  }
+
+  // Toggle between server and simulation mode
+  setServerMode(enabled: boolean): void {
+    this.useServerMode = enabled && this.connected;
+  }
+
   // Get all available debug adapters
   getAdapters(): DebugAdapter[] {
     return [...DEBUG_ADAPTERS];
@@ -364,8 +532,24 @@ class DebuggingService {
       sessionId: session.id,
     });
 
-    // Simulate initialization
-    await this.simulateInitialization(session);
+    // Use server mode if connected, otherwise simulate
+    if (this.useServerMode && this.socket) {
+      this.socket.emit('debug:create', {
+        ...config,
+        language: adapter.language,
+        sessionId: session.id,
+      });
+      
+      // Add console message for real debug session
+      this.addConsoleMessage(session.id, {
+        type: 'info',
+        message: `Starting debug session "${session.name}" with ${adapter.name}...`,
+        category: 'console',
+      });
+    } else {
+      // Simulate initialization for demo/offline mode
+      await this.simulateInitialization(session);
+    }
 
     return session;
   }
@@ -622,131 +806,156 @@ class DebuggingService {
     const session = sessionId ? this.sessions.get(sessionId) : this.getActiveSession();
     if (!session) return;
 
-    session.status = 'running';
-    session.threads.forEach(t => t.status = 'running');
+    // Use server mode if connected
+    if (this.useServerMode && this.socket) {
+      this.socket.emit('debug:continue', { sessionId: session.id });
+    } else {
+      session.status = 'running';
+      session.threads.forEach(t => t.status = 'running');
 
-    this.addConsoleMessage(session.id, {
-      type: 'debug',
-      message: 'Continued',
-      category: 'console',
-    });
+      this.addConsoleMessage(session.id, {
+        type: 'debug',
+        message: 'Continued',
+        category: 'console',
+      });
 
-    this.emit({
-      type: 'continued',
-      data: { threadId: session.activeThreadId || 1, allThreadsContinued: true },
-      sessionId: session.id,
-    });
+      this.emit({
+        type: 'continued',
+        data: { threadId: session.activeThreadId || 1, allThreadsContinued: true },
+        sessionId: session.id,
+      });
+    }
   }
 
   async pause(sessionId?: string): Promise<void> {
     const session = sessionId ? this.sessions.get(sessionId) : this.getActiveSession();
     if (!session) return;
 
-    session.status = 'paused';
-    session.threads.forEach(t => t.status = 'paused');
-    session.activeThreadId = 1;
+    // Use server mode if connected
+    if (this.useServerMode && this.socket) {
+      this.socket.emit('debug:pause', { sessionId: session.id });
+    } else {
+      session.status = 'paused';
+      session.threads.forEach(t => t.status = 'paused');
+      session.activeThreadId = 1;
 
-    // Simulate call stack
-    this.simulateCallStack(session);
+      // Simulate call stack
+      this.simulateCallStack(session);
 
-    this.addConsoleMessage(session.id, {
-      type: 'debug',
-      message: 'Paused',
-      category: 'console',
-    });
+      this.addConsoleMessage(session.id, {
+        type: 'debug',
+        message: 'Paused',
+        category: 'console',
+      });
 
-    this.emit({
-      type: 'stopped',
-      data: { reason: 'pause', threadId: 1, allThreadsStopped: true },
-      sessionId: session.id,
-    });
+      this.emit({
+        type: 'stopped',
+        data: { reason: 'pause', threadId: 1, allThreadsStopped: true },
+        sessionId: session.id,
+      });
+    }
   }
 
   async stepOver(sessionId?: string): Promise<void> {
     const session = sessionId ? this.sessions.get(sessionId) : this.getActiveSession();
     if (!session || session.status !== 'paused') return;
 
-    this.addConsoleMessage(session.id, {
-      type: 'debug',
-      message: 'Step over',
-      category: 'console',
-    });
+    // Use server mode if connected
+    if (this.useServerMode && this.socket) {
+      this.socket.emit('debug:stepOver', { sessionId: session.id });
+    } else {
+      this.addConsoleMessage(session.id, {
+        type: 'debug',
+        message: 'Step over',
+        category: 'console',
+      });
 
-    // Simulate stepping
-    await new Promise(r => setTimeout(r, 100));
+      // Simulate stepping
+      await new Promise(r => setTimeout(r, 100));
 
-    // Update call stack
-    if (session.callStack.length > 0) {
-      session.callStack[0].line += 1;
+      // Update call stack
+      if (session.callStack.length > 0) {
+        session.callStack[0].line += 1;
+      }
+
+      this.emit({
+        type: 'stopped',
+        data: { reason: 'step', threadId: session.activeThreadId || 1 },
+        sessionId: session.id,
+      });
+
+      // Re-evaluate watch expressions
+      session.watchExpressions.forEach(w => {
+        this.evaluateWatchExpression(session.id, w.id);
+      });
     }
-
-    this.emit({
-      type: 'stopped',
-      data: { reason: 'step', threadId: session.activeThreadId || 1 },
-      sessionId: session.id,
-    });
-
-    // Re-evaluate watch expressions
-    session.watchExpressions.forEach(w => {
-      this.evaluateWatchExpression(session.id, w.id);
-    });
   }
 
   async stepInto(sessionId?: string): Promise<void> {
     const session = sessionId ? this.sessions.get(sessionId) : this.getActiveSession();
     if (!session || session.status !== 'paused') return;
 
-    this.addConsoleMessage(session.id, {
-      type: 'debug',
-      message: 'Step into',
-      category: 'console',
-    });
+    // Use server mode if connected
+    if (this.useServerMode && this.socket) {
+      this.socket.emit('debug:stepInto', { sessionId: session.id });
+    } else {
+      this.addConsoleMessage(session.id, {
+        type: 'debug',
+        message: 'Step into',
+        category: 'console',
+      });
 
-    // Simulate stepping into a function
-    await new Promise(r => setTimeout(r, 100));
+      // Simulate stepping into a function
+      await new Promise(r => setTimeout(r, 100));
 
-    // Add a new stack frame
-    const newFrame: StackFrame = {
-      id: session.callStack.length,
-      name: 'innerFunction',
-      source: { name: 'module.js', path: '/src/module.js' },
-      line: 10,
-      column: 1,
-    };
-    session.callStack.unshift(newFrame);
-    session.activeFrameId = newFrame.id;
+      // Add a new stack frame
+      const newFrame: StackFrame = {
+        id: session.callStack.length,
+        name: 'innerFunction',
+        source: { name: 'module.js', path: '/src/module.js' },
+        line: 10,
+        column: 1,
+      };
+      session.callStack.unshift(newFrame);
+      session.activeFrameId = newFrame.id;
 
-    this.emit({
-      type: 'stopped',
-      data: { reason: 'step', threadId: session.activeThreadId || 1 },
-      sessionId: session.id,
-    });
+      this.emit({
+        type: 'stopped',
+        data: { reason: 'step', threadId: session.activeThreadId || 1 },
+        sessionId: session.id,
+      });
+    }
   }
 
   async stepOut(sessionId?: string): Promise<void> {
     const session = sessionId ? this.sessions.get(sessionId) : this.getActiveSession();
     if (!session || session.status !== 'paused') return;
 
-    this.addConsoleMessage(session.id, {
-      type: 'debug',
-      message: 'Step out',
-      category: 'console',
-    });
+    // Use server mode if connected
+    if (this.useServerMode && this.socket) {
+      this.socket.emit('debug:stepOut', { sessionId: session.id });
+    } else {
+      this.addConsoleMessage(session.id, {
+        type: 'debug',
+        message: 'Step out',
+        category: 'console',
+      });
 
-    // Simulate stepping out
-    await new Promise(r => setTimeout(r, 100));
+      // Simulate stepping out
+      await new Promise(r => setTimeout(r, 100));
 
-    // Remove top stack frame if possible
-    if (session.callStack.length > 1) {
-      session.callStack.shift();
-      session.activeFrameId = session.callStack[0]?.id;
+      // Remove top stack frame if possible
+      if (session.callStack.length > 1) {
+        session.callStack.shift();
+        session.activeFrameId = session.callStack[0]?.id;
+      }
+
+      this.emit({
+        type: 'stopped',
+        data: { reason: 'step', threadId: session.activeThreadId || 1 },
+        sessionId: session.id,
+      });
     }
-
-    this.emit({
-      type: 'stopped',
-      data: { reason: 'step', threadId: session.activeThreadId || 1 },
-      sessionId: session.id,
-    });
   }
 
   async restart(sessionId?: string): Promise<void> {
@@ -778,6 +987,11 @@ class DebuggingService {
   async stop(sessionId?: string): Promise<void> {
     const session = sessionId ? this.sessions.get(sessionId) : this.getActiveSession();
     if (!session) return;
+
+    // Use server mode if connected
+    if (this.useServerMode && this.socket) {
+      this.socket.emit('debug:terminate', { sessionId: session.id });
+    }
 
     session.status = 'terminated';
 

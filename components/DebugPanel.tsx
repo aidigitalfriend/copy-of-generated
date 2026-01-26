@@ -26,6 +26,7 @@ export const DebugPanel: React.FC = () => {
   const [consoleInput, setConsoleInput] = useState('');
   const [showConfigurations, setShowConfigurations] = useState(false);
   const [selectedAdapter, setSelectedAdapter] = useState<DebugAdapter | null>(null);
+  const [isConnected, setIsConnected] = useState(debuggingService.isConnected());
   const consoleEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,7 +36,15 @@ export const DebugPanel: React.FC = () => {
       setBreakpoints([...debuggingService.getBreakpoints()]);
     });
 
-    return unsubscribe;
+    // Check connection status periodically
+    const interval = setInterval(() => {
+      setIsConnected(debuggingService.isConnected());
+    }, 2000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -391,6 +400,12 @@ export const DebugPanel: React.FC = () => {
     <div className="h-full flex flex-col bg-[#1e1e1e] text-white">
       {/* Debug Controls Header */}
       <div className="relative flex items-center gap-1 px-3 py-2 bg-[#252526] border-b border-[#3c3c3c]">
+        {/* Connection status indicator */}
+        <div className="flex items-center gap-1 mr-2" title={isConnected ? 'Connected to debug server' : 'Using simulation mode'}>
+          <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-orange-400'}`} />
+          <span className="text-[10px] text-gray-500">{isConnected ? 'Live' : 'Sim'}</span>
+        </div>
+        
         {/* Session selector / Start button */}
         {session ? (
           <div className="flex items-center gap-2">

@@ -53,6 +53,9 @@ const AI_PROVIDERS = {
 
 type AIProviderKey = keyof typeof AI_PROVIDERS;
 
+import debuggingService, { DebugServerConfig } from '../services/debugging';
+import taskRunnerService, { TaskServerConfig } from '../services/taskRunner';
+
 interface SettingsPanelProps {
   theme: string;
   setTheme: (theme: string) => void;
@@ -60,7 +63,13 @@ interface SettingsPanelProps {
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme }) => {
   const { editorSettings, setEditorSettings, aiConfig, setAiConfig, uiLayout, setUILayout } = useStore();
-  const [activeTab, setActiveTab] = useState<'appearance' | 'editor' | 'fonts' | 'terminal' | 'layout' | 'ai'>('appearance');
+  const [activeTab, setActiveTab] = useState<'appearance' | 'editor' | 'fonts' | 'terminal' | 'layout' | 'ai' | 'debug' | 'tasks'>('appearance');
+  
+  // Debugging and Task Runner server configuration state
+  const [debugConfig, setDebugConfig] = useState<DebugServerConfig>(debuggingService.getServerConfig());
+  const [taskConfig, setTaskConfig] = useState<TaskServerConfig>(taskRunnerService.getServerConfig());
+  const [debugConnected, setDebugConnected] = useState(debuggingService.isConnected());
+  const [taskConnected, setTaskConnected] = useState(taskRunnerService.isConnected());
   
   // Check if current theme is a dark variant
   const isDarkTheme = theme !== 'light';
@@ -116,8 +125,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
   return (
     <div className="flex flex-col h-full">
       {/* Tabs */}
-      <div className={`flex border-b ${borderColor} ${isDarkTheme ? 'bg-vscode-sidebar' : 'bg-gray-100'}`}>
-        {(['appearance', 'editor', 'fonts', 'terminal', 'layout', 'ai'] as const).map(tab => (
+      <div className={`flex border-b ${borderColor} ${isDarkTheme ? 'bg-vscode-sidebar' : 'bg-gray-100'} overflow-x-auto`}>
+        {(['appearance', 'editor', 'fonts', 'terminal', 'layout', 'ai', 'debug', 'tasks'] as const).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -714,6 +723,286 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                 />
                 <p className={`text-xs ${textMuted}`}>Maximum response length</p>
               </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Debug Tab */}
+        {activeTab === 'debug' && (
+          <div className="space-y-6">
+            <div>
+              <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Debug Server</h3>
+              <div className="space-y-2">
+                <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-3 h-3 rounded-full ${debugConnected ? 'bg-green-500' : 'bg-gray-500'}`} />
+                    <span className={`text-sm ${textSecondary}`}>Server Status</span>
+                  </div>
+                  <span className={`text-sm font-medium ${debugConnected ? 'text-green-400' : textMuted}`}>
+                    {debugConnected ? 'Connected' : 'Disconnected'}
+                  </span>
+                </div>
+                
+                <div className={`p-3 ${bgCard}`}>
+                  <label className={`text-sm ${textSecondary} block mb-2`}>Server URL</label>
+                  <input
+                    type="text"
+                    value={debugConfig.url}
+                    onChange={(e) => setDebugConfig({ ...debugConfig, url: e.target.value })}
+                    className={`w-full ${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                    placeholder="http://localhost:4002"
+                  />
+                </div>
+                
+                <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                  <span className={`text-sm ${textSecondary}`}>Enable Real-time Debugging</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={debugConfig.enabled}
+                      onChange={(e) => {
+                        const newConfig = { ...debugConfig, enabled: e.target.checked };
+                        setDebugConfig(newConfig);
+                        debuggingService.updateServerConfig(newConfig);
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-vscode-accent"></div>
+                  </label>
+                </div>
+                
+                <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                  <span className={`text-sm ${textSecondary}`}>Auto-connect on startup</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={debugConfig.autoConnect}
+                      onChange={(e) => {
+                        const newConfig = { ...debugConfig, autoConnect: e.target.checked };
+                        setDebugConfig(newConfig);
+                        debuggingService.updateServerConfig(newConfig);
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-vscode-accent"></div>
+                  </label>
+                </div>
+                
+                <div className={`flex gap-2 p-3 ${bgCard}`}>
+                  <button
+                    onClick={() => {
+                      debuggingService.updateServerConfig(debugConfig);
+                      debuggingService.connectToServer();
+                      setTimeout(() => setDebugConnected(debuggingService.isConnected()), 1000);
+                    }}
+                    disabled={debugConnected}
+                    className={`flex-1 py-2 px-4 text-sm font-medium rounded ${
+                      debugConnected 
+                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
+                        : 'bg-green-600 hover:bg-green-700 text-white'
+                    }`}
+                  >
+                    Connect
+                  </button>
+                  <button
+                    onClick={() => {
+                      debuggingService.disconnectFromServer();
+                      setDebugConnected(false);
+                    }}
+                    disabled={!debugConnected}
+                    className={`flex-1 py-2 px-4 text-sm font-medium rounded ${
+                      !debugConnected 
+                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
+                        : 'bg-red-600 hover:bg-red-700 text-white'
+                    }`}
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Debug Preferences</h3>
+              <div className="space-y-2">
+                <div className={`p-3 ${bgCard}`}>
+                  <label className={`text-sm ${textSecondary} block mb-2`}>Reconnect Attempts</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={debugConfig.reconnectAttempts}
+                    onChange={(e) => setDebugConfig({ ...debugConfig, reconnectAttempts: parseInt(e.target.value) || 5 })}
+                    className={`w-full ${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  />
+                </div>
+                
+                <div className={`p-3 ${bgCard}`}>
+                  <label className={`text-sm ${textSecondary} block mb-2`}>Reconnect Delay (ms)</label>
+                  <input
+                    type="number"
+                    min="100"
+                    max="5000"
+                    step="100"
+                    value={debugConfig.reconnectDelay}
+                    onChange={(e) => setDebugConfig({ ...debugConfig, reconnectDelay: parseInt(e.target.value) || 1000 })}
+                    className={`w-full ${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className={`p-4 ${bgCard} rounded-lg`}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-lg">🐛</span>
+                <h4 className={`font-medium ${textPrimary}`}>About Debug Server</h4>
+              </div>
+              <p className={`text-sm ${textMuted} mb-2`}>
+                The debug server enables real-time debugging with support for multiple languages including JavaScript, TypeScript, Python, and Go.
+              </p>
+              <p className={`text-xs ${textMuted}`}>
+                Start the debug server: <code className="bg-gray-800 px-2 py-0.5 rounded">node server/debug-server.js</code>
+              </p>
+            </div>
+          </div>
+        )}
+        
+        {/* Tasks Tab */}
+        {activeTab === 'tasks' && (
+          <div className="space-y-6">
+            <div>
+              <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Task Runner Server</h3>
+              <div className="space-y-2">
+                <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-3 h-3 rounded-full ${taskConnected ? 'bg-green-500' : 'bg-gray-500'}`} />
+                    <span className={`text-sm ${textSecondary}`}>Server Status</span>
+                  </div>
+                  <span className={`text-sm font-medium ${taskConnected ? 'text-green-400' : textMuted}`}>
+                    {taskConnected ? 'Connected' : 'Disconnected'}
+                  </span>
+                </div>
+                
+                <div className={`p-3 ${bgCard}`}>
+                  <label className={`text-sm ${textSecondary} block mb-2`}>Server URL</label>
+                  <input
+                    type="text"
+                    value={taskConfig.url}
+                    onChange={(e) => setTaskConfig({ ...taskConfig, url: e.target.value })}
+                    className={`w-full ${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                    placeholder="http://localhost:4003"
+                  />
+                </div>
+                
+                <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                  <span className={`text-sm ${textSecondary}`}>Enable Real-time Task Execution</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={taskConfig.enabled}
+                      onChange={(e) => {
+                        const newConfig = { ...taskConfig, enabled: e.target.checked };
+                        setTaskConfig(newConfig);
+                        taskRunnerService.updateServerConfig(newConfig);
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-vscode-accent"></div>
+                  </label>
+                </div>
+                
+                <div className={`flex items-center justify-between p-3 ${bgCard}`}>
+                  <span className={`text-sm ${textSecondary}`}>Auto-connect on startup</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={taskConfig.autoConnect}
+                      onChange={(e) => {
+                        const newConfig = { ...taskConfig, autoConnect: e.target.checked };
+                        setTaskConfig(newConfig);
+                        taskRunnerService.updateServerConfig(newConfig);
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-vscode-accent"></div>
+                  </label>
+                </div>
+                
+                <div className={`flex gap-2 p-3 ${bgCard}`}>
+                  <button
+                    onClick={() => {
+                      taskRunnerService.updateServerConfig(taskConfig);
+                      taskRunnerService.connectToServer();
+                      setTimeout(() => setTaskConnected(taskRunnerService.isConnected()), 1000);
+                    }}
+                    disabled={taskConnected}
+                    className={`flex-1 py-2 px-4 text-sm font-medium rounded ${
+                      taskConnected 
+                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
+                        : 'bg-green-600 hover:bg-green-700 text-white'
+                    }`}
+                  >
+                    Connect
+                  </button>
+                  <button
+                    onClick={() => {
+                      taskRunnerService.disconnectFromServer();
+                      setTaskConnected(false);
+                    }}
+                    disabled={!taskConnected}
+                    className={`flex-1 py-2 px-4 text-sm font-medium rounded ${
+                      !taskConnected 
+                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
+                        : 'bg-red-600 hover:bg-red-700 text-white'
+                    }`}
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className={`text-xs font-semibold ${textPrimary} mb-3 uppercase tracking-wide border-b ${borderColor} pb-2`}>Task Preferences</h3>
+              <div className="space-y-2">
+                <div className={`p-3 ${bgCard}`}>
+                  <label className={`text-sm ${textSecondary} block mb-2`}>Reconnect Attempts</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={taskConfig.reconnectAttempts}
+                    onChange={(e) => setTaskConfig({ ...taskConfig, reconnectAttempts: parseInt(e.target.value) || 5 })}
+                    className={`w-full ${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  />
+                </div>
+                
+                <div className={`p-3 ${bgCard}`}>
+                  <label className={`text-sm ${textSecondary} block mb-2`}>Reconnect Delay (ms)</label>
+                  <input
+                    type="number"
+                    min="100"
+                    max="5000"
+                    step="100"
+                    value={taskConfig.reconnectDelay}
+                    onChange={(e) => setTaskConfig({ ...taskConfig, reconnectDelay: parseInt(e.target.value) || 1000 })}
+                    className={`w-full ${inputBg} text-sm px-3 py-1.5 focus:outline-none focus:border-vscode-accent`}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className={`p-4 ${bgCard} rounded-lg`}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-lg">🚀</span>
+                <h4 className={`font-medium ${textPrimary}`}>About Task Runner Server</h4>
+              </div>
+              <p className={`text-sm ${textMuted} mb-2`}>
+                The task runner server enables real-time task execution with support for npm, yarn, pnpm, build tools, test frameworks, and linters.
+              </p>
+              <p className={`text-xs ${textMuted}`}>
+                Start the task server: <code className="bg-gray-800 px-2 py-0.5 rounded">node server/task-runner-server.js</code>
+              </p>
             </div>
           </div>
         )}
