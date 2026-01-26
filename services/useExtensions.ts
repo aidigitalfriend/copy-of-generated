@@ -676,6 +676,11 @@ export function useExtensions() {
     setNotifications(prev => prev.filter(n => n.id !== notificationId));
   }, []);
 
+  // Clear all notifications
+  const clearNotifications = useCallback(() => {
+    setNotifications([]);
+  }, []);
+
   // Get installed extensions
   const installedExtensions = extensions.filter(e => e.installed);
 
@@ -693,7 +698,8 @@ export function useExtensions() {
     reloadExtension,
     executeCommand,
     addNotification,
-    dismissNotification
+    dismissNotification,
+    clearNotifications
   };
 }
 
