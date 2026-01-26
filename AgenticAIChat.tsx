@@ -30,6 +30,8 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
     theme,
     createFile,
     createFolder,
+    deleteNode,
+    renameNode,
     files,
     openFile,
     currentProject,
@@ -149,11 +151,20 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
         
         console.log(`[AI] Created/Updated file: ${operation.path}`);
       } else if (operation.type === 'delete') {
-        // Handle delete operation - for now just log
-        console.log(`[AI] Delete requested for: ${operation.path}`);
+        // Handle delete operation using store
+        deleteNode(operation.path);
+        console.log(`[AI] Deleted file/folder: ${operation.path}`);
+      } else if (operation.type === 'rename') {
+        // Handle rename operation using store
+        if (operation.newName) {
+          renameNode(operation.path, operation.newName);
+          console.log(`[AI] Renamed ${operation.path} to ${operation.newName}`);
+        } else {
+          console.warn('[AI] Rename operation missing newName');
+        }
       }
     }
-  }, [onFileOperation, createFile, createFolder, openFile, files]);
+  }, [onFileOperation, createFile, createFolder, deleteNode, renameNode, openFile, files]);
 
   // Handle terminal command from AI
   const handleTerminalCommand = useCallback((command: string) => {

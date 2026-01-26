@@ -128,7 +128,8 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ onClose }) => {
     createFile,
     createFolder,
     updateFileContent,
-    deleteFile,
+    deleteNode,
+    renameNode,
     openFile,
     aiConfig,
   } = useStore();
@@ -238,7 +239,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ onClose }) => {
         }
         
         case 'delete':
-          deleteFile(operation.path);
+          deleteNode(operation.path);
           break;
           
         case 'rename':
@@ -246,7 +247,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ onClose }) => {
           if (operation.newPath) {
             const file = files.find(f => f.path === operation.path);
             if (file?.content) {
-              deleteFile(operation.path);
+              deleteNode(operation.path);
               const newPathParts = operation.newPath.split('/').filter(Boolean);
               const newFileName = newPathParts.pop() || '';
               const newParentPath = newPathParts.join('/');
@@ -261,7 +262,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ onClose }) => {
     } catch (error) {
       console.error('[Copilot] Operation error:', error);
     }
-  }, [files, createFile, createFolder, updateFileContent, deleteFile, openFile, executedOps]);
+  }, [files, createFile, createFolder, updateFileContent, deleteNode, openFile, executedOps]);
 
   // Handle terminal commands from AI
   const handleCommand = useCallback((command: TerminalCommand) => {

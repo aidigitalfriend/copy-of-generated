@@ -11,10 +11,11 @@ export interface AIAgentCallbacks {
 }
 
 export interface FileOperation {
-  type: 'create' | 'edit' | 'delete' | 'read';
+  type: 'create' | 'edit' | 'delete' | 'read' | 'rename';
   path: string;
   content?: string;
   oldContent?: string;
+  newName?: string;
 }
 
 export interface AIAgentMessage {

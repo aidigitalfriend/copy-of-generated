@@ -1137,7 +1137,7 @@ export const useStore = create<StoreState>()(
       files: [],
       openFiles: [],
       activeFileId: null,
-      theme: 'dark',
+      theme: 'steel',
       layout: 'default',
       uiLayout: {
         leftSidebarWidth: 260,

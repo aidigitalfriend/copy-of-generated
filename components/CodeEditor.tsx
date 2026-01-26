@@ -230,7 +230,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     updateFileContent, 
     closeFile, 
     setActiveFile, 
-    editorSettings 
+    editorSettings,
+    files,
+    createFile: storeCreateFile,
+    openFile: storeOpenFile,
   } = useStore();
   
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -386,28 +389,89 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       // File operations (simplified - connect to your file store)
       {
         openFile: async (path: string) => {
-          extensionEvents.emit('file:open', { path });
-          return true;
+          // Find file in store and open it
+          const findFileByPath = (fileList: any[], targetPath: string): any => {
+            for (const file of fileList) {
+              if (file.path === targetPath) {
+                return file;
+              }
+              if (file.children) {
+                const found = findFileByPath(file.children, targetPath);
+                if (found) return found;
+              }
+            }
+            return null;
+          };
+          const file = findFileByPath(files, path);
+          if (file) {
+            const openFileData = {
+              id: file.id,
+              name: file.name,
+              path: file.path,
+              content: file.content || '',
+              language: file.language || 'plaintext',
+              isDirty: false,
+            };
+            storeOpenFile(openFileData);
+            return true;
+          }
+          return false;
         },
         createFile: async (path: string, content: string) => {
-          extensionEvents.emit('file:create', { path, content });
+          // Create file in store
+          const pathParts = path.split('/');
+          const fileName = pathParts.pop() || path;
+          const parentPath = pathParts.join('/');
+          storeCreateFile(parentPath, fileName, content);
           return true;
         },
         deleteFile: async (path: string) => {
+          // Delete file from store (this would need to be implemented in store)
           extensionEvents.emit('file:delete', { path });
           return true;
         },
         renameFile: async (oldPath: string, newPath: string) => {
+          // Rename file in store (this would need to be implemented in store)
           extensionEvents.emit('file:rename', { oldPath, newPath });
           return true;
         },
         readFile: async (path: string) => {
-          // This would read from your file store
-          return null;
+          // Read from file store
+          const findFileByPath = (fileList: any[], targetPath: string): any => {
+            for (const file of fileList) {
+              if (file.path === targetPath) {
+                return file;
+              }
+              if (file.children) {
+                const found = findFileByPath(file.children, targetPath);
+                if (found) return found;
+              }
+            }
+            return null;
+          };
+          const file = findFileByPath(files, path);
+          return file ? file.content || '' : null;
         },
         listFiles: async (pattern?: string) => {
-          // This would list files from your store
-          return [];
+          // List files from store
+          const getAllFiles = (fileList: any[]): string[] => {
+            const result: string[] = [];
+            for (const file of fileList) {
+              if (file.type === 'file') {
+                result.push(file.path);
+              }
+              if (file.children) {
+                result.push(...getAllFiles(file.children));
+              }
+            }
+            return result;
+          };
+          const allFiles = getAllFiles(files);
+          if (pattern) {
+            // Simple pattern matching
+            return allFiles.filter(path => path.includes(pattern));
+          }
+          return allFiles;
         },
         getActiveFilePath: () => {
           const model = editor.getModel();

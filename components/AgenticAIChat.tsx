@@ -96,6 +96,8 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
     theme,
     createFile,
     createFolder,
+    deleteNode,
+    renameNode,
     files,
     openFile,
     updateFileContent,
@@ -118,6 +120,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'connecting' | 'disconnected'>('disconnected');
   const [currentStreamingFile, setCurrentStreamingFile] = useState<StreamingFileOperation | null>(null);
   const [createdFilesCount, setCreatedFilesCount] = useState(0);
+  const [createdFiles, setCreatedFiles] = useState<string[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<Array<{name: string, content: string, type: string, isImage?: boolean}>>([]);
   const [webContainerStatus, setWebContainerStatus] = useState<'idle' | 'booting' | 'installing' | 'running' | 'error'>('idle');
   const [serverUrl, setServerUrl] = useState<string | null>(null);
@@ -133,6 +136,84 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   const [aiAgentStatus, setAiAgentStatus] = useState(aiAgentExtension.getStatus());
   const [extensionConfig, setExtensionConfig] = useState(aiAgentExtension.getConfig());
   
+  // Handle file operation from AI
+  const handleFileOperation = useCallback((operation: FileOperation) => {
+    console.log('[AI] File operation:', operation);
+    
+    if (onFileOperation) {
+      onFileOperation(operation);
+    } else {
+      // Default handler - create/edit files in store
+      if (operation.type === 'create' || operation.type === 'edit') {
+        const pathParts = operation.path.split('/');
+        const fileName = pathParts.pop() || operation.path;
+        const parentPath = pathParts.length > 0 ? pathParts.join('/') : '';
+        
+        // Create parent folders if they don't exist
+        if (parentPath) {
+          const folderParts = parentPath.split('/');
+          let currentPath = '';
+          for (const folder of folderParts) {
+            const folderPath = currentPath ? `${currentPath}/${folder}` : folder;
+            // Check if folder exists in files
+            const folderExists = files.some(f => f.path === folderPath && f.type === 'folder');
+            if (!folderExists) {
+              createFolder(currentPath, folder);
+            }
+            currentPath = folderPath;
+          }
+        }
+        
+        // Determine language from extension
+        const ext = fileName.split('.').pop() || '';
+        const languageMap: Record<string, string> = {
+          'ts': 'typescript',
+          'tsx': 'typescript',
+          'js': 'javascript',
+          'jsx': 'javascript',
+          'py': 'python',
+          'html': 'html',
+          'css': 'css',
+          'json': 'json',
+          'md': 'markdown',
+          'yml': 'yaml',
+          'yaml': 'yaml',
+          'sh': 'bash',
+          'env': 'plaintext',
+        };
+        const language = languageMap[ext] || 'plaintext';
+        
+        // Create the file
+        createFile(parentPath, fileName, operation.content);
+        
+        // Auto-open the file in editor
+        const fileId = crypto.randomUUID();
+        openFile({
+          id: fileId,
+          name: fileName,
+          path: operation.path,
+          content: operation.content || '',
+          language,
+          isDirty: false,
+        });
+        
+        console.log(`[AI] Created/Updated file: ${operation.path}`);
+      } else if (operation.type === 'delete') {
+        // Handle delete operation using store
+        deleteNode(operation.path);
+        console.log(`[AI] Deleted file/folder: ${operation.path}`);
+      } else if (operation.type === 'rename') {
+        // Handle rename operation using store
+        if (operation.newName) {
+          renameNode(operation.path, operation.newName);
+          console.log(`[AI] Renamed ${operation.path} to ${operation.newName}`);
+        } else {
+          console.warn('[AI] Rename operation missing newName');
+        }
+      }
+    }
+  }, [onFileOperation, createFile, createFolder, deleteNode, renameNode, openFile, files]);
+
   // Listen for extension events
   useEffect(() => {
     const unsubscribeStatus = aiAgentExtension.onStatusChange(setAiAgentStatus);

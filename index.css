@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* Steel/Metallic Theme - Industrial Metal Look */
 .theme-steel {
   --vscode-bg: #16181d;

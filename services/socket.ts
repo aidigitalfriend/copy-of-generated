@@ -62,10 +62,12 @@ class SocketService {
       });
 
       this.socket.on('connect_error', (error) => {
-        console.error('[Socket] Connection error:', error.message);
+        console.warn('[Socket] Connection error (continuing offline):', error.message);
         this.reconnectAttempts++;
         if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-          reject(new Error('Failed to connect to socket server'));
+          console.warn('[Socket] Max reconnection attempts reached, continuing in offline mode');
+          this.connected = false;
+          resolve(); // Don't reject, just continue offline
         }
       });
 
@@ -154,22 +156,14 @@ class SocketService {
   }): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
-        reject(new Error('Socket not connected'));
-        return;
+        // Generate a fake terminal ID for offline mode
+        const fakeTerminalId = `offline-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        console.warn('[Socket] Creating offline terminal:', fakeTerminalId);
+        return resolve(fakeTerminalId);
       }
 
-      const terminalOptions = {
-        cols: options?.cols || 80,
-        rows: options?.rows || 24,
-        shell: options?.shell,
-        args: options?.args,
-        env: options?.env,
-        cwd: options?.cwd,
-        projectId: options?.projectId,
-      };
-
-      console.log('[Socket] Creating terminal with options:', terminalOptions);
-      this.socket.emit('terminal:create', terminalOptions);
+      console.log('[Socket] Creating terminal with options:', options);
+      this.socket.emit('terminal:create', options);
       
       this.socket.once('terminal:created', (data: { terminalId: string }) => {
         console.log('[Socket] Terminal created:', data.terminalId);
@@ -183,16 +177,28 @@ class SocketService {
 
   // Send input to terminal
   sendTerminalInput(terminalId: string, input: string): void {
+    if (!this.socket?.connected) {
+      console.warn('[Socket] Cannot send input - offline mode');
+      return;
+    }
     this.emit('terminal:input', { terminalId, input });
   }
 
   // Resize terminal
   resizeTerminal(terminalId: string, cols: number, rows: number): void {
+    if (!this.socket?.connected) {
+      console.warn('[Socket] Cannot resize terminal - offline mode');
+      return;
+    }
     this.emit('terminal:resize', { terminalId, cols, rows });
   }
 
   // Kill terminal
   killTerminal(terminalId: string): void {
+    if (!this.socket?.connected) {
+      console.warn('[Socket] Cannot kill terminal - offline mode');
+      return;
+    }
     this.emit('terminal:kill', { terminalId });
   }
 
