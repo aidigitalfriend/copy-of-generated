@@ -4,11 +4,13 @@ import remarkGfm from 'remark-gfm';
 import { useStore } from '../store/useStore';
 import { ChatMessage } from '../types';
 import { voiceInput, voiceOutput, speechSupport } from '../services/speech';
-import { aiAgentService, FileOperation } from '../services/aiAgent';
+import { aiAgentExtension, FileOperation } from '../services/aiAgentExtension';
+import { extensionEvents } from '../services/extensions';
 import { filesApiService } from '../services/filesApi';
 import { socketService } from '../services/socket';
 import { StreamingParser, StreamingFileOperation, StreamingCommand } from '../services/streamingParser';
 import { webContainerService } from '../services/webcontainer';
+import AIAgentExtensionSettings from './AIAgentExtensionSettings';
 
 // Icons
 const HistoryIcon = () => (
@@ -87,7 +89,6 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
     chatHistory, 
     addMessage, 
     clearChat, 
-    aiConfig,
     isAiLoading,
     setAiLoading,
     openFiles,
@@ -128,6 +129,25 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   const [editingName, setEditingName] = useState('');
   const [messageFeedback, setMessageFeedback] = useState<Record<string, 'up' | 'down' | null>>({});
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+  const [showExtensionSettings, setShowExtensionSettings] = useState(false);
+  const [aiAgentStatus, setAiAgentStatus] = useState(aiAgentExtension.getStatus());
+  const [extensionConfig, setExtensionConfig] = useState(aiAgentExtension.getConfig());
+  
+  // Listen for extension events
+  useEffect(() => {
+    const unsubscribeStatus = aiAgentExtension.onStatusChange(setAiAgentStatus);
+    const unsubscribeConfig = aiAgentExtension.onConfigChange(setExtensionConfig);
+    
+    // Listen for open settings command from extension
+    const handleOpenSettings = () => setShowExtensionSettings(true);
+    extensionEvents.on('aiAgent:openSettings', handleOpenSettings);
+    
+    return () => {
+      unsubscribeStatus();
+      unsubscribeConfig();
+      extensionEvents.off('aiAgent:openSettings', handleOpenSettings);
+    };
+  }, []);
   
   // Available agents
   const AGENTS = [
@@ -592,6 +612,14 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
         });
       }
 
+      // Check if AI Agent extension is configured
+      if (!aiAgentExtension.isConfigured()) {
+        setIsStreaming(false);
+        setAiLoading(false);
+        setShowExtensionSettings(true);
+        return;
+      }
+
       // Try WebSocket streaming first with timeout, then fallback to REST API
       let useRestFallback = false;
       
@@ -601,7 +629,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
             new Promise<void>((resolve, reject) => {
               let hasResponse = false;
               
-              aiAgentService.streamChat(
+              aiAgentExtension.streamChat(
                 messagesForAI,
                 {
                   onToken: (token) => {
@@ -641,8 +669,6 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                   },
                   onTerminalCommand: handleTerminalCommand,
                 },
-                'openai',
-                'gpt-4o-mini'
               );
             }),
             new Promise<void>((_, reject) => 
@@ -658,24 +684,52 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
       }
       
       if (useRestFallback) {
-        // Fallback to REST API
-        const result = await aiAgentService.sendMessage(messagesForAI, 'openai', 'gpt-4o-mini');
-        
-        // Process file operations
-        result.operations.forEach(op => {
-          handleFileStart({ type: op.type as any, path: op.path, content: op.content, isComplete: true });
-          handleFileComplete({ type: op.type as any, path: op.path, content: op.content, isComplete: true });
+        // Fallback to REST API via extension
+        await new Promise<void>((resolve, reject) => {
+          aiAgentExtension.streamChat(
+            messagesForAI,
+            {
+              onToken: (token) => {
+                const displayContent = parserRef.current?.processToken(token) || '';
+                setStreamingContent(displayContent);
+              },
+              onComplete: (response) => {
+                setStreamingContent('');
+                setIsStreaming(false);
+                setAgentStatus(null);
+                
+                // Process operations from parsed response
+                const operations = aiAgentExtension.parseOperations(response);
+                operations.forEach(op => {
+                  handleFileStart({ type: op.type as any, path: op.path, content: op.content, isComplete: true });
+                  handleFileComplete({ type: op.type as any, path: op.path, content: op.content, isComplete: true });
+                });
+                
+                const commands = aiAgentExtension.parseTerminalCommands(response);
+                commands.forEach(handleTerminalCommand);
+                
+                const assistantMessage: ChatMessage = {
+                  id: crypto.randomUUID(),
+                  role: 'assistant',
+                  content: response,
+                  timestamp: Date.now(),
+                };
+                addMessage(assistantMessage);
+                
+                parserRef.current?.reset();
+                resolve();
+              },
+              onError: (error) => {
+                reject(error);
+              },
+              onFileOperation: (op) => {
+                handleFileStart({ type: op.type as any, path: op.path, content: op.content, isComplete: true });
+                handleFileComplete({ type: op.type as any, path: op.path, content: op.content, isComplete: true });
+              },
+              onTerminalCommand: handleTerminalCommand,
+            }
+          );
         });
-        
-        result.commands.forEach(handleTerminalCommand);
-        
-        const assistantMessage: ChatMessage = {
-          id: crypto.randomUUID(),
-          role: 'assistant',
-          content: result.response,
-          timestamp: Date.now(),
-        };
-        addMessage(assistantMessage);
       }
       
     } catch (error) {
@@ -782,6 +836,24 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
         <div className="flex items-center gap-2">
           <span className="text-vscode-accent">⚡</span>
           <span className={`font-semibold text-sm ${textClass}`}>AI CHAT</span>
+          {/* Provider Badge */}
+          <span 
+            className={`text-xs px-1.5 py-0.5 rounded ${
+              aiAgentExtension.isConfigured()
+                ? 'bg-green-500/20 text-green-400'
+                : 'bg-yellow-500/20 text-yellow-400 cursor-pointer'
+            }`}
+            onClick={() => !aiAgentExtension.isConfigured() && setShowExtensionSettings(true)}
+            title={aiAgentExtension.isConfigured() 
+              ? `${extensionConfig.provider} - ${extensionConfig.model}` 
+              : 'Click to configure AI provider'
+            }
+          >
+            {aiAgentExtension.isConfigured() 
+              ? extensionConfig.provider 
+              : '⚠️ Not Configured'
+            }
+          </span>
           {activeChatSessionId && chatSessions.find(s => s.id === activeChatSessionId) && (
             <span className={`text-xs ${mutedTextClass} max-w-32 truncate`}>
               - {chatSessions.find(s => s.id === activeChatSessionId)?.name}
@@ -848,6 +920,20 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
               <TrashIcon />
             </button>
           )}
+          
+          {/* AI Extension Settings Button */}
+          <button
+            onClick={() => setShowExtensionSettings(true)}
+            className={`p-1.5 rounded transition-colors ${
+              theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+            }`}
+            title={`AI Settings (${extensionConfig.provider} - ${extensionConfig.model})`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -1295,6 +1381,12 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
           </div>
         </div>
       </div>
+      
+      {/* AI Agent Extension Settings Modal */}
+      <AIAgentExtensionSettings
+        isOpen={showExtensionSettings}
+        onClose={() => setShowExtensionSettings(false)}
+      />
     </div>
   );
 };

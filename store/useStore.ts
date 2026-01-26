@@ -1112,6 +1112,17 @@ const DEFAULT_EXTENSIONS: Extension[] = [
     enabled: false,
     isBuiltIn: true,
   },
+  // AI Agent Extension
+  {
+    id: 'ai-agent',
+    name: 'AI Coding Agent',
+    description: 'Intelligent AI assistant for code generation, editing, and project scaffolding. Supports multiple AI providers.',
+    icon: '🤖',
+    version: '2.0.0',
+    category: 'AI',
+    enabled: true,
+    isBuiltIn: true,
+  },
 ];
 
 export const useStore = create<StoreState>()(
