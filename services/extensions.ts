@@ -48,9 +48,15 @@ export const extensionAPI = {
     delete: (path: string): void => {
       extensionEvents.emit('file:delete', path);
     },
+    rename: (oldPath: string, newPath: string): void => {
+      extensionEvents.emit('file:rename', oldPath, newPath);
+    },
     list: (path: string): string[] => {
       extensionEvents.emit('file:list', path);
       return [];
+    },
+    createFolder: (path: string): void => {
+      extensionEvents.emit('folder:create', path);
     },
   },
 
