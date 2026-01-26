@@ -838,12 +838,15 @@ const App: React.FC = () => {
   // VS Code Theme classes - use isDark for all dark theme variants
   const isDark = theme !== 'light';
   
-  const themeClasses = isDark 
-    ? 'bg-vscode-bg text-vscode-text' 
-    : 'bg-white text-gray-900';
+  const themeName = useStore((state) => state.theme);
+  const isDark = !['light', 'high-contrast-light'].includes(themeName);
+
+  // These are now fallbacks or for components not using CSS variables.
+  // The primary theming is done by CSS variables set in useStore.
+  const themeClasses = 'bg-vscode-bg text-vscode-text';
   
   const sidebarClasses = isDark
-    ? 'bg-vscode-sidebar border-vscode-border border-r'
+    ? 'bg-vscode-sidebar border-vscode-border'
     : 'bg-gray-100 border-gray-300 border-r';
   
   const panelClasses = isDark
@@ -873,7 +876,7 @@ const App: React.FC = () => {
   const borderClass = isDark ? 'border-vscode-border' : 'border-gray-300';
 
   return (
-    <div className={`flex h-screen w-full overflow-hidden ${themeClasses}`}>
+    <div className={`flex h-screen w-full overflow-hidden`}>
       {/* ===== LEFT SIDEBAR ===== */}
       <aside className="flex h-full">
         {/* Icon Bar - VS Code Style */}
