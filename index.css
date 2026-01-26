@@ -125,3 +125,43 @@
 .theme-steel .xterm {
   background: linear-gradient(180deg, #14161b 0%, #16181d 100%);
 }
+
+/* Animations to make the theme alive */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+@keyframes glow {
+  0% { text-shadow: 0 0 5px rgba(149, 165, 187, 0.3); }
+  50% { text-shadow: 0 0 15px rgba(149, 165, 187, 0.8); }
+  100% { text-shadow: 0 0 5px rgba(149, 165, 187, 0.3); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.theme-steel .bg-vscode-accent {
+  animation: pulse 3s infinite;
+}
+
+.theme-steel .text-vscode-accent {
+  animation: glow 4s infinite;
+}
+
+.theme-steel .bg-vscode-bg {
+  background: 
+    linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.02) 50%, transparent 100%),
+    linear-gradient(0deg, rgba(0,0,0,0.1) 0%, transparent 50%, rgba(255,255,255,0.03) 100%),
+    linear-gradient(90deg, rgba(255,255,255,0.01) 0%, transparent 50%, rgba(255,255,255,0.01) 100%),
+    #16181d;
+  background-size: 200% 100%;
+  animation: shimmer 10s infinite linear;
+}
+
+.theme-steel button:not([disabled]):hover {
+  animation: pulse 1s infinite;
+}

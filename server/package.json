@@ -5,10 +5,10 @@
   "main": "dist/main.js",
   "scripts": {
     "build": "nest build",
-    "start": "node dist/main.js",
+    "start": "node dist/nest-src/main.js",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main.js",
+    "start:prod": "node dist/nest-src/main.js",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
