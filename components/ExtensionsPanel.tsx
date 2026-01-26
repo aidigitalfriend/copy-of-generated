@@ -246,7 +246,7 @@ export const ExtensionsPanel: React.FC = () => {
                     </span>
                   </div>
                   <p className={`text-xs truncate ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{ext.author}</p>
-                  <p className={`text-xs mt-1 line-clamp-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>{ext.description}</p>
+                  <p className={`text-xs mt-1 truncate ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>{ext.description}</p>
                   
                   {/* Meta */}
                   <div className={`flex items-center gap-3 mt-2 text-[10px] ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
