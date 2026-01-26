@@ -8,6 +8,7 @@ import { RealTerminal } from './components/RealTerminal';
 import { IntegratedTerminal, IntegratedTerminalAdvanced } from './components/IntegratedTerminal';
 import { AIChat } from './components/AIChat';
 import { AgenticAIChat } from './components/AgenticAIChat';
+import { AIFullControlPanel } from './components/AIFullControlPanel';
 import { TemplateGallery } from './components/TemplateGallery';
 import PrebuiltTemplatesGallery from './components/PrebuiltTemplatesGallery';
 import { LivePreview } from './components/LivePreview';
@@ -40,7 +41,7 @@ import { mediaService } from './services/media';
 import { Diagnostic } from './services/codeIntelligence';
 
 type LeftTab = 'files' | 'templates' | 'prebuilt' | 'extensions' | 'search' | 'history' | 'git';
-type RightTab = 'ai' | 'ai-tools' | 'collab' | 'debug' | 'tasks' | 'package' | 'remote' | 'analytics' | 'techstack' | 'deploy' | 'settings';
+type RightTab = 'ai' | 'ai-full' | 'ai-tools' | 'collab' | 'debug' | 'tasks' | 'package' | 'remote' | 'analytics' | 'techstack' | 'deploy' | 'settings';
 
 // AI Provider Models Configuration
 const AI_PROVIDERS = {
@@ -769,6 +770,7 @@ const App: React.FC = () => {
   // Right sidebar items with SVG icons
   const rightSidebarItems = [
     { id: 'ai' as RightTab, label: 'AI Chat', tooltip: 'AI Assistant (Ctrl+Shift+A)' },
+    { id: 'ai-full' as RightTab, label: 'AI Full', tooltip: 'AI Full Control - Terminal, Files, Git, Deploy (Ctrl+Shift+F)' },
     { id: 'ai-tools' as RightTab, label: 'AI Tools', tooltip: 'AI Code Review, Docs, Security (Ctrl+Shift+I)' },
     { id: 'collab' as RightTab, label: 'Collaborate', tooltip: 'Real-Time Collaboration (Ctrl+Shift+C)' },
     { id: 'debug' as RightTab, label: 'Debug', tooltip: 'Debugging (F5)' },
@@ -810,6 +812,8 @@ const App: React.FC = () => {
     switch(id) {
       case 'ai':
         return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>;
+      case 'ai-full':
+        return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611l-.628.105a9.002 9.002 0 01-8.013-2.023L5 14.5" /></svg>;
       case 'ai-tools':
         return <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" /></svg>;
       case 'collab':
@@ -1340,6 +1344,7 @@ const App: React.FC = () => {
             {/* Panel Content */}
             <div className="flex-1 overflow-hidden">
               {rightTab === 'ai' && <AgenticAIChat voiceEnabled={voiceEnabled} />}
+              {rightTab === 'ai-full' && <AIFullControlPanel voiceEnabled={voiceEnabled} />}
               {rightTab === 'ai-tools' && <AIIntegrationPanel />}
               {rightTab === 'collab' && <CollaborationPanel />}
               {rightTab === 'debug' && <DebugPanel />}
