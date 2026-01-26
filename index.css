@@ -1,6 +1,529 @@
 @import "tailwindcss";
 
-/* Steel/Metallic Theme - Industrial Metal Look */
+/* ============================================
+   Complete Theme System
+   All themes with consistent styling
+   ============================================ */
+
+/* Base Theme Variables (Default Dark) */
+:root {
+  --vscode-bg: #1e1e1e;
+  --vscode-sidebar: #252526;
+  --vscode-activitybar: #333333;
+  --vscode-editor: #1e1e1e;
+  --vscode-panel: #1e1e1e;
+  --vscode-border: #3c3c3c;
+  --vscode-accent: #0078d4;
+  --vscode-accent-hover: #1c8ae0;
+  --vscode-text: #cccccc;
+  --vscode-text-muted: #858585;
+  --vscode-selection: #264f78;
+  --vscode-hover: #2a2d2e;
+  --vscode-active: #37373d;
+  --vscode-success: #4caf50;
+  --vscode-warning: #ff9800;
+  --vscode-error: #f44336;
+}
+
+/* ============================================
+   Light Theme
+   ============================================ */
+.light,
+[data-theme="light"] {
+  --vscode-bg: #ffffff;
+  --vscode-sidebar: #f3f3f3;
+  --vscode-activitybar: #e8e8e8;
+  --vscode-editor: #ffffff;
+  --vscode-panel: #f3f3f3;
+  --vscode-border: #e0e0e0;
+  --vscode-accent: #0078d4;
+  --vscode-accent-hover: #106ebe;
+  --vscode-text: #333333;
+  --vscode-text-muted: #666666;
+  --vscode-selection: #add6ff;
+  --vscode-hover: #e8e8e8;
+  --vscode-active: #dddddd;
+  --vscode-success: #388e3c;
+  --vscode-warning: #f57c00;
+  --vscode-error: #d32f2f;
+}
+
+/* Light Theme Specific Styles */
+.light ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.light ::-webkit-scrollbar-track {
+  background: #f3f3f3;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 5px;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.light ::selection {
+  background: #add6ff;
+  color: #333333;
+}
+
+.light input,
+.light textarea,
+.light select {
+  background: #ffffff;
+  border: 1px solid #cecece;
+  color: #333333;
+}
+
+.light input:focus,
+.light textarea:focus,
+.light select:focus {
+  border-color: #0078d4;
+  outline: none;
+  box-shadow: 0 0 0 1px #0078d4;
+}
+
+/* ============================================
+   High Contrast Theme
+   ============================================ */
+.high-contrast {
+  --vscode-bg: #000000;
+  --vscode-sidebar: #000000;
+  --vscode-activitybar: #000000;
+  --vscode-editor: #000000;
+  --vscode-panel: #000000;
+  --vscode-border: #ffffff;
+  --vscode-accent: #ffff00;
+  --vscode-accent-hover: #ffff00;
+  --vscode-text: #ffffff;
+  --vscode-text-muted: #ffffff;
+  --vscode-selection: #ffff00;
+  --vscode-hover: #333333;
+  --vscode-active: #444444;
+  --vscode-success: #00ff00;
+  --vscode-warning: #ffff00;
+  --vscode-error: #ff0000;
+}
+
+.high-contrast ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.high-contrast ::-webkit-scrollbar-track {
+  background: #000000;
+  border: 1px solid #ffffff;
+}
+
+.high-contrast ::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border: 1px solid #000000;
+}
+
+.high-contrast ::-webkit-scrollbar-thumb:hover {
+  background: #ffff00;
+}
+
+.high-contrast ::selection {
+  background: #ffff00;
+  color: #000000;
+}
+
+.high-contrast input,
+.high-contrast textarea,
+.high-contrast select {
+  background: #000000;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
+
+.high-contrast input:focus,
+.high-contrast textarea:focus,
+.high-contrast select:focus {
+  border-color: #ffff00;
+  outline: none;
+  box-shadow: 0 0 0 2px #ffff00;
+}
+
+.high-contrast button:focus {
+  outline: 2px solid #ffff00;
+  outline-offset: 2px;
+}
+
+/* ============================================
+   GitHub Dark Theme
+   ============================================ */
+.theme-github-dark {
+  --vscode-bg: #0d1117;
+  --vscode-sidebar: #161b22;
+  --vscode-activitybar: #21262d;
+  --vscode-editor: #0d1117;
+  --vscode-panel: #161b22;
+  --vscode-border: #30363d;
+  --vscode-accent: #58a6ff;
+  --vscode-accent-hover: #79c0ff;
+  --vscode-text: #c9d1d9;
+  --vscode-text-muted: #8b949e;
+  --vscode-selection: #388bfd33;
+  --vscode-hover: #21262d;
+  --vscode-active: #30363d;
+  --vscode-success: #3fb950;
+  --vscode-warning: #d29922;
+  --vscode-error: #f85149;
+}
+
+.theme-github-dark ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.theme-github-dark ::-webkit-scrollbar-track {
+  background: #161b22;
+}
+
+.theme-github-dark ::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 5px;
+}
+
+.theme-github-dark ::-webkit-scrollbar-thumb:hover {
+  background: #484f58;
+}
+
+.theme-github-dark ::selection {
+  background: #388bfd55;
+  color: #c9d1d9;
+}
+
+.theme-github-dark input,
+.theme-github-dark textarea,
+.theme-github-dark select {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+}
+
+.theme-github-dark input:focus,
+.theme-github-dark textarea:focus,
+.theme-github-dark select:focus {
+  border-color: #58a6ff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.3);
+}
+
+/* ============================================
+   Dracula Theme
+   ============================================ */
+.theme-dracula {
+  --vscode-bg: #282a36;
+  --vscode-sidebar: #21222c;
+  --vscode-activitybar: #343746;
+  --vscode-editor: #282a36;
+  --vscode-panel: #21222c;
+  --vscode-border: #44475a;
+  --vscode-accent: #bd93f9;
+  --vscode-accent-hover: #caa9fa;
+  --vscode-text: #f8f8f2;
+  --vscode-text-muted: #6272a4;
+  --vscode-selection: #44475a;
+  --vscode-hover: #343746;
+  --vscode-active: #44475a;
+  --vscode-success: #50fa7b;
+  --vscode-warning: #ffb86c;
+  --vscode-error: #ff5555;
+}
+
+.theme-dracula ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.theme-dracula ::-webkit-scrollbar-track {
+  background: #21222c;
+}
+
+.theme-dracula ::-webkit-scrollbar-thumb {
+  background: #44475a;
+  border-radius: 5px;
+}
+
+.theme-dracula ::-webkit-scrollbar-thumb:hover {
+  background: #6272a4;
+}
+
+.theme-dracula ::selection {
+  background: #bd93f955;
+  color: #f8f8f2;
+}
+
+.theme-dracula input,
+.theme-dracula textarea,
+.theme-dracula select {
+  background: #282a36;
+  border: 1px solid #44475a;
+  color: #f8f8f2;
+}
+
+.theme-dracula input:focus,
+.theme-dracula textarea:focus,
+.theme-dracula select:focus {
+  border-color: #bd93f9;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(189, 147, 249, 0.3);
+}
+
+/* ============================================
+   Nord Theme
+   ============================================ */
+.theme-nord {
+  --vscode-bg: #2e3440;
+  --vscode-sidebar: #3b4252;
+  --vscode-activitybar: #434c5e;
+  --vscode-editor: #2e3440;
+  --vscode-panel: #3b4252;
+  --vscode-border: #4c566a;
+  --vscode-accent: #88c0d0;
+  --vscode-accent-hover: #8fbcbb;
+  --vscode-text: #eceff4;
+  --vscode-text-muted: #d8dee9;
+  --vscode-selection: #434c5e;
+  --vscode-hover: #434c5e;
+  --vscode-active: #4c566a;
+  --vscode-success: #a3be8c;
+  --vscode-warning: #ebcb8b;
+  --vscode-error: #bf616a;
+}
+
+.theme-nord ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.theme-nord ::-webkit-scrollbar-track {
+  background: #3b4252;
+}
+
+.theme-nord ::-webkit-scrollbar-thumb {
+  background: #4c566a;
+  border-radius: 5px;
+}
+
+.theme-nord ::-webkit-scrollbar-thumb:hover {
+  background: #5e6779;
+}
+
+.theme-nord ::selection {
+  background: #88c0d055;
+  color: #eceff4;
+}
+
+.theme-nord input,
+.theme-nord textarea,
+.theme-nord select {
+  background: #2e3440;
+  border: 1px solid #4c566a;
+  color: #eceff4;
+}
+
+.theme-nord input:focus,
+.theme-nord textarea:focus,
+.theme-nord select:focus {
+  border-color: #88c0d0;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(136, 192, 208, 0.3);
+}
+
+/* ============================================
+   Monokai Theme
+   ============================================ */
+.theme-monokai {
+  --vscode-bg: #272822;
+  --vscode-sidebar: #1e1f1c;
+  --vscode-activitybar: #3e3d32;
+  --vscode-editor: #272822;
+  --vscode-panel: #1e1f1c;
+  --vscode-border: #49483e;
+  --vscode-accent: #a6e22e;
+  --vscode-accent-hover: #b8f340;
+  --vscode-text: #f8f8f2;
+  --vscode-text-muted: #75715e;
+  --vscode-selection: #49483e;
+  --vscode-hover: #3e3d32;
+  --vscode-active: #49483e;
+  --vscode-success: #a6e22e;
+  --vscode-warning: #e6db74;
+  --vscode-error: #f92672;
+}
+
+.theme-monokai ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.theme-monokai ::-webkit-scrollbar-track {
+  background: #1e1f1c;
+}
+
+.theme-monokai ::-webkit-scrollbar-thumb {
+  background: #49483e;
+  border-radius: 5px;
+}
+
+.theme-monokai ::-webkit-scrollbar-thumb:hover {
+  background: #75715e;
+}
+
+.theme-monokai ::selection {
+  background: #a6e22e44;
+  color: #f8f8f2;
+}
+
+.theme-monokai input,
+.theme-monokai textarea,
+.theme-monokai select {
+  background: #272822;
+  border: 1px solid #49483e;
+  color: #f8f8f2;
+}
+
+.theme-monokai input:focus,
+.theme-monokai textarea:focus,
+.theme-monokai select:focus {
+  border-color: #a6e22e;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(166, 226, 46, 0.3);
+}
+
+/* ============================================
+   Solarized Dark Theme
+   ============================================ */
+.theme-solarized-dark {
+  --vscode-bg: #002b36;
+  --vscode-sidebar: #073642;
+  --vscode-activitybar: #094959;
+  --vscode-editor: #002b36;
+  --vscode-panel: #073642;
+  --vscode-border: #094959;
+  --vscode-accent: #268bd2;
+  --vscode-accent-hover: #2aa198;
+  --vscode-text: #839496;
+  --vscode-text-muted: #657b83;
+  --vscode-selection: #073642;
+  --vscode-hover: #073642;
+  --vscode-active: #094959;
+  --vscode-success: #859900;
+  --vscode-warning: #b58900;
+  --vscode-error: #dc322f;
+}
+
+.theme-solarized-dark ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.theme-solarized-dark ::-webkit-scrollbar-track {
+  background: #073642;
+}
+
+.theme-solarized-dark ::-webkit-scrollbar-thumb {
+  background: #094959;
+  border-radius: 5px;
+}
+
+.theme-solarized-dark ::-webkit-scrollbar-thumb:hover {
+  background: #2aa198;
+}
+
+.theme-solarized-dark ::selection {
+  background: #268bd255;
+  color: #839496;
+}
+
+.theme-solarized-dark input,
+.theme-solarized-dark textarea,
+.theme-solarized-dark select {
+  background: #002b36;
+  border: 1px solid #094959;
+  color: #839496;
+}
+
+.theme-solarized-dark input:focus,
+.theme-solarized-dark textarea:focus,
+.theme-solarized-dark select:focus {
+  border-color: #268bd2;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(38, 139, 210, 0.3);
+}
+
+/* ============================================
+   One Dark Theme
+   ============================================ */
+.theme-one-dark {
+  --vscode-bg: #282c34;
+  --vscode-sidebar: #21252b;
+  --vscode-activitybar: #2c323c;
+  --vscode-editor: #282c34;
+  --vscode-panel: #21252b;
+  --vscode-border: #3e4451;
+  --vscode-accent: #61afef;
+  --vscode-accent-hover: #528bff;
+  --vscode-text: #abb2bf;
+  --vscode-text-muted: #5c6370;
+  --vscode-selection: #3e4451;
+  --vscode-hover: #2c323c;
+  --vscode-active: #3e4451;
+  --vscode-success: #98c379;
+  --vscode-warning: #e5c07b;
+  --vscode-error: #e06c75;
+}
+
+.theme-one-dark ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.theme-one-dark ::-webkit-scrollbar-track {
+  background: #21252b;
+}
+
+.theme-one-dark ::-webkit-scrollbar-thumb {
+  background: #3e4451;
+  border-radius: 5px;
+}
+
+.theme-one-dark ::-webkit-scrollbar-thumb:hover {
+  background: #4d5566;
+}
+
+.theme-one-dark ::selection {
+  background: #61afef44;
+  color: #abb2bf;
+}
+
+.theme-one-dark input,
+.theme-one-dark textarea,
+.theme-one-dark select {
+  background: #282c34;
+  border: 1px solid #3e4451;
+  color: #abb2bf;
+}
+
+.theme-one-dark input:focus,
+.theme-one-dark textarea:focus,
+.theme-one-dark select:focus {
+  border-color: #61afef;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(97, 175, 239, 0.3);
+}
+
+/* ============================================
+   Steel/Metallic Theme - Industrial Metal Look
+   ============================================ */
 .theme-steel {
   --vscode-bg: #16181d;
   --vscode-sidebar: #1c1f26;
@@ -166,4 +689,265 @@
 
 .theme-steel button:not([disabled]):hover {
   animation: pulse 1s infinite;
+}
+
+/* ============================================
+   Dark Theme (Default VS Code Dark)
+   Uses .dark class without any specific theme class
+   ============================================ */
+.dark:not([class*="theme-"]):not(.high-contrast) {
+  --vscode-bg: #1e1e1e;
+  --vscode-sidebar: #252526;
+  --vscode-activitybar: #333333;
+  --vscode-editor: #1e1e1e;
+  --vscode-panel: #1e1e1e;
+  --vscode-border: #3c3c3c;
+  --vscode-accent: #0078d4;
+  --vscode-accent-hover: #1c8ae0;
+  --vscode-text: #cccccc;
+  --vscode-text-muted: #858585;
+  --vscode-selection: #264f78;
+  --vscode-hover: #2a2d2e;
+  --vscode-active: #37373d;
+  --vscode-success: #4caf50;
+  --vscode-warning: #ff9800;
+  --vscode-error: #f44336;
+}
+
+.dark:not([class*="theme-"]):not(.high-contrast) ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.dark:not([class*="theme-"]):not(.high-contrast) ::-webkit-scrollbar-track {
+  background: #252526;
+}
+
+.dark:not([class*="theme-"]):not(.high-contrast) ::-webkit-scrollbar-thumb {
+  background: #424242;
+  border-radius: 5px;
+}
+
+.dark:not([class*="theme-"]):not(.high-contrast) ::-webkit-scrollbar-thumb:hover {
+  background: #5a5a5a;
+}
+
+.dark:not([class*="theme-"]):not(.high-contrast) ::selection {
+  background: #264f78;
+  color: #cccccc;
+}
+
+.dark:not([class*="theme-"]):not(.high-contrast) input,
+.dark:not([class*="theme-"]):not(.high-contrast) textarea,
+.dark:not([class*="theme-"]):not(.high-contrast) select {
+  background: #3c3c3c;
+  border: 1px solid #3c3c3c;
+  color: #cccccc;
+}
+
+.dark:not([class*="theme-"]):not(.high-contrast) input:focus,
+.dark:not([class*="theme-"]):not(.high-contrast) textarea:focus,
+.dark:not([class*="theme-"]):not(.high-contrast) select:focus {
+  border-color: #0078d4;
+  outline: none;
+  box-shadow: 0 0 0 1px #0078d4;
+}
+
+/* ============================================
+   Global Theme Utilities
+   ============================================ */
+
+/* Ensure proper color inheritance for all form elements */
+input::placeholder,
+textarea::placeholder {
+  color: var(--vscode-text-muted);
+  opacity: 0.7;
+}
+
+/* Button focus states for accessibility */
+button:focus-visible {
+  outline: 2px solid var(--vscode-accent);
+  outline-offset: 2px;
+}
+
+/* Links should use accent color */
+a {
+  color: var(--vscode-accent);
+}
+
+a:hover {
+  color: var(--vscode-accent-hover);
+}
+
+/* Success, warning, error text utilities */
+.text-success {
+  color: var(--vscode-success);
+}
+
+.text-warning {
+  color: var(--vscode-warning);
+}
+
+.text-error {
+  color: var(--vscode-error);
+}
+
+/* Background utilities for status colors */
+.bg-success {
+  background-color: var(--vscode-success);
+}
+
+.bg-warning {
+  background-color: var(--vscode-warning);
+}
+
+.bg-error {
+  background-color: var(--vscode-error);
+}
+
+/* Smooth transitions for theme changes - applied to key UI elements */
+body,
+.bg-vscode-bg,
+.bg-vscode-sidebar,
+.bg-vscode-panel,
+.text-vscode-text,
+.border-vscode-border,
+button,
+input,
+textarea,
+select {
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+/* Responsive scrollbar for Firefox - applied to scrollable containers */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--vscode-active) var(--vscode-sidebar);
+}
+
+/* Code/Pre element styling */
+code, pre {
+  background: var(--vscode-hover);
+  color: var(--vscode-text);
+  border-radius: 4px;
+}
+
+pre {
+  padding: 12px;
+  overflow-x: auto;
+}
+
+code {
+  padding: 2px 4px;
+  font-size: 0.9em;
+}
+
+/* Badge/Tag styling */
+.badge {
+  background: var(--vscode-accent);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75em;
+  font-weight: 500;
+}
+
+/* Card/Panel styling */
+.card {
+  background: var(--vscode-sidebar);
+  border: 1px solid var(--vscode-border);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+/* Divider/Separator */
+.divider {
+  height: 1px;
+  background: var(--vscode-border);
+  margin: 8px 0;
+}
+
+/* Tooltip base styling */
+.tooltip {
+  background: var(--vscode-panel);
+  color: var(--vscode-text);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.85em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Menu/Dropdown styling */
+.menu {
+  background: var(--vscode-panel);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.menu-item {
+  padding: 8px 12px;
+  color: var(--vscode-text);
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: var(--vscode-hover);
+}
+
+.menu-item.active {
+  background: var(--vscode-selection);
+}
+
+/* Tab styling */
+.tab {
+  padding: 8px 16px;
+  color: var(--vscode-text-muted);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--vscode-text);
+}
+
+.tab.active {
+  color: var(--vscode-text);
+  border-bottom-color: var(--vscode-accent);
+}
+
+/* List item styling */
+.list-item {
+  padding: 8px 12px;
+  color: var(--vscode-text);
+  border-left: 2px solid transparent;
+}
+
+.list-item:hover {
+  background: var(--vscode-hover);
+}
+
+.list-item.active {
+  background: var(--vscode-selection);
+  border-left-color: var(--vscode-accent);
+}
+
+/* Status indicator dots */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-dot.online {
+  background: var(--vscode-success);
+}
+
+.status-dot.offline {
+  background: var(--vscode-error);
+}
+
+.status-dot.busy {
+  background: var(--vscode-warning);
 }
