@@ -2,8 +2,6 @@
 // Supports multiple languages with breakpoints, call stack, variables, and watch expressions
 // Now with real-time WebSocket connection to debug server
 
-import { io, Socket } from 'socket.io-client';
-
 export type DebugLanguage = 'javascript' | 'typescript' | 'python' | 'java' | 'csharp' | 'cpp' | 'go' | 'rust' | 'ruby' | 'php';
 
 // Debug server connection settings
@@ -329,7 +327,7 @@ class DebuggingService {
   ];
 
   // WebSocket connection to debug server
-  private socket: Socket | null = null;
+  private socket: any = null;
   private serverConfig: DebugServerConfig = {
     url: 'http://localhost:4002',
     enabled: true,
@@ -352,24 +350,26 @@ class DebuggingService {
     if (!this.serverConfig.enabled || this.socket) return;
 
     try {
-      this.socket = io(this.serverConfig.url, {
-        reconnectionAttempts: this.serverConfig.reconnectAttempts,
-        reconnectionDelay: this.serverConfig.reconnectDelay,
-        transports: ['websocket', 'polling'],
-      });
+      // Dynamic import for socket.io-client
+      import('socket.io-client').then(({ io }) => {
+        this.socket = io(this.serverConfig.url, {
+          reconnectionAttempts: this.serverConfig.reconnectAttempts,
+          reconnectionDelay: this.serverConfig.reconnectDelay,
+          transports: ['websocket', 'polling'],
+        });
 
-      this.socket.on('connect', () => {
-        console.log('🐛 Connected to debug server');
-        this.connected = true;
-        this.useServerMode = true;
-      });
+        this.socket.on('connect', () => {
+          console.log('🐛 Connected to debug server');
+          this.connected = true;
+          this.useServerMode = true;
+        });
 
-      this.socket.on('disconnect', () => {
-        console.log('🐛 Disconnected from debug server');
-        this.connected = false;
-      });
+        this.socket.on('disconnect', () => {
+          console.log('🐛 Disconnected from debug server');
+          this.connected = false;
+        });
 
-      this.socket.on('connect_error', () => {
+        this.socket.on('connect_error', () => {
         // Fall back to simulation mode
         console.log('🐛 Debug server not available, using simulation mode');
         this.useServerMode = false;
@@ -449,6 +449,10 @@ class DebuggingService {
         this.globalBreakpoints.push(data.breakpoint);
         this.emit({ type: 'breakpoint', data: { reason: 'new', breakpoint: data.breakpoint }, sessionId: this.activeSessionId || '' });
       });
+      }).catch(() => {
+        console.log('🐛 Socket.io-client not available, using simulation mode');
+        this.useServerMode = false;
+      });
     } catch (error) {
       console.error('Failed to connect to debug server:', error);
       this.useServerMode = false;
@@ -508,7 +512,7 @@ class DebuggingService {
     }
 
     const session: DebugSession = {
-      id: `debug-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `debug-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       name: config.name,
       adapter,
       status: 'initializing',
@@ -597,7 +601,7 @@ class DebuggingService {
   // Breakpoint management
   addBreakpoint(file: string, line: number, options?: Partial<Breakpoint>): Breakpoint {
     const breakpoint: Breakpoint = {
-      id: `bp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `bp-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       file,
       line,
       enabled: true,
@@ -706,7 +710,7 @@ class DebuggingService {
   // Watch expressions
   addWatchExpression(expression: string): WatchExpression {
     const watch: WatchExpression = {
-      id: `watch-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `watch-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       expression,
     };
 
@@ -1193,7 +1197,7 @@ class DebuggingService {
     if (!session) return;
 
     const fullMessage: DebugConsoleMessage = {
-      id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `msg-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       timestamp: new Date(),
       type: message.type || 'output',
       message: message.message || '',

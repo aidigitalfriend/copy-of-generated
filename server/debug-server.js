@@ -363,7 +363,7 @@ io.on('connection', (socket) => {
 
   // Create debug session
   socket.on('debug:create', async (config) => {
-    const sessionId = `debug-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const sessionId = `debug-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     
     try {
       const session = new DebugSession(sessionId, config, socket);

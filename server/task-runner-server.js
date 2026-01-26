@@ -422,7 +422,7 @@ io.on('connection', (socket) => {
 
   // Execute a task
   socket.on('task:execute', async (config) => {
-    const executionId = `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const executionId = `task-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     
     try {
       // Check if it's a template
@@ -466,7 +466,7 @@ io.on('connection', (socket) => {
 
   // Run tests
   socket.on('test:run', async (options) => {
-    const runId = `test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const runId = `test-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     
     try {
       const runner = new TestRunner(

@@ -468,14 +468,14 @@ class TaskRunnerService {
   private parseTestResults(testRun: TestRun, results: any): void {
     if (results.testResults) {
       testRun.suites = results.testResults.map((suite: any) => ({
-        id: `suite-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `suite-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
         name: suite.name.split('/').pop() || suite.name,
         file: suite.name,
         framework: testRun.framework,
         status: suite.status === 'passed' ? 'passed' : 'failed',
         duration: suite.endTime - suite.startTime,
         tests: (suite.assertionResults || []).map((test: any) => ({
-          id: `test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: `test-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
           name: test.title,
           fullName: test.fullName,
           status: test.status,
@@ -595,7 +595,7 @@ class TaskRunnerService {
     }
 
     const execution: TaskExecution = {
-      id: `exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `exec-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       taskId,
       task,
       status: 'running',
@@ -803,7 +803,7 @@ class TaskRunnerService {
     }
 
     const testRun: TestRun = {
-      id: `test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `test-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       framework,
       status: 'running',
       startTime: new Date(),
@@ -908,13 +908,13 @@ class TaskRunnerService {
     return suiteTemplates
       .filter(t => !filter || t.name.toLowerCase().includes(filter.toLowerCase()))
       .map(template => ({
-        id: `suite-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `suite-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
         name: template.name,
         file: template.file,
         framework,
         status: 'pending' as const,
         tests: template.tests.map(testName => ({
-          id: `test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: `test-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
           name: testName,
           fullName: `${template.name} > ${testName}`,
           status: 'pending' as const,
