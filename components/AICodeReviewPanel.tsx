@@ -34,8 +34,6 @@ type PanelSection = 'review' | 'docs' | 'security' | 'settings';
 
 interface AICodeReviewPanelProps {
   className?: string;
-  onApplyFix?: (code: string) => void;
-  onInsertCode?: (code: string) => void;
 }
 
 // ============================================================================
@@ -157,8 +155,6 @@ const PROVIDER_ICONS: Record<AIAssistantProvider, string> = {
 
 export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
   className = '',
-  onApplyFix,
-  onInsertCode,
 }) => {
   const { theme, activeFile, openFiles } = useStore();
   const isDark = theme !== 'light';
@@ -279,8 +275,8 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
           });
           setIsConfigured(true);
         }
-      } catch {
-        // Ignore parse errors
+      } catch (err) {
+        console.warn('Failed to load AI Code Review config:', err);
       }
     }
   }, []);
@@ -468,7 +464,7 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
         </div>
         {realtimeEnabled && (
           <p className={`text-xs ${mutedClass}`}>
-            Code is automatically analyzed as you type (with {realtimeDelay/1000}s delay)
+            Code is automatically analyzed as you type (with {Math.round(realtimeDelay/1000)}s delay)
           </p>
         )}
       </div>
@@ -906,7 +902,12 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
             <input
               type="number"
               value={realtimeDelay}
-              onChange={(e) => setRealtimeDelay(Math.max(500, parseInt(e.target.value) || 2000))}
+              onChange={(e) => {
+                const parsed = parseInt(e.target.value);
+                if (!isNaN(parsed)) {
+                  setRealtimeDelay(Math.max(500, Math.min(10000, parsed)));
+                }
+              }}
               min={500}
               max={10000}
               className={`w-full px-3 py-1.5 text-sm rounded border ${inputClass}`}

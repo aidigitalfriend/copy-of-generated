@@ -710,6 +710,12 @@ const App: React.FC = () => {
         setRightTab('ai');
         setRightSidebarOpen(true);
       }
+      // AI Code Review: Ctrl+Shift+R
+      if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+        e.preventDefault();
+        setRightTab('ai-code-review');
+        setRightSidebarOpen(true);
+      }
       // Settings: Ctrl+,
       if (e.ctrlKey && e.key === ',') {
         e.preventDefault();
