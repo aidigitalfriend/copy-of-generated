@@ -29,6 +29,7 @@ export const TaskRunnerPanel: React.FC = () => {
   const [testFilter, setTestFilter] = useState('');
   const [expandedSuites, setExpandedSuites] = useState<Set<string>>(new Set());
   const [runWithCoverage, setRunWithCoverage] = useState(false);
+  const [isConnected, setIsConnected] = useState(taskRunnerService.isConnected());
   const outputRef = useRef<HTMLDivElement>(null);
 
   const frameworks = taskRunnerService.getTestFrameworks();
@@ -55,7 +56,15 @@ export const TaskRunnerPanel: React.FC = () => {
       }
     });
 
-    return unsubscribe;
+    // Check connection status periodically
+    const interval = setInterval(() => {
+      setIsConnected(taskRunnerService.isConnected());
+    }, 2000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -236,6 +245,11 @@ export const TaskRunnerPanel: React.FC = () => {
       <div className="flex items-center gap-2 px-3 py-2 bg-[#252526] border-b border-[#3c3c3c]">
         <span className="text-lg">🚀</span>
         <span className="font-medium text-sm">Task Runner</span>
+        {/* Connection status indicator */}
+        <div className="flex items-center gap-1 ml-2" title={isConnected ? 'Connected to task server' : 'Using simulation mode'}>
+          <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-orange-400'}`} />
+          <span className="text-[10px] text-gray-500">{isConnected ? 'Live' : 'Sim'}</span>
+        </div>
         {activeExecution?.status === 'running' && (
           <span className="ml-auto flex items-center gap-1 text-xs text-blue-400">
             <span className="animate-spin">⏳</span>
