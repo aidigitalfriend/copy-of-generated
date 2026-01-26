@@ -467,6 +467,9 @@ export const RealtimeTerminal: React.FC<RealtimeTerminalProps> = ({
         return false;
       }
 
+      // Reset reconnect attempts after max attempts reached (allows manual reconnect later)
+      instance.reconnectAttempts = 0;
+
       instance.xterm.writeln(`\x1b[31m✗ Connection failed: ${error.message}\x1b[0m`);
       instance.xterm.writeln('\x1b[90mUsing local shell emulation...\x1b[0m\r\n');
       
@@ -651,7 +654,7 @@ export const RealtimeTerminal: React.FC<RealtimeTerminalProps> = ({
   // ============================================================================
 
   const createSession = useCallback((name?: string): string => {
-    const sessionId = `terminal-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const sessionId = `terminal-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     const sessionNumber = sessions.length + 1;
 
     const newSession: TerminalSession = {
@@ -1419,11 +1422,11 @@ export const RealtimeTerminal: React.FC<RealtimeTerminalProps> = ({
 
       {/* Keyboard Shortcuts Footer */}
       <div className={`px-2 py-1 text-[10px] ${textMuted} border-t ${borderColor} flex items-center gap-3 overflow-x-auto`}>
-        <span><kbd className="px-1 rounded bg-slate-700/50">Ctrl+Shift+`</kbd> New</span>
-        <span><kbd className="px-1 rounded bg-slate-700/50">Ctrl+Shift+\\</kbd> Split H</span>
-        <span><kbd className="px-1 rounded bg-slate-700/50">Ctrl+Shift+-</kbd> Split V</span>
-        <span><kbd className="px-1 rounded bg-slate-700/50">Ctrl+K</kbd> Clear</span>
-        <span><kbd className="px-1 rounded bg-slate-700/50">Ctrl+Shift+C/V</kbd> Copy/Paste</span>
+        <span><kbd className={`px-1 rounded ${isDark ? 'bg-slate-700/50' : 'bg-gray-200'}`}>Ctrl+Shift+`</kbd> New</span>
+        <span><kbd className={`px-1 rounded ${isDark ? 'bg-slate-700/50' : 'bg-gray-200'}`}>Ctrl+Shift+\\</kbd> Split H</span>
+        <span><kbd className={`px-1 rounded ${isDark ? 'bg-slate-700/50' : 'bg-gray-200'}`}>Ctrl+Shift+-</kbd> Split V</span>
+        <span><kbd className={`px-1 rounded ${isDark ? 'bg-slate-700/50' : 'bg-gray-200'}`}>Ctrl+K</kbd> Clear</span>
+        <span><kbd className={`px-1 rounded ${isDark ? 'bg-slate-700/50' : 'bg-gray-200'}`}>Ctrl+Shift+C/V</kbd> Copy/Paste</span>
       </div>
     </div>
   );
