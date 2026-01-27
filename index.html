@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark theme-charcoal-aurora">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,12 +10,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+      /* Charcoal Aurora theme - prevent flash of wrong colors */
+      :root {
+        --vscode-bg: #0a0c10;
+        --vscode-sidebar: #0e1117;
+        --vscode-panel: #0e1117;
+        --vscode-border: #1e2530;
+        --vscode-accent: #00d4aa;
+        --vscode-accent-hover: #00f5c4;
+        --vscode-text: #e0e6ed;
+        --vscode-text-muted: #6b7a8f;
+      }
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #0f172a;
+        background-color: #0a0c10;
       }
       .dark body {
-        background-color: #0f172a;
+        background-color: #0a0c10;
       }
       .font-mono {
         font-family: 'JetBrains Mono', monospace;
@@ -25,7 +36,7 @@
         height: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: #0e1117;
       }
       .dark ::-webkit-scrollbar-track {
         background: #1e293b;

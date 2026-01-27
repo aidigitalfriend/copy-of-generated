@@ -1841,8 +1841,16 @@ export const useStore = create<StoreState>()(
             activeWorkspaceId: null 
           };
         }
+        // Migrate to charcoal-aurora theme for version < 4
+        if (version < 4) {
+          return {
+            ...state,
+            theme: 'charcoal-aurora' as Theme,
+          };
+        }
         return state;
       },
+      version: 4, // Bumped version to trigger migration
     }
   )
 );
