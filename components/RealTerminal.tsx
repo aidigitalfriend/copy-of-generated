@@ -28,7 +28,7 @@ export const RealTerminal: React.FC<RealTerminalProps> = ({ className = '' }) =>
     
     hasInitializedRef.current = true;
 
-    const isDark = theme === 'dark';
+    const isDark = theme !== 'light' && theme !== 'high-contrast-light';
     
     const terminal = new XTerminal({
       cursorBlink: true,
@@ -186,7 +186,7 @@ export const RealTerminal: React.FC<RealTerminalProps> = ({ className = '' }) =>
   // Update theme
   useEffect(() => {
     if (xtermRef.current) {
-      const isDark = theme === 'dark';
+      const isDark = theme !== 'light' && theme !== 'high-contrast-light';
       xtermRef.current.options.theme = {
         background: isDark ? '#1e1e1e' : '#ffffff',
         foreground: isDark ? '#d4d4d4' : '#1e293b',

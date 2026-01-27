@@ -54,7 +54,8 @@ export const CollaborationPanel: React.FC = () => {
   const chatRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const isDark = theme === 'dark';
+  // Fix: Check for all dark themes including charcoal-aurora and steel
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   // Initialize collaboration service
   useEffect(() => {
@@ -265,9 +266,9 @@ export const CollaborationPanel: React.FC = () => {
   // No session view
   if (!session) {
     return (
-      <div className={`h-full flex flex-col ${isDark ? 'bg-[#1e1e1e]' : 'bg-gray-50'}`}>
+      <div className={`h-full flex flex-col ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
         {/* Header */}
-        <div className={`px-4 py-3 border-b ${isDark ? 'border-[#3c3c3c] bg-[#252526]' : 'border-gray-200 bg-white'}`}>
+        <div className={`px-4 py-3 border-b ${isDark ? 'border-[#1c1c1c] bg-[#0d0d0d]' : 'border-gray-200 bg-white'}`}>
           <div className="flex items-center gap-2">
             <span className="text-xl">🧑‍🤝‍🧑</span>
             <div>
@@ -304,7 +305,7 @@ export const CollaborationPanel: React.FC = () => {
             onClick={() => setShowJoinModal(true)}
             className={`w-full max-w-xs py-3 rounded-lg font-medium transition-all border ${
               isDark
-                ? 'bg-[#252526] border-[#3c3c3c] text-white hover:border-blue-500'
+                ? 'bg-[#0d0d0d] border-[#1c1c1c] text-white hover:border-blue-500'
                 : 'bg-white border-gray-200 text-gray-900 hover:border-blue-400'
             }`}
           >
@@ -343,7 +344,7 @@ export const CollaborationPanel: React.FC = () => {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className={`w-full max-w-md mx-4 p-6 rounded-xl ${isDark ? 'bg-[#252526]' : 'bg-white'}`}
+                className={`w-full max-w-md mx-4 p-6 rounded-xl ${isDark ? 'bg-[#0d0d0d]' : 'bg-white'}`}
                 onClick={e => e.stopPropagation()}
               >
                 <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -362,7 +363,7 @@ export const CollaborationPanel: React.FC = () => {
                       placeholder="Enter your name"
                       className={`w-full px-3 py-2 rounded-lg border text-sm ${
                         isDark
-                          ? 'bg-[#1e1e1e] border-[#3c3c3c] text-white'
+                          ? 'bg-[#0a0a0a] border-[#1c1c1c] text-white'
                           : 'bg-gray-50 border-gray-200 text-gray-900'
                       }`}
                     />
@@ -379,13 +380,13 @@ export const CollaborationPanel: React.FC = () => {
                       placeholder="My Collaboration Session"
                       className={`w-full px-3 py-2 rounded-lg border text-sm ${
                         isDark
-                          ? 'bg-[#1e1e1e] border-[#3c3c3c] text-white'
+                          ? 'bg-[#0a0a0a] border-[#1c1c1c] text-white'
                           : 'bg-gray-50 border-gray-200 text-gray-900'
                       }`}
                     />
                   </div>
 
-                  <div className={`p-3 rounded-lg ${isDark ? 'bg-[#1e1e1e]' : 'bg-gray-50'}`}>
+                  <div className={`p-3 rounded-lg ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
                     <p className={`text-xs font-medium mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                       Session Settings
                     </p>
@@ -416,7 +417,7 @@ export const CollaborationPanel: React.FC = () => {
                   <button
                     onClick={() => setShowCreateModal(false)}
                     className={`flex-1 py-2 rounded-lg text-sm font-medium ${
-                      isDark ? 'bg-[#3c3c3c] text-gray-300' : 'bg-gray-100 text-gray-600'
+                      isDark ? 'bg-[#1a1a1a] text-gray-300' : 'bg-gray-100 text-gray-600'
                     }`}
                   >
                     Cancel
@@ -452,7 +453,7 @@ export const CollaborationPanel: React.FC = () => {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className={`w-full max-w-md mx-4 p-6 rounded-xl ${isDark ? 'bg-[#252526]' : 'bg-white'}`}
+                className={`w-full max-w-md mx-4 p-6 rounded-xl ${isDark ? 'bg-[#0d0d0d]' : 'bg-white'}`}
                 onClick={e => e.stopPropagation()}
               >
                 <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -471,7 +472,7 @@ export const CollaborationPanel: React.FC = () => {
                       placeholder="Enter your name"
                       className={`w-full px-3 py-2 rounded-lg border text-sm ${
                         isDark
-                          ? 'bg-[#1e1e1e] border-[#3c3c3c] text-white'
+                          ? 'bg-[#0a0a0a] border-[#1c1c1c] text-white'
                           : 'bg-gray-50 border-gray-200 text-gray-900'
                       }`}
                     />
@@ -488,7 +489,7 @@ export const CollaborationPanel: React.FC = () => {
                       placeholder="Paste invite code or link"
                       className={`w-full px-3 py-2 rounded-lg border text-sm ${
                         isDark
-                          ? 'bg-[#1e1e1e] border-[#3c3c3c] text-white'
+                          ? 'bg-[#0a0a0a] border-[#1c1c1c] text-white'
                           : 'bg-gray-50 border-gray-200 text-gray-900'
                       }`}
                     />
@@ -499,7 +500,7 @@ export const CollaborationPanel: React.FC = () => {
                   <button
                     onClick={() => setShowJoinModal(false)}
                     className={`flex-1 py-2 rounded-lg text-sm font-medium ${
-                      isDark ? 'bg-[#3c3c3c] text-gray-300' : 'bg-gray-100 text-gray-600'
+                      isDark ? 'bg-[#1a1a1a] text-gray-300' : 'bg-gray-100 text-gray-600'
                     }`}
                   >
                     Cancel
@@ -526,9 +527,9 @@ export const CollaborationPanel: React.FC = () => {
 
   // Active session view
   return (
-    <div className={`h-full flex flex-col ${isDark ? 'bg-[#1e1e1e]' : 'bg-gray-50'}`}>
+    <div className={`h-full flex flex-col ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className={`px-4 py-3 border-b ${isDark ? 'border-[#3c3c3c] bg-[#252526]' : 'border-gray-200 bg-white'}`}>
+      <div className={`px-4 py-3 border-b ${isDark ? 'border-[#1c1c1c] bg-[#0d0d0d]' : 'border-gray-200 bg-white'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="relative">
@@ -568,7 +569,7 @@ export const CollaborationPanel: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className={`flex border-b ${isDark ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
+      <div className={`flex border-b ${isDark ? 'border-[#1c1c1c]' : 'border-gray-200'}`}>
         {[
           { id: 'participants', label: 'Team', icon: '👥' },
           { id: 'chat', label: 'Chat', icon: '💬' },
@@ -634,7 +635,7 @@ export const CollaborationPanel: React.FC = () => {
             {participants.map(user => (
               <div
                 key={user.id}
-                className={`p-3 rounded-lg border ${isDark ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'}`}
+                className={`p-3 rounded-lg border ${isDark ? 'bg-[#0d0d0d] border-[#1c1c1c]' : 'bg-white border-gray-200'}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -665,7 +666,7 @@ export const CollaborationPanel: React.FC = () => {
                         value={user.role}
                         onChange={(e) => handleUpdateRole(user.id, e.target.value as UserRole)}
                         className={`text-[10px] px-1 py-0.5 rounded ${
-                          isDark ? 'bg-[#3c3c3c] text-white' : 'bg-gray-100 text-gray-900'
+                          isDark ? 'bg-[#1a1a1a] text-white' : 'bg-gray-100 text-gray-900'
                         }`}
                       >
                         <option value="editor">Editor</option>
@@ -720,7 +721,7 @@ export const CollaborationPanel: React.FC = () => {
                       </div>
                       {msg.type === 'code' ? (
                         <pre className={`mt-1 p-2 rounded text-xs font-mono overflow-x-auto ${
-                          isDark ? 'bg-[#1e1e1e]' : 'bg-gray-100'
+                          isDark ? 'bg-[#0a0a0a]' : 'bg-gray-100'
                         }`}>
                           {msg.content}
                         </pre>
@@ -743,7 +744,7 @@ export const CollaborationPanel: React.FC = () => {
             </div>
 
             {/* Input */}
-            <div className={`p-3 border-t ${isDark ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
+            <div className={`p-3 border-t ${isDark ? 'border-[#1c1c1c]' : 'border-gray-200'}`}>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -753,7 +754,7 @@ export const CollaborationPanel: React.FC = () => {
                   placeholder="Type a message..."
                   className={`flex-1 px-3 py-2 rounded-lg border text-sm ${
                     isDark
-                      ? 'bg-[#1e1e1e] border-[#3c3c3c] text-white placeholder-gray-500'
+                      ? 'bg-[#0a0a0a] border-[#1c1c1c] text-white placeholder-gray-500'
                       : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
                   }`}
                 />
@@ -776,7 +777,7 @@ export const CollaborationPanel: React.FC = () => {
         {/* Voice Tab */}
         {activeTab === 'voice' && (
           <div className="h-full p-4 space-y-4">
-            <div className={`p-4 rounded-lg border text-center ${isDark ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'}`}>
+            <div className={`p-4 rounded-lg border text-center ${isDark ? 'bg-[#0d0d0d] border-[#1c1c1c]' : 'bg-white border-gray-200'}`}>
               <div className="text-4xl mb-3">
                 {voiceEnabled ? '🎙️' : '🔇'}
               </div>
@@ -809,7 +810,7 @@ export const CollaborationPanel: React.FC = () => {
                 {participants.filter(p => p.audioEnabled).map(user => (
                   <div
                     key={user.id}
-                    className={`flex items-center gap-3 p-2 rounded-lg ${isDark ? 'bg-[#252526]' : 'bg-white'}`}
+                    className={`flex items-center gap-3 p-2 rounded-lg ${isDark ? 'bg-[#0d0d0d]' : 'bg-white'}`}
                   >
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs ${
@@ -836,7 +837,7 @@ export const CollaborationPanel: React.FC = () => {
         {activeTab === 'settings' && (
           <div className="h-full overflow-auto p-4 space-y-4">
             {/* Session Info */}
-            <div className={`p-4 rounded-lg border ${isDark ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'}`}>
+            <div className={`p-4 rounded-lg border ${isDark ? 'bg-[#0d0d0d] border-[#1c1c1c]' : 'bg-white border-gray-200'}`}>
               <h4 className={`text-sm font-medium mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 Session Info
               </h4>
@@ -848,7 +849,7 @@ export const CollaborationPanel: React.FC = () => {
             </div>
 
             {/* Your Role */}
-            <div className={`p-4 rounded-lg border ${isDark ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'}`}>
+            <div className={`p-4 rounded-lg border ${isDark ? 'bg-[#0d0d0d] border-[#1c1c1c]' : 'bg-white border-gray-200'}`}>
               <h4 className={`text-sm font-medium mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 Your Role
               </h4>
@@ -868,7 +869,7 @@ export const CollaborationPanel: React.FC = () => {
                 onClick={handleLeaveSession}
                 className={`w-full py-2 rounded-lg text-sm font-medium ${
                   isDark
-                    ? 'bg-[#3c3c3c] text-gray-300 hover:bg-[#4c4c4c]'
+                    ? 'bg-[#1a1a1a] text-gray-300 hover:bg-[#4c4c4c]'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -901,14 +902,14 @@ export const CollaborationPanel: React.FC = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className={`w-full max-w-md mx-4 p-6 rounded-xl ${isDark ? 'bg-[#252526]' : 'bg-white'}`}
+              className={`w-full max-w-md mx-4 p-6 rounded-xl ${isDark ? 'bg-[#0d0d0d]' : 'bg-white'}`}
               onClick={e => e.stopPropagation()}
             >
               <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 🔗 Invite Collaborators
               </h3>
 
-              <div className={`p-4 rounded-lg ${isDark ? 'bg-[#1e1e1e]' : 'bg-gray-50'}`}>
+              <div className={`p-4 rounded-lg ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
                 <p className={`text-xs mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                   Share this link:
                 </p>
@@ -919,7 +920,7 @@ export const CollaborationPanel: React.FC = () => {
                     value={collaborationService.generateInviteLink() || ''}
                     className={`flex-1 px-3 py-2 rounded border text-xs font-mono ${
                       isDark
-                        ? 'bg-[#252526] border-[#3c3c3c] text-white'
+                        ? 'bg-[#0d0d0d] border-[#1c1c1c] text-white'
                         : 'bg-white border-gray-200 text-gray-900'
                     }`}
                   />
@@ -939,7 +940,7 @@ export const CollaborationPanel: React.FC = () => {
               <button
                 onClick={() => setShowInviteModal(false)}
                 className={`w-full mt-4 py-2 rounded-lg text-sm font-medium ${
-                  isDark ? 'bg-[#3c3c3c] text-gray-300' : 'bg-gray-100 text-gray-600'
+                  isDark ? 'bg-[#1a1a1a] text-gray-300' : 'bg-gray-100 text-gray-600'
                 }`}
               >
                 Close

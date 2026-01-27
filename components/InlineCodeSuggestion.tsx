@@ -35,7 +35,7 @@ export const InlineCodeSuggestion: React.FC<InlineSuggestionProps> = ({
   const lastCodeRef = useRef<string>('');
   const lastPositionRef = useRef<number>(0);
 
-  const isDark = theme === 'dark';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   // Get suggestion after typing stops
   const fetchSuggestion = useCallback(async () => {
@@ -200,7 +200,7 @@ export const SuggestionPopup: React.FC<SuggestionPopupProps> = ({
   onNavigate,
 }) => {
   const { theme } = useStore();
-  const isDark = theme === 'dark';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
   const listRef = useRef<HTMLDivElement>(null);
 
   // Handle keyboard navigation
@@ -330,7 +330,7 @@ export const CodeActionMenu: React.FC<CodeActionMenuProps> = ({
   onClose,
 }) => {
   const { theme } = useStore();
-  const isDark = theme === 'dark';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   // Handle keyboard navigation
@@ -439,7 +439,7 @@ export const CopilotStatusBar: React.FC<CopilotStatusProps> = ({
   onSettings,
 }) => {
   const { theme } = useStore();
-  const isDark = theme === 'dark';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   return (
     <div

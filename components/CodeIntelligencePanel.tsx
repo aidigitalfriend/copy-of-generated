@@ -96,7 +96,7 @@ export const CodeIntelligencePanel: React.FC<CodeIntelligencePanelProps> = ({
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['error', 'warning']));
   const [filterText, setFilterText] = useState('');
 
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
   const activeFile = openFiles.find(f => f.id === activeFileId);
 
   // ============================================================================

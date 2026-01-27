@@ -107,7 +107,7 @@ export const SearchReplaceAdvanced: React.FC<SearchReplaceAdvancedProps> = ({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchDebounceRef = useRef<NodeJS.Timeout>();
 
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   // ============================================================================
   // Flatten Files

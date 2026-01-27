@@ -235,7 +235,7 @@ export const FileProjectManager: React.FC<FileProjectManagerProps> = ({
   const renameInputRef = useRef<HTMLInputElement>(null);
   const newItemInputRef = useRef<HTMLInputElement>(null);
 
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   // ============================================================================
   // Sync Files from Server
@@ -1324,7 +1324,7 @@ const ContextMenuItem: React.FC<{
   danger?: boolean;
 }> = ({ icon, label, shortcut, onClick, danger }) => {
   const { theme } = useStore();
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   return (
     <button
@@ -1344,7 +1344,7 @@ const ContextMenuItem: React.FC<{
 
 const ContextMenuDivider: React.FC = () => {
   const { theme } = useStore();
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
   
   return <div className={`my-1 border-t ${isDark ? 'border-vscode-border' : 'border-gray-200'}`} />;
 };

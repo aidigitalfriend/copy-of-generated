@@ -151,13 +151,13 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ onClose }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Theme
-  const isDark = theme === 'dark';
-  const bgClass = isDark ? 'bg-[#1e1e1e]' : 'bg-white';
-  const borderClass = isDark ? 'border-[#3c3c3c]' : 'border-gray-200';
-  const textClass = isDark ? 'text-[#cccccc]' : 'text-gray-800';
-  const mutedClass = isDark ? 'text-[#808080]' : 'text-gray-500';
-  const inputBg = isDark ? 'bg-[#3c3c3c]' : 'bg-gray-100';
+  // Theme - Updated for charcoal-aurora
+  const isDark = theme !== 'light';
+  const bgClass = isDark ? 'bg-[#0a0a0a]' : 'bg-white';
+  const borderClass = isDark ? 'border-[#1c1c1c]' : 'border-gray-200';
+  const textClass = isDark ? 'text-[#a0a0a0]' : 'text-gray-800';
+  const mutedClass = isDark ? 'text-[#606060]' : 'text-gray-500';
+  const inputBg = isDark ? 'bg-[#0d0d0d]' : 'bg-gray-100';
 
   // Auto-scroll
   useEffect(() => {

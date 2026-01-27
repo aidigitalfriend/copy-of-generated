@@ -118,7 +118,7 @@ export const ProductionTerminal: React.FC<TerminalPanelProps> = ({
   maxTabs = 10,
 }) => {
   const { theme } = useStore();
-  const isDark = theme === 'dark';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   // State
   const [panes, setPanes] = useState<SplitPane[]>([

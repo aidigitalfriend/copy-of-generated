@@ -137,9 +137,9 @@ export const AIExtensionPanel: React.FC<AIExtensionPanelProps> = ({ className = 
   };
   
   return (
-    <div className={`flex flex-col h-full ${isDark ? 'bg-[#1e1e1e] text-white' : 'bg-white text-gray-900'} ${className}`}>
+    <div className={`flex flex-col h-full ${isDark ? 'bg-[#0a0a0a] text-[#a0a0a0]' : 'bg-white text-gray-900'} ${className}`}>
       {/* Header */}
-      <div className={`flex items-center justify-between px-4 py-2 border-b ${isDark ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
+      <div className={`flex items-center justify-between px-4 py-2 border-b ${isDark ? 'border-[#1c1c1c] bg-[#0a0a0a]' : 'border-gray-200'}`}>
         <div className="flex items-center gap-2">
           <span className="text-lg">🤖</span>
           <h2 className="font-medium">AI Assistant</h2>
@@ -149,7 +149,7 @@ export const AIExtensionPanel: React.FC<AIExtensionPanelProps> = ({ className = 
           <select
             value={permissionLevel}
             onChange={(e) => setPermissionLevel(e.target.value as any)}
-            className={`text-xs px-2 py-1 rounded ${isDark ? 'bg-[#3c3c3c] border-[#3c3c3c]' : 'bg-gray-100 border-gray-200'} border outline-none`}
+            className={`text-xs px-2 py-1 rounded ${isDark ? 'bg-[#141414] border-[#252525] text-[#a0a0a0]' : 'bg-gray-100 border-gray-200'} border outline-none`}
           >
             <option value="readonly">Read Only</option>
             <option value="edit">Edit</option>
@@ -162,15 +162,15 @@ export const AIExtensionPanel: React.FC<AIExtensionPanelProps> = ({ className = 
       </div>
       
       {/* View tabs */}
-      <div className={`flex border-b ${isDark ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
+      <div className={`flex border-b ${isDark ? 'border-[#1c1c1c] bg-[#0a0a0a]' : 'border-gray-200'}`}>
         {(['chat', 'tools', 'history'] as ViewMode[]).map(mode => (
           <button
             key={mode}
             onClick={() => setViewMode(mode)}
             className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
               viewMode === mode
-                ? isDark ? 'bg-[#007acc]/20 text-[#007acc] border-b-2 border-[#007acc]' : 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
-                : isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'
+                ? isDark ? 'bg-transparent text-[#00c8e0] border-b-2 border-[#00c8e0]' : 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
+                : isDark ? 'text-[#505050] hover:text-[#808080]' : 'text-gray-500 hover:text-gray-900'
             }`}
           >
             {mode === 'chat' ? '💬 Chat' : mode === 'tools' ? '🔧 Tools' : '📜 History'}
@@ -186,7 +186,7 @@ export const AIExtensionPanel: React.FC<AIExtensionPanelProps> = ({ className = 
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {/* Current plan preview */}
               {currentPlan && (
-                <div className={`p-3 rounded-lg ${isDark ? 'bg-[#252526]' : 'bg-gray-50'}`}>
+                <div className={`p-3 rounded-lg ${isDark ? 'bg-[#0d0d0d] border border-[#1c1c1c]' : 'bg-gray-50'}`}>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-yellow-500">⚡</span>
                     <span className="font-medium text-sm">Action Plan Ready</span>
@@ -231,7 +231,7 @@ export const AIExtensionPanel: React.FC<AIExtensionPanelProps> = ({ className = 
                       onClick={handleReject}
                       disabled={isProcessing}
                       className={`px-3 py-1.5 text-xs rounded transition-colors ${
-                        isDark ? 'bg-[#3c3c3c] hover:bg-[#4c4c4c]' : 'bg-gray-200 hover:bg-gray-300'
+                        isDark ? 'bg-[#1a1a1a] hover:bg-[#252525] text-[#a0a0a0]' : 'bg-gray-200 hover:bg-gray-300'
                       }`}
                     >
                       ❌ Reject
@@ -269,7 +269,7 @@ export const AIExtensionPanel: React.FC<AIExtensionPanelProps> = ({ className = 
                     <button
                       onClick={handleUndo}
                       className={`mt-2 px-3 py-1 text-xs rounded ${
-                        isDark ? 'bg-[#3c3c3c] hover:bg-[#4c4c4c]' : 'bg-gray-200 hover:bg-gray-300'
+                        isDark ? 'bg-[#1a1a1a] hover:bg-[#252525] text-[#a0a0a0]' : 'bg-gray-200 hover:bg-gray-300'
                       }`}
                     >
                       ↩ Undo
@@ -298,7 +298,7 @@ export const AIExtensionPanel: React.FC<AIExtensionPanelProps> = ({ className = 
             </div>
             
             {/* Input area */}
-            <div className={`p-3 border-t ${isDark ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
+            <div className={`p-3 border-t ${isDark ? 'border-[#1c1c1c] bg-[#0a0a0a]' : 'border-gray-200'}`}>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -309,14 +309,14 @@ export const AIExtensionPanel: React.FC<AIExtensionPanelProps> = ({ className = 
                   disabled={isProcessing}
                   className={`flex-1 px-3 py-2 text-sm rounded-lg outline-none ${
                     isDark 
-                      ? 'bg-[#3c3c3c] border-[#3c3c3c] focus:border-[#007acc]' 
+                      ? 'bg-[#0d0d0d] border-[#252525] text-[#a0a0a0] placeholder-[#505050] focus:border-[#00c8e0]' 
                       : 'bg-gray-100 border-gray-200 focus:border-blue-500'
                   } border`}
                 />
                 <button
                   onClick={handleSubmit}
                   disabled={isProcessing || !input.trim()}
-                  className="px-4 py-2 text-sm bg-[#007acc] text-white rounded-lg hover:bg-[#0088e0] disabled:opacity-50 transition-colors"
+                  className="px-4 py-2 text-sm bg-[#00c8e0] text-black font-semibold rounded-lg hover:bg-[#00d4ff] disabled:opacity-50 transition-colors"
                 >
                   {isProcessing ? '⏳' : '→'}
                 </button>
@@ -331,10 +331,10 @@ export const AIExtensionPanel: React.FC<AIExtensionPanelProps> = ({ className = 
               {AI_TOOLS.map(tool => (
                 <div 
                   key={tool.name}
-                  className={`p-3 rounded-lg ${isDark ? 'bg-[#252526]' : 'bg-gray-50'}`}
+                  className={`p-3 rounded-lg ${isDark ? 'bg-[#0d0d0d] border border-[#1c1c1c]' : 'bg-gray-50'}`}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-mono text-xs text-[#007acc]">{tool.name}</span>
+                    <span className="font-mono text-xs text-[#00c8e0]">{tool.name}</span>
                     {tool.dangerous && (
                       <span className="text-[10px] px-1.5 py-0.5 bg-red-500/20 text-red-400 rounded">DANGEROUS</span>
                     )}
@@ -374,7 +374,7 @@ export const AIExtensionPanel: React.FC<AIExtensionPanelProps> = ({ className = 
                 {history.map((item, idx) => (
                   <div 
                     key={idx}
-                    className={`p-3 rounded-lg ${isDark ? 'bg-[#252526]' : 'bg-gray-50'}`}
+                    className={`p-3 rounded-lg ${isDark ? 'bg-[#0d0d0d] border border-[#1c1c1c]' : 'bg-gray-50'}`}
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <span>{item.result?.success ? '✅' : '❌'}</span>
@@ -402,14 +402,14 @@ const ActionPreview: React.FC<{ action: AIAction; index: number; isDark: boolean
   const tool = AI_TOOLS.find(t => t.name === action.action);
   
   return (
-    <div className={`p-2 rounded ${isDark ? 'bg-[#1e1e1e]' : 'bg-white'}`}>
+    <div className={`p-2 rounded ${isDark ? 'bg-[#0a0a0a] border border-[#1c1c1c]' : 'bg-white'}`}>
       <div className="flex items-center gap-2">
         <span className={`w-5 h-5 flex items-center justify-center text-[10px] rounded-full ${
-          isDark ? 'bg-[#3c3c3c]' : 'bg-gray-200'
+          isDark ? 'bg-[#1a1a1a] text-[#808080]' : 'bg-gray-200'
         }`}>
           {index + 1}
         </span>
-        <span className="font-mono text-xs text-[#007acc]">{action.action}</span>
+        <span className="font-mono text-xs text-[#00c8e0]">{action.action}</span>
         {tool?.dangerous && <span className="text-red-400 text-[10px]">⚠</span>}
       </div>
       {action.reasoning && (

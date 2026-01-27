@@ -48,7 +48,7 @@ export const EnhancedDeployPanel: React.FC = () => {
   const logsRef = useRef<HTMLDivElement>(null);
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
-  const isDark = theme === 'dark';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   // Cleanup polling on unmount
   useEffect(() => {
@@ -298,9 +298,9 @@ export const EnhancedDeployPanel: React.FC = () => {
   // Provider selection
   if (!selectedProvider) {
     return (
-      <div className={`h-full flex flex-col ${isDark ? 'bg-[#1e1e1e]' : 'bg-gray-50'}`}>
+      <div className={`h-full flex flex-col ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
         {/* Header */}
-        <div className={`px-4 py-3 border-b ${isDark ? 'border-[#3c3c3c] bg-[#252526]' : 'border-gray-200 bg-white'}`}>
+        <div className={`px-4 py-3 border-b ${isDark ? 'border-[#1c1c1c] bg-[#0d0d0d]' : 'border-gray-200 bg-white'}`}>
           <h2 className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
             ☁️ One-Click Deploy
           </h2>
@@ -310,7 +310,7 @@ export const EnhancedDeployPanel: React.FC = () => {
         </div>
 
         {/* Category Filter */}
-        <div className={`px-4 py-2 border-b ${isDark ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
+        <div className={`px-4 py-2 border-b ${isDark ? 'border-[#1c1c1c]' : 'border-gray-200'}`}>
           <div className="flex gap-1">
             {(['all', 'frontend', 'fullstack', 'cloud'] as const).map(cat => (
               <button
@@ -320,7 +320,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                   providerCategory === cat
                     ? 'bg-blue-500 text-white'
                     : isDark
-                      ? 'bg-[#2d2d2d] text-gray-300 hover:bg-[#3c3c3c]'
+                      ? 'bg-[#2d2d2d] text-gray-300 hover:bg-[#1a1a1a]'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -342,7 +342,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                 }}
                 className={`flex items-start gap-4 p-4 rounded-lg border transition-all text-left group ${
                   isDark
-                    ? 'bg-[#252526] border-[#3c3c3c] hover:border-blue-500'
+                    ? 'bg-[#0d0d0d] border-[#1c1c1c] hover:border-blue-500'
                     : 'bg-white border-gray-200 hover:border-blue-400'
                 }`}
               >
@@ -356,7 +356,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <h3 className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{p.name}</h3>
                     <span className={`text-xs px-1.5 py-0.5 rounded ${
-                      isDark ? 'bg-[#3c3c3c] text-gray-400' : 'bg-gray-100 text-gray-500'
+                      isDark ? 'bg-[#1a1a1a] text-gray-400' : 'bg-gray-100 text-gray-500'
                     }`}>
                       {p.category}
                     </span>
@@ -366,7 +366,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                   <div className="flex flex-wrap gap-1 mt-2">
                     {p.features.slice(0, 3).map(f => (
                       <span key={f} className={`text-[10px] px-1.5 py-0.5 rounded ${
-                        isDark ? 'bg-[#3c3c3c] text-gray-400' : 'bg-gray-100 text-gray-500'
+                        isDark ? 'bg-[#1a1a1a] text-gray-400' : 'bg-gray-100 text-gray-500'
                       }`}>
                         {f}
                       </span>
@@ -383,9 +383,9 @@ export const EnhancedDeployPanel: React.FC = () => {
 
   // Provider detail view with tabs
   return (
-    <div className={`h-full flex flex-col ${isDark ? 'bg-[#1e1e1e]' : 'bg-gray-50'}`}>
+    <div className={`h-full flex flex-col ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className={`px-4 py-3 border-b ${isDark ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
+      <div className={`px-4 py-3 border-b ${isDark ? 'border-[#1c1c1c]' : 'border-gray-200'}`}>
         <button
           onClick={() => {
             setSelectedProvider(null);
@@ -410,7 +410,7 @@ export const EnhancedDeployPanel: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className={`flex border-b ${isDark ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
+      <div className={`flex border-b ${isDark ? 'border-[#1c1c1c]' : 'border-gray-200'}`}>
         {[
           { id: 'deploy', label: 'Deploy', icon: '▶' },
           { id: 'deployments', label: 'History', icon: '📋' },
@@ -427,7 +427,7 @@ export const EnhancedDeployPanel: React.FC = () => {
             className={`flex-1 px-3 py-2 text-xs font-medium transition-all ${
               activeTab === tab.id
                 ? isDark
-                  ? 'text-white border-b-2 border-blue-500 bg-[#252526]'
+                  ? 'text-white border-b-2 border-blue-500 bg-[#0d0d0d]'
                   : 'text-blue-600 border-b-2 border-blue-500 bg-white'
                 : isDark
                   ? 'text-gray-400 hover:text-white'
@@ -445,7 +445,7 @@ export const EnhancedDeployPanel: React.FC = () => {
         {activeTab === 'deploy' && (
           <div className="p-4 space-y-4">
             {/* Token Input */}
-            <div className={`p-4 rounded-lg border ${isDark ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'}`}>
+            <div className={`p-4 rounded-lg border ${isDark ? 'bg-[#0d0d0d] border-[#1c1c1c]' : 'bg-white border-gray-200'}`}>
               <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 {provider?.tokenLabel}
               </label>
@@ -461,7 +461,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                 placeholder={provider?.tokenPlaceholder}
                 className={`w-full px-3 py-2 rounded border text-sm ${
                   isDark
-                    ? 'bg-[#1e1e1e] border-[#3c3c3c] text-white placeholder-gray-500'
+                    ? 'bg-[#0a0a0a] border-[#1c1c1c] text-white placeholder-gray-500'
                     : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
                 }`}
               />
@@ -476,7 +476,7 @@ export const EnhancedDeployPanel: React.FC = () => {
             </div>
 
             {/* Project Settings */}
-            <div className={`p-4 rounded-lg border ${isDark ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'}`}>
+            <div className={`p-4 rounded-lg border ${isDark ? 'bg-[#0d0d0d] border-[#1c1c1c]' : 'bg-white border-gray-200'}`}>
               <h3 className={`font-medium mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>Project Settings</h3>
               
               <div className="space-y-3">
@@ -488,7 +488,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                     onChange={(e) => setProjectName(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
                     className={`w-full px-3 py-2 rounded border text-sm ${
                       isDark
-                        ? 'bg-[#1e1e1e] border-[#3c3c3c] text-white'
+                        ? 'bg-[#0a0a0a] border-[#1c1c1c] text-white'
                         : 'bg-gray-50 border-gray-200 text-gray-900'
                     }`}
                   />
@@ -502,7 +502,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                       onChange={(e) => setBranch(e.target.value)}
                       className={`w-full px-3 py-2 rounded border text-sm ${
                         isDark
-                          ? 'bg-[#1e1e1e] border-[#3c3c3c] text-white'
+                          ? 'bg-[#0a0a0a] border-[#1c1c1c] text-white'
                           : 'bg-gray-50 border-gray-200 text-gray-900'
                       }`}
                     >
@@ -520,7 +520,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                       onChange={(e) => setOutputDir(e.target.value)}
                       className={`w-full px-3 py-2 rounded border text-sm font-mono ${
                         isDark
-                          ? 'bg-[#1e1e1e] border-[#3c3c3c] text-green-400'
+                          ? 'bg-[#0a0a0a] border-[#1c1c1c] text-green-400'
                           : 'bg-gray-50 border-gray-200 text-green-600'
                       }`}
                     />
@@ -535,7 +535,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                     onChange={(e) => setBuildCommand(e.target.value)}
                     className={`w-full px-3 py-2 rounded border text-sm font-mono ${
                       isDark
-                        ? 'bg-[#1e1e1e] border-[#3c3c3c] text-green-400'
+                        ? 'bg-[#0a0a0a] border-[#1c1c1c] text-green-400'
                         : 'bg-gray-50 border-gray-200 text-green-600'
                     }`}
                   />
@@ -549,7 +549,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                     onChange={(e) => setInstallCommand(e.target.value)}
                     className={`w-full px-3 py-2 rounded border text-sm font-mono ${
                       isDark
-                        ? 'bg-[#1e1e1e] border-[#3c3c3c] text-green-400'
+                        ? 'bg-[#0a0a0a] border-[#1c1c1c] text-green-400'
                         : 'bg-gray-50 border-gray-200 text-green-600'
                     }`}
                   />
@@ -564,7 +564,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                   ? 'border-green-500 bg-green-500/10'
                   : currentDeployment.status === 'error'
                     ? 'border-red-500 bg-red-500/10'
-                    : isDark ? 'border-[#3c3c3c] bg-[#252526]' : 'border-gray-200 bg-white'
+                    : isDark ? 'border-[#1c1c1c] bg-[#0d0d0d]' : 'border-gray-200 bg-white'
               }`}>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>Current Deployment</h3>
@@ -617,7 +617,7 @@ export const EnhancedDeployPanel: React.FC = () => {
               deployments.map(dep => (
                 <div
                   key={dep.id}
-                  className={`p-3 rounded-lg border ${isDark ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'}`}
+                  className={`p-3 rounded-lg border ${isDark ? 'bg-[#0d0d0d] border-[#1c1c1c]' : 'bg-white border-gray-200'}`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
@@ -656,7 +656,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                         setActiveTab('logs');
                       }}
                       className={`text-xs px-2 py-1 rounded ${
-                        isDark ? 'bg-[#3c3c3c] text-gray-300 hover:bg-[#4c4c4c]' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        isDark ? 'bg-[#1a1a1a] text-gray-300 hover:bg-[#4c4c4c]' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
                     >
                       📄 Logs
@@ -745,7 +745,7 @@ export const EnhancedDeployPanel: React.FC = () => {
             </div>
 
             {envVars.length === 0 ? (
-              <div className={`text-center py-8 border-2 border-dashed rounded-lg ${isDark ? 'border-[#3c3c3c] text-gray-400' : 'border-gray-200 text-gray-500'}`}>
+              <div className={`text-center py-8 border-2 border-dashed rounded-lg ${isDark ? 'border-[#1c1c1c] text-gray-400' : 'border-gray-200 text-gray-500'}`}>
                 <p className="text-2xl mb-2">🔐</p>
                 <p className="text-sm">No environment variables</p>
                 <p className="text-xs mt-1">Add variables to configure your deployment</p>
@@ -755,7 +755,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                 {envVars.map(env => (
                   <div
                     key={env.id}
-                    className={`p-3 rounded-lg border ${isDark ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'}`}
+                    className={`p-3 rounded-lg border ${isDark ? 'bg-[#0d0d0d] border-[#1c1c1c]' : 'bg-white border-gray-200'}`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -778,7 +778,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                             setNewEnvTargets(env.target);
                             setShowAddEnvModal(true);
                           }}
-                          className={`p-1 rounded ${isDark ? 'hover:bg-[#3c3c3c]' : 'hover:bg-gray-100'}`}
+                          className={`p-1 rounded ${isDark ? 'hover:bg-[#1a1a1a]' : 'hover:bg-gray-100'}`}
                         >
                           ✏️
                         </button>
@@ -810,7 +810,7 @@ export const EnhancedDeployPanel: React.FC = () => {
             )}
 
             {/* Common env vars presets */}
-            <div className={`p-3 rounded-lg border ${isDark ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'}`}>
+            <div className={`p-3 rounded-lg border ${isDark ? 'bg-[#0d0d0d] border-[#1c1c1c]' : 'bg-white border-gray-200'}`}>
               <p className={`text-xs font-medium mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Quick Add:</p>
               <div className="flex flex-wrap gap-2">
                 {['NODE_ENV', 'API_URL', 'DATABASE_URL', 'JWT_SECRET', 'NEXT_PUBLIC_API'].map(key => (
@@ -824,7 +824,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                     }}
                     className={`text-[10px] px-2 py-1 rounded border ${
                       isDark
-                        ? 'border-[#3c3c3c] text-gray-400 hover:border-blue-500 hover:text-blue-400'
+                        ? 'border-[#1c1c1c] text-gray-400 hover:border-blue-500 hover:text-blue-400'
                         : 'border-gray-200 text-gray-500 hover:border-blue-400 hover:text-blue-500'
                     }`}
                   >
@@ -848,7 +848,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                 disabled={buildTasks.some(t => t.status === 'running')}
                 className={`p-3 rounded-lg border text-center transition-all ${
                   isDark
-                    ? 'bg-[#252526] border-[#3c3c3c] hover:border-blue-500'
+                    ? 'bg-[#0d0d0d] border-[#1c1c1c] hover:border-blue-500'
                     : 'bg-white border-gray-200 hover:border-blue-400'
                 } ${buildTasks.some(t => t.status === 'running') ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
@@ -860,7 +860,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                 disabled={buildTasks.some(t => t.status === 'running')}
                 className={`p-3 rounded-lg border text-center transition-all ${
                   isDark
-                    ? 'bg-[#252526] border-[#3c3c3c] hover:border-green-500'
+                    ? 'bg-[#0d0d0d] border-[#1c1c1c] hover:border-green-500'
                     : 'bg-white border-gray-200 hover:border-green-400'
                 } ${buildTasks.some(t => t.status === 'running') ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
@@ -872,7 +872,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                 disabled={buildTasks.some(t => t.status === 'running')}
                 className={`p-3 rounded-lg border text-center transition-all ${
                   isDark
-                    ? 'bg-[#252526] border-[#3c3c3c] hover:border-yellow-500'
+                    ? 'bg-[#0d0d0d] border-[#1c1c1c] hover:border-yellow-500'
                     : 'bg-white border-gray-200 hover:border-yellow-400'
                 } ${buildTasks.some(t => t.status === 'running') ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
@@ -888,7 +888,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                 {buildTasks.slice().reverse().map(task => (
                   <div
                     key={task.id}
-                    className={`p-3 rounded-lg border ${isDark ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'}`}
+                    className={`p-3 rounded-lg border ${isDark ? 'bg-[#0d0d0d] border-[#1c1c1c]' : 'bg-white border-gray-200'}`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -926,7 +926,7 @@ export const EnhancedDeployPanel: React.FC = () => {
             )}
 
             {/* Custom command */}
-            <div className={`p-3 rounded-lg border ${isDark ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'}`}>
+            <div className={`p-3 rounded-lg border ${isDark ? 'bg-[#0d0d0d] border-[#1c1c1c]' : 'bg-white border-gray-200'}`}>
               <label className={`block text-xs font-medium mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                 Custom Command
               </label>
@@ -936,7 +936,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                   placeholder="npm run custom-script"
                   className={`flex-1 px-3 py-2 rounded border text-sm font-mono ${
                     isDark
-                      ? 'bg-[#1e1e1e] border-[#3c3c3c] text-white placeholder-gray-500'
+                      ? 'bg-[#0a0a0a] border-[#1c1c1c] text-white placeholder-gray-500'
                       : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
                   }`}
                 />
@@ -951,7 +951,7 @@ export const EnhancedDeployPanel: React.FC = () => {
 
       {/* Deploy Button (fixed at bottom) */}
       {activeTab !== 'logs' && (
-        <div className={`p-4 border-t ${isDark ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
+        <div className={`p-4 border-t ${isDark ? 'border-[#1c1c1c]' : 'border-gray-200'}`}>
           <button
             onClick={handleDeploy}
             disabled={deploying || !tokens[selectedProvider]}
@@ -982,7 +982,7 @@ export const EnhancedDeployPanel: React.FC = () => {
       {showAddEnvModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={() => setShowAddEnvModal(false)}>
           <div
-            className={`w-full max-w-md mx-4 p-5 rounded-lg ${isDark ? 'bg-[#252526]' : 'bg-white'}`}
+            className={`w-full max-w-md mx-4 p-5 rounded-lg ${isDark ? 'bg-[#0d0d0d]' : 'bg-white'}`}
             onClick={e => e.stopPropagation()}
           >
             <h3 className={`text-base font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -999,7 +999,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                   placeholder="API_KEY"
                   className={`w-full px-3 py-2 rounded border text-sm font-mono ${
                     isDark
-                      ? 'bg-[#1e1e1e] border-[#3c3c3c] text-white'
+                      ? 'bg-[#0a0a0a] border-[#1c1c1c] text-white'
                       : 'bg-gray-50 border-gray-200 text-gray-900'
                   }`}
                 />
@@ -1014,7 +1014,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                   placeholder="Enter value..."
                   className={`w-full px-3 py-2 rounded border text-sm font-mono ${
                     isDark
-                      ? 'bg-[#1e1e1e] border-[#3c3c3c] text-white'
+                      ? 'bg-[#0a0a0a] border-[#1c1c1c] text-white'
                       : 'bg-gray-50 border-gray-200 text-gray-900'
                   }`}
                 />
@@ -1059,7 +1059,7 @@ export const EnhancedDeployPanel: React.FC = () => {
                 onClick={() => setShowAddEnvModal(false)}
                 className={`flex-1 py-2 rounded text-sm font-medium ${
                   isDark
-                    ? 'bg-[#3c3c3c] text-gray-300 hover:bg-[#4c4c4c]'
+                    ? 'bg-[#1a1a1a] text-gray-300 hover:bg-[#4c4c4c]'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >

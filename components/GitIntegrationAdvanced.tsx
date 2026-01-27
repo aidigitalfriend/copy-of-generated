@@ -130,7 +130,7 @@ export const GitIntegrationAdvanced: React.FC<GitIntegrationAdvancedProps> = ({
   const [cloneUrl, setCloneUrl] = useState('');
   const [githubToken, setGithubToken] = useState('');
 
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   // ============================================================================
   // Mock Data (since we don't have a real git repo)

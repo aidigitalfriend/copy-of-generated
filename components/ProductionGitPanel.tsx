@@ -163,7 +163,7 @@ interface ProductionGitPanelProps {
 
 export const ProductionGitPanel: React.FC<ProductionGitPanelProps> = ({ className = '' }) => {
   const { theme } = useStore();
-  const isDark = theme === 'dark';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   // State
   const [activeTab, setActiveTab] = useState<GitTab>('changes');

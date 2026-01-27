@@ -35,7 +35,7 @@ export const WorkspaceManager: React.FC<WorkspaceManagerProps> = ({ isOpen, onCl
   const [newProjectName, setNewProjectName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<string>('blank');
 
-  const isDark = theme === 'dark';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   // Load workspaces from localStorage
   useEffect(() => {

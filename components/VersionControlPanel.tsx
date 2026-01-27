@@ -204,7 +204,7 @@ export const VersionControlPanel: React.FC<VersionControlPanelProps> = ({
   onFileSelect,
 }) => {
   const { theme, openFiles, updateFileContent } = useStore();
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
 
   // ============================================================================
   // State

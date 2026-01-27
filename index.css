@@ -158,6 +158,99 @@
 }
 
 /* ============================================
+   UNIVERSAL DARK THEME OVERRIDES
+   Applies to ALL dark themes to fix white backgrounds
+   ============================================ */
+.dark .bg-white,
+.dark [class*="bg-white"],
+.theme-github-dark .bg-white,
+.theme-dracula .bg-white,
+.theme-nord .bg-white,
+.theme-monokai .bg-white,
+.theme-solarized-dark .bg-white,
+.theme-one-dark .bg-white,
+.theme-steel .bg-white,
+.theme-charcoal-aurora .bg-white {
+  background: var(--vscode-sidebar, #0d0d0d) !important;
+}
+
+/* Gray backgrounds for all dark themes */
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-gray-200,
+.theme-github-dark .bg-gray-50,
+.theme-github-dark .bg-gray-100,
+.theme-github-dark .bg-gray-200,
+.theme-dracula .bg-gray-50,
+.theme-dracula .bg-gray-100,
+.theme-dracula .bg-gray-200,
+.theme-nord .bg-gray-50,
+.theme-nord .bg-gray-100,
+.theme-nord .bg-gray-200,
+.theme-monokai .bg-gray-50,
+.theme-monokai .bg-gray-100,
+.theme-monokai .bg-gray-200,
+.theme-solarized-dark .bg-gray-50,
+.theme-solarized-dark .bg-gray-100,
+.theme-solarized-dark .bg-gray-200,
+.theme-one-dark .bg-gray-50,
+.theme-one-dark .bg-gray-100,
+.theme-one-dark .bg-gray-200,
+.theme-steel .bg-gray-50,
+.theme-steel .bg-gray-100,
+.theme-steel .bg-gray-200,
+.theme-charcoal-aurora .bg-gray-50,
+.theme-charcoal-aurora .bg-gray-100,
+.theme-charcoal-aurora .bg-gray-200 {
+  background: var(--vscode-panel, #0d0d0d) !important;
+}
+
+/* Text colors for all dark themes */
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.theme-github-dark .text-gray-900,
+.theme-github-dark .text-gray-800,
+.theme-dracula .text-gray-900,
+.theme-dracula .text-gray-800,
+.theme-nord .text-gray-900,
+.theme-nord .text-gray-800,
+.theme-monokai .text-gray-900,
+.theme-monokai .text-gray-800,
+.theme-solarized-dark .text-gray-900,
+.theme-solarized-dark .text-gray-800,
+.theme-one-dark .text-gray-900,
+.theme-one-dark .text-gray-800,
+.theme-steel .text-gray-900,
+.theme-steel .text-gray-800,
+.theme-charcoal-aurora .text-gray-900,
+.theme-charcoal-aurora .text-gray-800 {
+  color: var(--vscode-text, #a0a0a0) !important;
+}
+
+/* Border colors for all dark themes */
+.dark .border-gray-200,
+.dark .border-gray-300,
+.theme-github-dark .border-gray-200,
+.theme-github-dark .border-gray-300,
+.theme-dracula .border-gray-200,
+.theme-dracula .border-gray-300,
+.theme-nord .border-gray-200,
+.theme-nord .border-gray-300,
+.theme-monokai .border-gray-200,
+.theme-monokai .border-gray-300,
+.theme-solarized-dark .border-gray-200,
+.theme-solarized-dark .border-gray-300,
+.theme-one-dark .border-gray-200,
+.theme-one-dark .border-gray-300,
+.theme-steel .border-gray-200,
+.theme-steel .border-gray-300,
+.theme-charcoal-aurora .border-gray-200,
+.theme-charcoal-aurora .border-gray-300 {
+  border-color: var(--vscode-border, #1c1c1c) !important;
+}
+
+/* ============================================
    GitHub Dark Theme
    ============================================ */
 .theme-github-dark {
@@ -216,6 +309,24 @@
   border-color: #58a6ff;
   outline: none;
   box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.3);
+}
+
+/* GitHub Dark - White Background Overrides */
+.theme-github-dark .bg-white,
+.theme-github-dark .bg-gray-50,
+.theme-github-dark .bg-gray-100,
+.theme-github-dark .bg-gray-200 {
+  background: #161b22 !important;
+}
+
+.theme-github-dark .text-gray-900,
+.theme-github-dark .text-gray-800 {
+  color: #c9d1d9 !important;
+}
+
+.theme-github-dark .border-gray-200,
+.theme-github-dark .border-gray-300 {
+  border-color: #30363d !important;
 }
 
 /* ============================================
@@ -279,6 +390,24 @@
   box-shadow: 0 0 0 2px rgba(189, 147, 249, 0.3);
 }
 
+/* Dracula - White Background Overrides */
+.theme-dracula .bg-white,
+.theme-dracula .bg-gray-50,
+.theme-dracula .bg-gray-100,
+.theme-dracula .bg-gray-200 {
+  background: #21222c !important;
+}
+
+.theme-dracula .text-gray-900,
+.theme-dracula .text-gray-800 {
+  color: #f8f8f2 !important;
+}
+
+.theme-dracula .border-gray-200,
+.theme-dracula .border-gray-300 {
+  border-color: #44475a !important;
+}
+
 /* ============================================
    Nord Theme
    ============================================ */
@@ -338,6 +467,24 @@
   border-color: #88c0d0;
   outline: none;
   box-shadow: 0 0 0 2px rgba(136, 192, 208, 0.3);
+}
+
+/* Nord - White Background Overrides */
+.theme-nord .bg-white,
+.theme-nord .bg-gray-50,
+.theme-nord .bg-gray-100,
+.theme-nord .bg-gray-200 {
+  background: #3b4252 !important;
+}
+
+.theme-nord .text-gray-900,
+.theme-nord .text-gray-800 {
+  color: #eceff4 !important;
+}
+
+.theme-nord .border-gray-200,
+.theme-nord .border-gray-300 {
+  border-color: #4c566a !important;
 }
 
 /* ============================================
@@ -401,6 +548,24 @@
   box-shadow: 0 0 0 2px rgba(166, 226, 46, 0.3);
 }
 
+/* Monokai - White Background Overrides */
+.theme-monokai .bg-white,
+.theme-monokai .bg-gray-50,
+.theme-monokai .bg-gray-100,
+.theme-monokai .bg-gray-200 {
+  background: #1e1f1c !important;
+}
+
+.theme-monokai .text-gray-900,
+.theme-monokai .text-gray-800 {
+  color: #f8f8f2 !important;
+}
+
+.theme-monokai .border-gray-200,
+.theme-monokai .border-gray-300 {
+  border-color: #49483e !important;
+}
+
 /* ============================================
    Solarized Dark Theme
    ============================================ */
@@ -462,6 +627,24 @@
   box-shadow: 0 0 0 2px rgba(38, 139, 210, 0.3);
 }
 
+/* Solarized Dark - White Background Overrides */
+.theme-solarized-dark .bg-white,
+.theme-solarized-dark .bg-gray-50,
+.theme-solarized-dark .bg-gray-100,
+.theme-solarized-dark .bg-gray-200 {
+  background: #073642 !important;
+}
+
+.theme-solarized-dark .text-gray-900,
+.theme-solarized-dark .text-gray-800 {
+  color: #839496 !important;
+}
+
+.theme-solarized-dark .border-gray-200,
+.theme-solarized-dark .border-gray-300 {
+  border-color: #094959 !important;
+}
+
 /* ============================================
    One Dark Theme
    ============================================ */
@@ -521,6 +704,27 @@
   border-color: #61afef;
   outline: none;
   box-shadow: 0 0 0 2px rgba(97, 175, 239, 0.3);
+}
+
+/* One Dark - White Background Overrides */
+.theme-one-dark .bg-white,
+.theme-one-dark .bg-gray-50,
+.theme-one-dark .bg-gray-100,
+.theme-one-dark .bg-gray-200 {
+  background: #21252b !important;
+}
+.theme-one-dark .text-gray-900,
+.theme-one-dark .text-gray-800,
+.theme-one-dark .text-gray-700 {
+  color: #abb2bf !important;
+}
+.theme-one-dark .text-gray-600,
+.theme-one-dark .text-gray-500 {
+  color: #5c6370 !important;
+}
+.theme-one-dark .border-gray-200,
+.theme-one-dark .border-gray-300 {
+  border-color: #3e4451 !important;
 }
 
 /* ============================================
@@ -653,6 +857,51 @@
   background: linear-gradient(180deg, #14161b 0%, #16181d 100%);
 }
 
+/* ===== STEEL THEME - WHITE/LIGHT BACKGROUND OVERRIDES ===== */
+/* Force all white backgrounds to steel dark */
+.theme-steel .bg-white,
+.theme-steel [class*="bg-white"],
+.theme-steel .bg-gray-50,
+.theme-steel .bg-gray-100,
+.theme-steel .bg-gray-200 {
+  background: #1c1f26 !important;
+}
+
+.theme-steel .bg-gray-800,
+.theme-steel .bg-gray-900,
+.theme-steel [class*="bg-slate-800"],
+.theme-steel [class*="bg-slate-900"] {
+  background: #16181d !important;
+}
+
+/* Steel border fixes */
+.theme-steel .border-gray-200,
+.theme-steel .border-gray-300,
+.theme-steel [class*="border-gray-"] {
+  border-color: #3a3f4a !important;
+}
+
+/* Steel text color fixes */
+.theme-steel .text-gray-900,
+.theme-steel .text-gray-800,
+.theme-steel .text-gray-700 {
+  color: #d0d6de !important;
+}
+
+.theme-steel .text-gray-600,
+.theme-steel .text-gray-500,
+.theme-steel .text-gray-400 {
+  color: #6d7585 !important;
+}
+
+/* Steel modals/dialogs */
+.theme-steel .fixed.inset-0 > div[class*="bg-"],
+.theme-steel [class*="modal"],
+.theme-steel [role="dialog"] {
+  background: #1c1f26 !important;
+  border-color: #3a3f4a !important;
+}
+
 /* Animations to make the theme alive */
 @keyframes pulse {
   0% { opacity: 1; }
@@ -695,131 +944,246 @@
 
 /* ============================================
    CHARCOAL AURORA - DEEP METALLIC HARDSTYLE THEME
-   Gaming/Industrial aesthetic with pure black & cyan accents
+   Gaming/Industrial aesthetic - Dark & Minimal with Cyan accents
+   Based on Windows Dark Gaming Theme Reference
    ============================================ */
 .theme-charcoal-aurora {
-  /* Core backgrounds - Pure deep black */
-  --vscode-bg: #0a0a0a;
-  --vscode-sidebar: #0c0c0c;
-  --vscode-activitybar: #080808;
-  --vscode-editor: #0a0a0a;
-  --vscode-panel: #0d0d0d;
-  --vscode-border: #1a1a1a;
+  /* Core backgrounds - Pure deep black, unified */
+  --vscode-bg: #0d0d0d;
+  --vscode-sidebar: #0a0a0a;
+  --vscode-activitybar: #0a0a0a;
+  --vscode-editor: #0d0d0d;
+  --vscode-panel: #0a0a0a;
+  --vscode-border: #1c1c1c;
   
-  /* Primary accent - Bright electric cyan */
-  --vscode-accent: #00d4ff;
-  --vscode-accent-hover: #00e5ff;
+  /* Primary accent - Electric cyan (used sparingly) */
+  --vscode-accent: #00c8e0;
+  --vscode-accent-hover: #00d4ff;
   
-  /* Text colors - Silver/Chrome */
-  --vscode-text: #c8c8c8;
-  --vscode-text-muted: #666666;
+  /* Text colors - Muted silver/gray */
+  --vscode-text: #a0a0a0;
+  --vscode-text-muted: #505050;
   
   /* Interactive states */
-  --vscode-selection: #003344;
-  --vscode-hover: #141414;
-  --vscode-active: #1a1a1a;
+  --vscode-selection: #1a3040;
+  --vscode-hover: #161616;
+  --vscode-active: #1c1c1c;
   
   /* Status colors */
-  --vscode-success: #00ff88;
-  --vscode-warning: #ff9500;
-  --vscode-error: #ff3333;
+  --vscode-success: #00c878;
+  --vscode-warning: #e89000;
+  --vscode-error: #d43030;
   
-  /* Hardstyle accents */
-  --hardstyle-cyan: #00d4ff;
-  --hardstyle-red: #ff3333;
-  --hardstyle-silver: #888888;
-  --hardstyle-chrome: #aaaaaa;
-  --hardstyle-gunmetal: #1e1e1e;
-  --hardstyle-black: #0a0a0a;
+  /* Theme specific */
+  --icon-default: #404040;
+  --icon-hover: #808080;
+  --icon-active: #00c8e0;
+  --text-inactive: #505050;
+  --text-active: #00c8e0;
 }
 
-/* ===== TOP ACCENT LINE - Electric Cyan ===== */
+/* ===== REMOVE TOP BAR GLOW - Subtle instead ===== */
 .theme-charcoal-aurora::before {
   content: '';
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, 
-    #0a0a0a 0%,
-    #00d4ff 15%,
-    #00d4ff 85%,
-    #0a0a0a 100%
-  );
+  height: 1px;
+  background: #00c8e0;
   z-index: 9999;
   pointer-events: none;
-  box-shadow: 
-    0 0 10px #00d4ff,
-    0 0 20px rgba(0, 212, 255, 0.5),
-    0 0 30px rgba(0, 212, 255, 0.3);
+  opacity: 0.6;
+  box-shadow: 0 0 8px rgba(0, 200, 224, 0.5);
 }
 
-/* ===== SIDEBAR & ACTIVITY BAR - Gunmetal Black ===== */
+/* ===== ALL BACKGROUNDS - Unified Dark ===== */
+.theme-charcoal-aurora,
+.theme-charcoal-aurora .bg-vscode-bg,
 .theme-charcoal-aurora .bg-vscode-sidebar,
-.theme-charcoal-aurora .bg-vscode-activitybar {
-  background: #0c0c0c;
-  border-right: 1px solid #1a1a1a;
+.theme-charcoal-aurora .bg-vscode-activitybar,
+.theme-charcoal-aurora .bg-vscode-panel,
+.theme-charcoal-aurora .bg-vscode-editor {
+  background: #0a0a0a !important;
 }
 
-/* ===== PANEL BACKGROUNDS - Deep Black ===== */
-.theme-charcoal-aurora .bg-vscode-panel {
-  background: #0d0d0d;
+/* Main editor area slightly lighter */
+.theme-charcoal-aurora main,
+.theme-charcoal-aurora .editor-container {
+  background: #0d0d0d !important;
 }
 
-/* ===== EDITOR BACKGROUND - Pure Black ===== */
-.theme-charcoal-aurora .bg-vscode-bg {
-  background: #0a0a0a;
+/* ===== BORDERS - Subtle dark lines ===== */
+.theme-charcoal-aurora .border-vscode-border,
+.theme-charcoal-aurora [class*="border-"] {
+  border-color: #1c1c1c !important;
 }
 
-/* ===== BORDERS - Dark Steel ===== */
-.theme-charcoal-aurora .border-vscode-border {
-  border-color: #1a1a1a;
+/* ===== ALL TEXT - Muted Silver ===== */
+.theme-charcoal-aurora,
+.theme-charcoal-aurora * {
+  color: #909090;
 }
 
-/* ===== ACCENT BUTTONS - Cyan Glow ===== */
-.theme-charcoal-aurora .bg-vscode-accent {
-  background: linear-gradient(180deg, #00d4ff 0%, #00a8cc 100%);
-  border: none;
-  box-shadow: 
-    0 0 15px rgba(0, 212, 255, 0.6),
-    0 0 30px rgba(0, 212, 255, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  color: #000000;
+.theme-charcoal-aurora h1,
+.theme-charcoal-aurora h2,
+.theme-charcoal-aurora h3,
+.theme-charcoal-aurora h4,
+.theme-charcoal-aurora .text-vscode-text {
+  color: #b0b0b0 !important;
+}
+
+.theme-charcoal-aurora .text-vscode-text-muted,
+.theme-charcoal-aurora p,
+.theme-charcoal-aurora span {
+  color: #707070;
+}
+
+/* ===== ICONS - Dark by default, cyan on active/hover ===== */
+.theme-charcoal-aurora svg {
+  color: #404040 !important;
+  filter: none !important;
+  transition: color 0.15s ease;
+}
+
+.theme-charcoal-aurora *:hover > svg,
+.theme-charcoal-aurora button:hover svg,
+.theme-charcoal-aurora a:hover svg {
+  color: #808080 !important;
+}
+
+/* Active/selected icons get cyan */
+.theme-charcoal-aurora .active svg,
+.theme-charcoal-aurora [class*="border-l-2"] svg,
+.theme-charcoal-aurora [aria-selected="true"] svg,
+.theme-charcoal-aurora .selected svg {
+  color: #00c8e0 !important;
+}
+
+/* ===== ACTIVITY BAR ICONS - Very subtle ===== */
+.theme-charcoal-aurora .bg-vscode-activitybar button svg {
+  color: #383838 !important;
+}
+
+.theme-charcoal-aurora .bg-vscode-activitybar button:hover svg {
+  color: #707070 !important;
+}
+
+.theme-charcoal-aurora .bg-vscode-activitybar button.active svg,
+.theme-charcoal-aurora .bg-vscode-activitybar [class*="border-l"] svg {
+  color: #00c8e0 !important;
+}
+
+/* Activity bar active indicator - cyan line */
+.theme-charcoal-aurora [class*="border-l-2"][class*="border-vscode-accent"],
+.theme-charcoal-aurora [class*="border-l-vscode-accent"] {
+  border-left: 2px solid #00c8e0 !important;
+  background: transparent !important;
+}
+
+/* ===== SIDEBAR CONTENT ===== */
+.theme-charcoal-aurora .bg-vscode-sidebar {
+  background: #0a0a0a !important;
+}
+
+/* Sidebar section headers */
+.theme-charcoal-aurora .bg-vscode-sidebar h2,
+.theme-charcoal-aurora .bg-vscode-sidebar h3,
+.theme-charcoal-aurora .bg-vscode-sidebar [class*="font-semibold"],
+.theme-charcoal-aurora .bg-vscode-sidebar [class*="font-medium"] {
+  color: #808080 !important;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+/* ===== TABS - FILES, OPEN, RECENT, SPACES ===== */
+.theme-charcoal-aurora [role="tablist"] button,
+.theme-charcoal-aurora [role="tab"] {
+  color: #505050 !important;
+  background: transparent !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+.theme-charcoal-aurora [role="tablist"] button:hover,
+.theme-charcoal-aurora [role="tab"]:hover {
+  color: #808080 !important;
+  background: transparent !important;
+}
+
+.theme-charcoal-aurora [role="tablist"] button[aria-selected="true"],
+.theme-charcoal-aurora [role="tab"][aria-selected="true"],
+.theme-charcoal-aurora [role="tablist"] button.active,
+.theme-charcoal-aurora .tab-active {
+  color: #00c8e0 !important;
+  border-bottom: 2px solid #00c8e0 !important;
+  background: transparent !important;
+}
+
+/* Editor tabs */
+.theme-charcoal-aurora .editor-tabs button {
+  color: #606060 !important;
+  background: #0a0a0a !important;
+  border-bottom: 2px solid transparent;
+}
+
+.theme-charcoal-aurora .editor-tabs button:hover {
+  color: #909090 !important;
+}
+
+.theme-charcoal-aurora .editor-tabs button.active,
+.theme-charcoal-aurora .editor-tabs [class*="border-b-2"] {
+  color: #c0c0c0 !important;
+  border-bottom: 2px solid #00c8e0 !important;
+  background: #0d0d0d !important;
+}
+
+/* ===== BUTTONS - Minimal style ===== */
+.theme-charcoal-aurora button {
+  color: #707070 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.theme-charcoal-aurora button:hover {
+  color: #a0a0a0 !important;
+  background: #161616 !important;
+}
+
+.theme-charcoal-aurora button:active {
+  background: #1a1a1a !important;
+}
+
+/* Primary accent buttons */
+.theme-charcoal-aurora .bg-vscode-accent,
+.theme-charcoal-aurora button[class*="bg-vscode-accent"] {
+  background: linear-gradient(180deg, #00c8e0 0%, #00a0b8 100%) !important;
+  color: #000000 !important;
   font-weight: 600;
-  text-shadow: none;
+  box-shadow: 0 0 12px rgba(0, 200, 224, 0.4);
 }
 
 .theme-charcoal-aurora .bg-vscode-accent:hover {
-  background: linear-gradient(180deg, #00e5ff 0%, #00d4ff 100%);
-  box-shadow: 
-    0 0 20px rgba(0, 212, 255, 0.8),
-    0 0 40px rgba(0, 212, 255, 0.5),
-    0 0 60px rgba(0, 212, 255, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  background: linear-gradient(180deg, #00d4ff 0%, #00c8e0 100%) !important;
+  box-shadow: 0 0 20px rgba(0, 200, 224, 0.6);
 }
 
-/* ===== ACCENT TEXT - Cyan Glow ===== */
+/* ===== ACCENT TEXT - Cyan for important items ===== */
 .theme-charcoal-aurora .text-vscode-accent {
-  color: #00d4ff;
-  text-shadow: 
-    0 0 8px rgba(0, 212, 255, 0.8),
-    0 0 16px rgba(0, 212, 255, 0.4);
+  color: #00c8e0 !important;
+  text-shadow: none;
 }
 
-/* ===== HOVER STATES - Subtle Lift ===== */
-.theme-charcoal-aurora button:not([disabled]):hover,
-.theme-charcoal-aurora .hover\:bg-vscode-hover:hover {
-  background: #181818;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+/* Remove excessive glow animations */
+.theme-charcoal-aurora .text-vscode-accent {
+  animation: none !important;
 }
 
-.theme-charcoal-aurora button:not([disabled]):active {
-  background: #101010;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+.theme-charcoal-aurora .bg-vscode-accent {
+  animation: none !important;
 }
 
-/* ===== SCROLLBARS - Metallic Dark ===== */
+/* ===== SCROLLBARS - Minimal dark ===== */
 .theme-charcoal-aurora ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -830,525 +1194,615 @@
 }
 
 .theme-charcoal-aurora ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #333333 0%, #222222 100%);
+  background: #252525;
   border-radius: 4px;
-  border: 1px solid #1a1a1a;
 }
 
 .theme-charcoal-aurora ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #444444 0%, #333333 100%);
-  border-color: #00d4ff;
-  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+  background: #353535;
 }
 
-/* ===== TEXT SELECTION - Cyan Tint ===== */
-.theme-charcoal-aurora ::selection {
-  background: rgba(0, 212, 255, 0.25);
-  color: #ffffff;
-}
-
-/* ===== INPUT FIELDS - Recessed Steel ===== */
+/* ===== INPUT FIELDS ===== */
 .theme-charcoal-aurora input,
 .theme-charcoal-aurora textarea,
 .theme-charcoal-aurora select {
-  background: #080808;
-  border: 1px solid #222222;
-  color: #c8c8c8;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  background: #0a0a0a !important;
+  border: 1px solid #252525 !important;
+  color: #a0a0a0 !important;
 }
 
 .theme-charcoal-aurora input:focus,
 .theme-charcoal-aurora textarea:focus,
 .theme-charcoal-aurora select:focus {
-  border-color: #00d4ff;
-  outline: none;
-  box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.5),
-    0 0 0 2px rgba(0, 212, 255, 0.3),
-    0 0 15px rgba(0, 212, 255, 0.2);
+  border-color: #00c8e0 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 1px rgba(0, 200, 224, 0.3) !important;
 }
 
-/* ===== STATUS BAR - Electric Cyan Strip ===== */
-.theme-charcoal-aurora footer,
-.theme-charcoal-aurora .status-bar {
-  background: linear-gradient(90deg, 
-    #00a8cc 0%, 
-    #00d4ff 50%,
-    #00a8cc 100%
-  ) !important;
-  color: #000000 !important;
-  font-weight: 500;
-  box-shadow: 
-    0 -2px 10px rgba(0, 212, 255, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+.theme-charcoal-aurora input::placeholder {
+  color: #404040 !important;
 }
 
-.theme-charcoal-aurora footer *,
-.theme-charcoal-aurora .status-bar * {
+/* ===== STATUS BAR - Cyan strip ===== */
+.theme-charcoal-aurora footer {
+  background: linear-gradient(90deg, #00a0b8 0%, #00c8e0 50%, #00a0b8 100%) !important;
+}
+
+.theme-charcoal-aurora footer * {
   color: #000000 !important;
 }
 
-/* ===== TABS - Steel with Cyan Indicator ===== */
-.theme-charcoal-aurora .tab-active,
-.theme-charcoal-aurora [class*="border-b-2"][class*="border-vscode-accent"] {
-  background: #141414;
-  border-bottom: 2px solid #00d4ff !important;
-  box-shadow: 
-    inset 0 -2px 10px rgba(0, 212, 255, 0.15),
-    0 2px 8px rgba(0, 212, 255, 0.1);
-}
-
-/* ===== TERMINAL - Deep Black ===== */
+/* ===== TERMINAL PANEL ===== */
 .theme-charcoal-aurora .xterm,
 .theme-charcoal-aurora [class*="terminal"] {
   background: #080808 !important;
 }
 
-.theme-charcoal-aurora .xterm-viewport {
-  background: #080808 !important;
+/* Terminal tabs */
+.theme-charcoal-aurora [class*="terminal"] button {
+  color: #606060 !important;
 }
 
-/* ===== ANIMATIONS - Subtle Cyan Pulse ===== */
-@keyframes hardstyle-glow {
-  0%, 100% { 
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.6), 0 0 30px rgba(0, 212, 255, 0.3);
-  }
-  50% { 
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.8), 0 0 40px rgba(0, 212, 255, 0.5);
-  }
+.theme-charcoal-aurora [class*="terminal"] button:hover {
+  color: #909090 !important;
 }
 
-@keyframes hardstyle-text-glow {
-  0%, 100% { 
-    text-shadow: 0 0 8px rgba(0, 212, 255, 0.8), 0 0 16px rgba(0, 212, 255, 0.4);
-  }
-  50% { 
-    text-shadow: 0 0 12px rgba(0, 212, 255, 1), 0 0 24px rgba(0, 212, 255, 0.6);
-  }
-}
-
-@keyframes top-bar-pulse {
-  0%, 100% { 
-    opacity: 1;
-    box-shadow: 0 0 10px #00d4ff, 0 0 20px rgba(0, 212, 255, 0.5);
-  }
-  50% { 
-    opacity: 0.9;
-    box-shadow: 0 0 15px #00d4ff, 0 0 30px rgba(0, 212, 255, 0.7);
-  }
-}
-
-/* Apply animations */
-.theme-charcoal-aurora::before {
-  animation: top-bar-pulse 3s ease-in-out infinite;
-}
-
-.theme-charcoal-aurora .text-vscode-accent {
-  animation: hardstyle-text-glow 3s ease-in-out infinite;
-}
-
-.theme-charcoal-aurora .bg-vscode-accent {
-  animation: hardstyle-glow 2s ease-in-out infinite;
-}
-
-/* ===== ACTIVE BORDERS - Cyan Glow Strip ===== */
-.theme-charcoal-aurora [class*="border-l-vscode-accent"],
-.theme-charcoal-aurora [class*="border-r-vscode-accent"] {
-  position: relative;
-}
-
-.theme-charcoal-aurora [class*="border-l-vscode-accent"]::before,
-.theme-charcoal-aurora [class*="border-r-vscode-accent"]::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: #00d4ff;
-  box-shadow: 0 0 12px rgba(0, 212, 255, 0.9);
-}
-
-.theme-charcoal-aurora [class*="border-l-vscode-accent"]::before {
-  left: 0;
-}
-
-.theme-charcoal-aurora [class*="border-r-vscode-accent"]::before {
-  right: 0;
-}
-
-/* ===== DIVIDERS - Steel Line ===== */
-.theme-charcoal-aurora hr,
-.theme-charcoal-aurora .divider {
-  background: linear-gradient(90deg, 
-    transparent 0%,
-    #333333 20%,
-    #444444 50%,
-    #333333 80%,
-    transparent 100%
-  );
-  height: 1px;
-  border: none;
-}
-
-/* ===== SYNTAX HIGHLIGHTING - Hardstyle Colors ===== */
-.theme-charcoal-aurora .monaco-editor .mtk1 { color: #c8c8c8; } /* default text */
-.theme-charcoal-aurora .monaco-editor .mtk3 { color: #555555; } /* comments */
-.theme-charcoal-aurora .monaco-editor .mtk4 { color: #00d4ff; } /* numbers - cyan */
-.theme-charcoal-aurora .monaco-editor .mtk5 { color: #ff9500; } /* strings - orange */
-.theme-charcoal-aurora .monaco-editor .mtk6 { color: #00d4ff; } /* keywords - cyan */
-.theme-charcoal-aurora .monaco-editor .mtk8 { color: #00ff88; } /* types - green */
-.theme-charcoal-aurora .monaco-editor .mtk10 { color: #ff3333; } /* functions - red */
-
-/* ===== SVG ICONS - Subtle Glow ===== */
-.theme-charcoal-aurora svg {
-  filter: drop-shadow(0 0 1px rgba(0, 212, 255, 0.3));
-}
-
-.theme-charcoal-aurora svg:hover {
-  filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.6));
-}
-
-/* ===== PANEL HEADERS - Dark Steel ===== */
-.theme-charcoal-aurora [class*="border-b"] {
-  background: #0c0c0c;
-}
-
-/* ===== BADGES - Cyan Glow ===== */
-.theme-charcoal-aurora .badge,
-.theme-charcoal-aurora [class*="rounded-full"][class*="bg-"] {
-  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
-}
-
-/* ===== DROPDOWNS/POPOVERS - Dark with Cyan Accent ===== */
-.theme-charcoal-aurora [class*="shadow-"] {
-  background: #0d0d0d;
-  border: 1px solid #1a1a1a;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.8),
-    0 0 0 1px rgba(0, 212, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
-}
-
-/* ===== ERROR/WARNING STATES - Red Accent ===== */
-.theme-charcoal-aurora .text-red-400,
-.theme-charcoal-aurora .text-red-500,
-.theme-charcoal-aurora .text-vscode-error {
-  color: #ff3333 !important;
-  text-shadow: 0 0 8px rgba(255, 51, 51, 0.6);
-}
-
-.theme-charcoal-aurora .bg-red-500,
-.theme-charcoal-aurora .bg-vscode-error {
-  background: linear-gradient(180deg, #ff3333 0%, #cc0000 100%) !important;
-  box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
-}
-
-/* ===== SUCCESS STATES - Green Accent ===== */
-.theme-charcoal-aurora .text-green-400,
-.theme-charcoal-aurora .text-green-500,
-.theme-charcoal-aurora .text-vscode-success {
-  color: #00ff88 !important;
-  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
-}
-
-/* ===== FILE TREE ITEMS ===== */
-.theme-charcoal-aurora [class*="file-item"]:hover,
-.theme-charcoal-aurora [class*="tree-item"]:hover {
-  background: #141414;
-  border-left: 2px solid #00d4ff;
-}
-
-/* ===== MONACO EDITOR SPECIFIC ===== */
-.theme-charcoal-aurora .monaco-editor {
-  background: #0a0a0a !important;
-}
-
-.theme-charcoal-aurora .monaco-editor .margin {
-  background: #0a0a0a !important;
-}
-
-.theme-charcoal-aurora .monaco-editor .line-numbers {
-  color: #444444 !important;
-}
-
-.theme-charcoal-aurora .monaco-editor .current-line {
-  background: rgba(0, 212, 255, 0.05) !important;
-  border-left: 2px solid #00d4ff !important;
-}
-
-/* ===== CONTEXT MENUS ===== */
-.theme-charcoal-aurora .context-menu,
-.theme-charcoal-aurora [role="menu"] {
-  background: #0d0d0d;
-  border: 1px solid #222222;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.9),
-    0 0 0 1px rgba(0, 212, 255, 0.1);
-}
-
-/* ===== TOOLTIPS ===== */
-.theme-charcoal-aurora [class*="tooltip"],
-.theme-charcoal-aurora [role="tooltip"] {
-  background: #141414;
-  border: 1px solid #00d4ff;
-  color: #c8c8c8;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8), 0 0 10px rgba(0, 212, 255, 0.2);
-}
-
-/* ===== SIDEBAR ICONS - Make them VISIBLE ===== */
-.theme-charcoal-aurora svg {
-  color: #888888 !important;
-  filter: none !important;
-}
-
-.theme-charcoal-aurora svg:hover {
-  color: #00d4ff !important;
-  filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.6)) !important;
-}
-
-.theme-charcoal-aurora button svg,
-.theme-charcoal-aurora a svg {
-  color: #999999 !important;
-}
-
-.theme-charcoal-aurora button:hover svg,
-.theme-charcoal-aurora a:hover svg {
-  color: #00d4ff !important;
-}
-
-/* Activity bar icons */
-.theme-charcoal-aurora .bg-vscode-activitybar svg,
-.theme-charcoal-aurora [class*="activitybar"] svg {
-  color: #777777 !important;
-  opacity: 0.9;
-}
-
-.theme-charcoal-aurora .bg-vscode-activitybar svg:hover,
-.theme-charcoal-aurora [class*="activitybar"] svg:hover,
-.theme-charcoal-aurora .bg-vscode-activitybar button:hover svg {
-  color: #00d4ff !important;
-  opacity: 1;
-}
-
-/* Active sidebar icon */
-.theme-charcoal-aurora [class*="border-l-2"],
-.theme-charcoal-aurora [class*="border-l-vscode-accent"] {
-  border-left-color: #00d4ff !important;
-}
-
-.theme-charcoal-aurora [class*="border-l-2"] svg,
-.theme-charcoal-aurora [class*="border-l-vscode-accent"] svg {
-  color: #00d4ff !important;
-}
-
-/* ===== TABS - OPEN, RECENT, SPACES - High Contrast ===== */
-.theme-charcoal-aurora button,
-.theme-charcoal-aurora [role="tab"] {
-  color: #999999 !important;
-}
-
-.theme-charcoal-aurora button:hover,
-.theme-charcoal-aurora [role="tab"]:hover {
-  color: #ffffff !important;
-  background: #1a1a1a;
-}
-
-.theme-charcoal-aurora [aria-selected="true"],
-.theme-charcoal-aurora .tab-active,
-.theme-charcoal-aurora button[class*="border-b-2"],
-.theme-charcoal-aurora [class*="border-b-2"][class*="border-vscode-accent"] {
-  color: #00d4ff !important;
-  background: #141414 !important;
-  border-bottom: 2px solid #00d4ff !important;
-}
-
-/* Tab text specifically */
-.theme-charcoal-aurora [role="tablist"] button,
-.theme-charcoal-aurora [role="tablist"] [role="tab"] {
-  color: #888888 !important;
-  font-weight: 500;
-}
-
-.theme-charcoal-aurora [role="tablist"] button:hover,
-.theme-charcoal-aurora [role="tablist"] [role="tab"]:hover {
-  color: #ffffff !important;
-}
-
-.theme-charcoal-aurora [role="tablist"] [aria-selected="true"],
-.theme-charcoal-aurora [role="tablist"] .active {
-  color: #00d4ff !important;
-}
-
-/* ===== AI CHAT PANEL - Dark Background ===== */
+/* ===== AI CHAT PANEL - Right sidebar ===== */
 .theme-charcoal-aurora [class*="ai-chat"],
-.theme-charcoal-aurora [class*="AI_CHAT"],
-.theme-charcoal-aurora [class*="chat-panel"],
-.theme-charcoal-aurora [class*="ChatPanel"] {
-  background: #0c0c0c !important;
-  color: #c8c8c8 !important;
-}
-
-/* AI Chat container - force dark */
-.theme-charcoal-aurora aside,
-.theme-charcoal-aurora [class*="right-panel"],
-.theme-charcoal-aurora [class*="sidebar-right"] {
-  background: #0c0c0c !important;
-}
-
-/* The white card in AI Chat - make it dark */
-.theme-charcoal-aurora .bg-white,
-.theme-charcoal-aurora [class*="bg-white"] {
-  background: #141414 !important;
-  color: #c8c8c8 !important;
-  border: 1px solid #222222 !important;
-}
-
-/* Gray backgrounds */
-.theme-charcoal-aurora .bg-gray-50,
-.theme-charcoal-aurora .bg-gray-100,
-.theme-charcoal-aurora .bg-gray-200 {
-  background: #141414 !important;
-}
-
-.theme-charcoal-aurora .bg-gray-800,
-.theme-charcoal-aurora .bg-gray-900 {
-  background: #0c0c0c !important;
-}
-
-/* Text colors - ensure readability */
-.theme-charcoal-aurora .text-gray-400,
-.theme-charcoal-aurora .text-gray-500 {
-  color: #888888 !important;
-}
-
-.theme-charcoal-aurora .text-gray-600,
-.theme-charcoal-aurora .text-gray-700 {
-  color: #777777 !important;
-}
-
-.theme-charcoal-aurora .text-gray-800,
-.theme-charcoal-aurora .text-gray-900,
-.theme-charcoal-aurora .text-black {
-  color: #c8c8c8 !important;
-}
-
-.theme-charcoal-aurora .text-white {
-  color: #ffffff !important;
-}
-
-/* ===== SPECIFIC AI CHAT COMPONENTS ===== */
-/* "Ready to Build" card */
-.theme-charcoal-aurora [class*="rounded-lg"][class*="border"],
-.theme-charcoal-aurora [class*="rounded-xl"][class*="border"] {
-  background: #121212 !important;
-  border-color: #222222 !important;
-}
-
-/* Chat input area */
-.theme-charcoal-aurora [class*="chat-input"],
-.theme-charcoal-aurora textarea[placeholder*="Ask"],
-.theme-charcoal-aurora input[placeholder*="Ask"] {
+.theme-charcoal-aurora [class*="AIChat"],
+.theme-charcoal-aurora aside {
   background: #0a0a0a !important;
-  border: 1px solid #333333 !important;
-  color: #c8c8c8 !important;
-}
-
-.theme-charcoal-aurora [class*="chat-input"]:focus,
-.theme-charcoal-aurora textarea[placeholder*="Ask"]:focus {
-  border-color: #00d4ff !important;
-  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2) !important;
-}
-
-/* ===== TERMINAL TABS ===== */
-.theme-charcoal-aurora [class*="terminal"] button,
-.theme-charcoal-aurora [class*="Terminal"] button {
-  color: #888888 !important;
-}
-
-.theme-charcoal-aurora [class*="terminal"] button:hover,
-.theme-charcoal-aurora [class*="Terminal"] button:hover {
-  color: #00d4ff !important;
-  background: #1a1a1a !important;
-}
-
-.theme-charcoal-aurora [class*="terminal"] [aria-selected="true"],
-.theme-charcoal-aurora [class*="Terminal"] .active {
-  color: #00d4ff !important;
-  background: #141414 !important;
-}
-
-/* Terminal header bar */
-.theme-charcoal-aurora [class*="terminal-header"],
-.theme-charcoal-aurora [class*="Terminal"] > div:first-child {
-  background: #0c0c0c !important;
-  border-bottom: 1px solid #1a1a1a !important;
-}
-
-/* ===== EXPLORER TEXT ===== */
-.theme-charcoal-aurora [class*="explorer"] span,
-.theme-charcoal-aurora [class*="Explorer"] span,
-.theme-charcoal-aurora [class*="file-tree"] span {
-  color: #c8c8c8 !important;
-}
-
-.theme-charcoal-aurora [class*="explorer"] .text-vscode-text-muted,
-.theme-charcoal-aurora [class*="Explorer"] .text-vscode-text-muted {
-  color: #666666 !important;
-}
-
-/* ===== PANEL HEADERS ===== */
-.theme-charcoal-aurora h1,
-.theme-charcoal-aurora h2,
-.theme-charcoal-aurora h3,
-.theme-charcoal-aurora h4 {
-  color: #e0e0e0 !important;
-}
-
-/* ===== LINK/ANCHOR COLORS ===== */
-.theme-charcoal-aurora a {
-  color: #00d4ff !important;
-}
-
-.theme-charcoal-aurora a:hover {
-  color: #00e5ff !important;
-  text-decoration: underline;
-}
-
-/* ===== KEYBOARD SHORTCUTS/BADGES ===== */
-.theme-charcoal-aurora kbd,
-.theme-charcoal-aurora [class*="kbd"],
-.theme-charcoal-aurora [class*="shortcut"] {
-  background: #1a1a1a !important;
-  border: 1px solid #333333 !important;
-  color: #888888 !important;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.85em;
-}
-
-/* ===== "No files open" and similar text ===== */
-.theme-charcoal-aurora [class*="empty-state"],
-.theme-charcoal-aurora [class*="placeholder"] {
-  color: #666666 !important;
-}
-
-/* ===== RIGHT SIDEBAR SPECIFIC (AI Chat) ===== */
-.theme-charcoal-aurora > div > aside:last-child,
-.theme-charcoal-aurora [class*="w-80"],
-.theme-charcoal-aurora [class*="w-96"] {
-  background: #0c0c0c !important;
 }
 
 /* AI Chat header */
 .theme-charcoal-aurora [class*="AI CHAT"],
-.theme-charcoal-aurora [class*="ai-chat-header"] {
+.theme-charcoal-aurora aside header {
   background: #0a0a0a !important;
-  border-bottom: 1px solid #1a1a1a !important;
+  border-bottom: 1px solid #1c1c1c !important;
 }
 
-/* ===== SCROLLBAR TRACK IN SIDEBARS ===== */
-.theme-charcoal-aurora aside::-webkit-scrollbar-track {
-  background: #0c0c0c !important;
+/* Not Configured warning - red dot style */
+.theme-charcoal-aurora [class*="Not Configured"],
+.theme-charcoal-aurora [class*="warning"] {
+  color: #d43030 !important;
+}
+
+/* ===== FILE EXPLORER ===== */
+.theme-charcoal-aurora .file-item,
+.theme-charcoal-aurora [class*="tree-item"] {
+  color: #707070 !important;
+}
+
+.theme-charcoal-aurora .file-item:hover,
+.theme-charcoal-aurora [class*="tree-item"]:hover {
+  background: #141414 !important;
+  color: #a0a0a0 !important;
+}
+
+.theme-charcoal-aurora .file-item.selected,
+.theme-charcoal-aurora [class*="tree-item"].selected {
+  background: #1a2530 !important;
+  color: #00c8e0 !important;
+}
+
+/* Folder icons - yellow/gold like reference */
+.theme-charcoal-aurora .folder-icon,
+.theme-charcoal-aurora [class*="folder"] svg {
+  color: #c0a040 !important;
+}
+
+/* ===== PANELS & CARDS ===== */
+.theme-charcoal-aurora [class*="rounded-lg"],
+.theme-charcoal-aurora [class*="card"],
+.theme-charcoal-aurora [class*="panel"] {
+  background: #0d0d0d !important;
+  border: 1px solid #1c1c1c !important;
+}
+
+/* ===== RED DOT INDICATORS ===== */
+.theme-charcoal-aurora .bg-red-500,
+.theme-charcoal-aurora [class*="error"],
+.theme-charcoal-aurora [class*="danger"] {
+  background: #d43030 !important;
+}
+
+.theme-charcoal-aurora .text-red-500,
+.theme-charcoal-aurora .text-red-400 {
+  color: #d43030 !important;
+}
+
+/* ===== GREEN SUCCESS ===== */
+.theme-charcoal-aurora .bg-green-500,
+.theme-charcoal-aurora [class*="success"] {
+  background: #00c878 !important;
+}
+
+.theme-charcoal-aurora .text-green-500,
+.theme-charcoal-aurora .text-green-400 {
+  color: #00c878 !important;
+}
+
+/* ===== YELLOW/ORANGE WARNINGS ===== */
+.theme-charcoal-aurora .bg-yellow-500,
+.theme-charcoal-aurora .bg-orange-500 {
+  background: #e89000 !important;
+}
+
+.theme-charcoal-aurora .text-yellow-500,
+.theme-charcoal-aurora .text-yellow-400,
+.theme-charcoal-aurora .text-orange-500 {
+  color: #e89000 !important;
+}
+
+/* ===== KEYBOARD SHORTCUTS ===== */
+.theme-charcoal-aurora kbd,
+.theme-charcoal-aurora [class*="kbd"],
+.theme-charcoal-aurora code {
+  background: #161616 !important;
+  border: 1px solid #252525 !important;
+  color: #808080 !important;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+/* ===== RIGHT SIDEBAR ICONS ===== */
+.theme-charcoal-aurora aside svg,
+.theme-charcoal-aurora [class*="right-sidebar"] svg {
+  color: #383838 !important;
+}
+
+.theme-charcoal-aurora aside button:hover svg,
+.theme-charcoal-aurora [class*="right-sidebar"] button:hover svg {
+  color: #707070 !important;
+}
+
+/* ===== MONACO EDITOR ===== */
+.theme-charcoal-aurora .monaco-editor {
+  background: #0d0d0d !important;
+}
+
+.theme-charcoal-aurora .monaco-editor .margin {
+  background: #0d0d0d !important;
+}
+
+.theme-charcoal-aurora .monaco-editor .line-numbers {
+  color: #353535 !important;
+}
+
+/* ===== SELECTION ===== */
+.theme-charcoal-aurora ::selection {
+  background: rgba(0, 200, 224, 0.2);
+  color: #ffffff;
+}
+
+/* ===== DIVIDERS ===== */
+.theme-charcoal-aurora hr {
+  border-color: #1c1c1c !important;
+  opacity: 0.5;
+}
+
+/* ===== MODAL / DIALOG / POPUP FIXES ===== */
+/* Modal backdrop - solid dark overlay */
+.theme-charcoal-aurora .fixed.inset-0[class*="bg-black"],
+.theme-charcoal-aurora [class*="bg-black/50"],
+.theme-charcoal-aurora [class*="bg-black/80"] {
+  background: rgba(0, 0, 0, 0.9) !important;
+  backdrop-filter: blur(4px);
+}
+
+/* Modal container - solid background, no transparency */
+.theme-charcoal-aurora .fixed.inset-0 > div[class*="bg-"],
+.theme-charcoal-aurora [class*="modal"],
+.theme-charcoal-aurora [class*="dialog"],
+.theme-charcoal-aurora [role="dialog"],
+.theme-charcoal-aurora .fixed.inset-0 .rounded-lg {
+  background: #0d0d0d !important;
+  border: 1px solid #252525 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(0, 200, 224, 0.1) !important;
+}
+
+/* Modal header */
+.theme-charcoal-aurora .fixed.inset-0 [class*="border-b"],
+.theme-charcoal-aurora [role="dialog"] [class*="border-b"] {
+  background: #0a0a0a !important;
+  border-color: #1c1c1c !important;
+}
+
+/* Modal content area */
+.theme-charcoal-aurora .fixed.inset-0 [class*="overflow-y-auto"],
+.theme-charcoal-aurora [role="dialog"] [class*="overflow-y-auto"] {
+  background: #0d0d0d !important;
+}
+
+/* Modal text colors */
+.theme-charcoal-aurora .fixed.inset-0 h2,
+.theme-charcoal-aurora .fixed.inset-0 h3,
+.theme-charcoal-aurora [role="dialog"] h2,
+.theme-charcoal-aurora [role="dialog"] h3 {
+  color: #c0c0c0 !important;
+}
+
+.theme-charcoal-aurora .fixed.inset-0 p,
+.theme-charcoal-aurora .fixed.inset-0 span,
+.theme-charcoal-aurora .fixed.inset-0 label,
+.theme-charcoal-aurora [role="dialog"] p,
+.theme-charcoal-aurora [role="dialog"] span,
+.theme-charcoal-aurora [role="dialog"] label {
+  color: #808080 !important;
+}
+
+/* Modal tabs */
+.theme-charcoal-aurora .fixed.inset-0 [class*="flex"][class*="border-b"] button {
+  color: #505050 !important;
+  background: transparent !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+.theme-charcoal-aurora .fixed.inset-0 [class*="flex"][class*="border-b"] button:hover {
+  color: #808080 !important;
+  background: #141414 !important;
+}
+
+.theme-charcoal-aurora .fixed.inset-0 [class*="flex"][class*="border-b"] button[class*="border-b-2"],
+.theme-charcoal-aurora .fixed.inset-0 [class*="flex"][class*="border-b"] button[class*="text-"][class*="accent"] {
+  color: #00c8e0 !important;
+  border-bottom-color: #00c8e0 !important;
+  background: #0a0a0a !important;
+}
+
+/* Provider cards in modal */
+.theme-charcoal-aurora .fixed.inset-0 [class*="grid"] > div,
+.theme-charcoal-aurora .fixed.inset-0 [class*="rounded-lg"][class*="border"] {
+  background: #0a0a0a !important;
+  border-color: #252525 !important;
+}
+
+.theme-charcoal-aurora .fixed.inset-0 [class*="grid"] > div:hover {
+  background: #121212 !important;
+  border-color: #303030 !important;
+}
+
+/* Selected provider card */
+.theme-charcoal-aurora .fixed.inset-0 [class*="grid"] > div[class*="border-2"],
+.theme-charcoal-aurora .fixed.inset-0 [class*="grid"] > div[class*="ring"] {
+  border-color: #00c8e0 !important;
+  background: #0a1520 !important;
+}
+
+/* Modal input fields */
+.theme-charcoal-aurora .fixed.inset-0 input,
+.theme-charcoal-aurora .fixed.inset-0 textarea,
+.theme-charcoal-aurora .fixed.inset-0 select,
+.theme-charcoal-aurora [role="dialog"] input,
+.theme-charcoal-aurora [role="dialog"] textarea,
+.theme-charcoal-aurora [role="dialog"] select {
+  background: #080808 !important;
+  border: 1px solid #252525 !important;
+  color: #a0a0a0 !important;
+}
+
+.theme-charcoal-aurora .fixed.inset-0 input:focus,
+.theme-charcoal-aurora .fixed.inset-0 textarea:focus,
+.theme-charcoal-aurora [role="dialog"] input:focus {
+  border-color: #00c8e0 !important;
+  box-shadow: 0 0 0 2px rgba(0, 200, 224, 0.2) !important;
+}
+
+/* Modal close button */
+.theme-charcoal-aurora .fixed.inset-0 button[class*="hover:bg-"] svg,
+.theme-charcoal-aurora [role="dialog"] button svg {
+  color: #606060 !important;
+}
+
+.theme-charcoal-aurora .fixed.inset-0 button:hover svg {
+  color: #a0a0a0 !important;
+}
+
+/* Modal action buttons */
+.theme-charcoal-aurora .fixed.inset-0 button[class*="bg-vscode-accent"],
+.theme-charcoal-aurora [role="dialog"] button[class*="bg-vscode-accent"] {
+  background: linear-gradient(180deg, #00c8e0 0%, #00a0b8 100%) !important;
+  color: #000000 !important;
+}
+
+/* Cancel/secondary buttons */
+.theme-charcoal-aurora .fixed.inset-0 button[class*="border"][class*="hover:bg"],
+.theme-charcoal-aurora [role="dialog"] button[class*="border"] {
+  background: transparent !important;
+  border-color: #303030 !important;
+  color: #808080 !important;
+}
+
+.theme-charcoal-aurora .fixed.inset-0 button[class*="border"]:hover {
+  background: #141414 !important;
+  color: #a0a0a0 !important;
+}
+
+/* ===== CSS VARIABLE OVERRIDES FOR MODALS ===== */
+.theme-charcoal-aurora {
+  --bg-primary: #0d0d0d;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #141414;
+  --border-primary: #1c1c1c;
+  --border-secondary: #252525;
+  --text-primary: #c0c0c0;
+  --text-secondary: #707070;
+  --accent-primary: #00c8e0;
+}
+
+/* ===== TAB LISTS (FILES, OPEN, RECENT, SPACES) ===== */
+.theme-charcoal-aurora [role="tablist"] button,
+.theme-charcoal-aurora [role="tablist"] [role="tab"] {
+  color: #505050 !important;
+  font-weight: 500;
+  background: transparent !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+.theme-charcoal-aurora [role="tablist"] button:hover,
+.theme-charcoal-aurora [role="tablist"] [role="tab"]:hover {
+  color: #808080 !important;
+  background: transparent !important;
+}
+
+.theme-charcoal-aurora [role="tablist"] [aria-selected="true"],
+.theme-charcoal-aurora [role="tablist"] button.active,
+.theme-charcoal-aurora [role="tablist"] .tab-active {
+  color: #00c8e0 !important;
+  border-bottom: 2px solid #00c8e0 !important;
+  background: transparent !important;
+}
+
+/* ===== AI CHAT PANEL ===== */
+.theme-charcoal-aurora [class*="ai-chat"],
+.theme-charcoal-aurora [class*="AI_CHAT"],
+.theme-charcoal-aurora [class*="chat-panel"],
+.theme-charcoal-aurora [class*="ChatPanel"],
+.theme-charcoal-aurora aside {
+  background: #0a0a0a !important;
+}
+
+/* White backgrounds to dark */
+.theme-charcoal-aurora .bg-white,
+.theme-charcoal-aurora [class*="bg-white"],
+.theme-charcoal-aurora [style*="background: white"],
+.theme-charcoal-aurora [style*="background-color: white"],
+.theme-charcoal-aurora [style*="background:#fff"],
+.theme-charcoal-aurora [style*="background: #fff"] {
+  background: #0a0a0a !important;
+  border-color: #1c1c1c !important;
+}
+
+/* Slate backgrounds to charcoal */
+.theme-charcoal-aurora [class*="bg-slate-800"],
+.theme-charcoal-aurora [class*="bg-slate-900"],
+.theme-charcoal-aurora [class*="bg-slate-700"] {
+  background: #0a0a0a !important;
+}
+
+.theme-charcoal-aurora [class*="bg-slate-600"],
+.theme-charcoal-aurora [class*="bg-slate-500"] {
+  background: #141414 !important;
+}
+
+/* VS Code styled backgrounds */
+.theme-charcoal-aurora [class*="bg-\\[#1e1e1e\\]"],
+.theme-charcoal-aurora [class*="bg-\\[#252526\\]"],
+.theme-charcoal-aurora [class*="bg-\\[#2d2d2d\\]"],
+.theme-charcoal-aurora [class*="bg-\\[#3c3c3c\\]"] {
+  background: #0a0a0a !important;
+}
+
+/* Gray utility classes */
+.theme-charcoal-aurora .bg-gray-50,
+.theme-charcoal-aurora .bg-gray-100,
+.theme-charcoal-aurora .bg-gray-200,
+.theme-charcoal-aurora .bg-gray-300 {
+  background: #0d0d0d !important;
+}
+
+.theme-charcoal-aurora .bg-gray-800,
+.theme-charcoal-aurora .bg-gray-900 {
+  background: #0a0a0a !important;
+}
+
+.theme-charcoal-aurora .text-gray-400,
+.theme-charcoal-aurora .text-gray-500 {
+  color: #606060 !important;
+}
+
+.theme-charcoal-aurora .text-gray-600,
+.theme-charcoal-aurora .text-gray-700,
+.theme-charcoal-aurora .text-gray-800,
+.theme-charcoal-aurora .text-gray-900 {
+  color: #909090 !important;
+}
+
+/* ===== TERMINAL ===== */
+.theme-charcoal-aurora [class*="terminal"] button,
+.theme-charcoal-aurora [class*="Terminal"] button {
+  color: #505050 !important;
+}
+
+.theme-charcoal-aurora [class*="terminal"] button:hover,
+.theme-charcoal-aurora [class*="Terminal"] button:hover {
+  color: #808080 !important;
+}
+
+.theme-charcoal-aurora [class*="terminal"] [aria-selected="true"],
+.theme-charcoal-aurora [class*="Terminal"] .active {
+  color: #00c8e0 !important;
+}
+
+/* ===== HEADINGS ===== */
+.theme-charcoal-aurora h1,
+.theme-charcoal-aurora h2,
+.theme-charcoal-aurora h3,
+.theme-charcoal-aurora h4 {
+  color: #b0b0b0 !important;
+}
+
+/* ===== LINKS ===== */
+.theme-charcoal-aurora a:not(button) {
+  color: #00c8e0 !important;
+}
+
+.theme-charcoal-aurora a:not(button):hover {
+  color: #00d4ff !important;
+}
+
+/* ===== COMPREHENSIVE SIDEBAR FIXES ===== */
+
+/* Left sidebar - File explorer tabs */
+.theme-charcoal-aurora .flex.border-b button,
+.theme-charcoal-aurora nav button,
+.theme-charcoal-aurora [class*="tab-list"] button {
+  color: #505050 !important;
+  background: transparent !important;
+  border-bottom: 2px solid transparent !important;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 8px 12px !important;
+}
+
+.theme-charcoal-aurora .flex.border-b button:hover,
+.theme-charcoal-aurora nav button:hover {
+  color: #808080 !important;
+}
+
+.theme-charcoal-aurora .flex.border-b button[class*="border-b-2"],
+.theme-charcoal-aurora .flex.border-b button[class*="text-vscode-accent"],
+.theme-charcoal-aurora nav button.active {
+  color: #00c8e0 !important;
+  border-bottom-color: #00c8e0 !important;
+}
+
+/* Right sidebar action icons container */
+.theme-charcoal-aurora aside .flex.flex-col button,
+.theme-charcoal-aurora aside nav button {
+  color: #383838 !important;
+}
+
+.theme-charcoal-aurora aside .flex.flex-col button:hover,
+.theme-charcoal-aurora aside nav button:hover {
+  color: #707070 !important;
+  background: #141414 !important;
+}
+
+.theme-charcoal-aurora aside .flex.flex-col button.active,
+.theme-charcoal-aurora aside .flex.flex-col button[class*="border-l"] {
+  color: #00c8e0 !important;
+}
+
+/* AI Chat specific container fixes */
+.theme-charcoal-aurora div[class*="rounded-xl"],
+.theme-charcoal-aurora div[class*="border-dashed"] {
+  background: #0d0d0d !important;
+  border-color: #252525 !important;
+}
+
+/* "Ready to Build" card in AI chat */
+.theme-charcoal-aurora div[class*="rounded-xl"][class*="border"] {
+  background: #0d0d0d !important;
+  border: 1px dashed #303030 !important;
+}
+
+/* AI Chat quick action buttons */
+.theme-charcoal-aurora div[class*="flex-wrap"] button,
+.theme-charcoal-aurora div[class*="gap-2"] button[class*="flex"][class*="items-center"] {
+  color: #707070 !important;
+  background: transparent !important;
+}
+
+.theme-charcoal-aurora div[class*="flex-wrap"] button:hover {
+  color: #00c8e0 !important;
+}
+
+/* Lightning bolt icon colors */
+.theme-charcoal-aurora svg[class*="text-yellow"],
+.theme-charcoal-aurora .text-yellow-400,
+.theme-charcoal-aurora .text-yellow-500 {
+  color: #f0a030 !important;
+}
+
+/* ===== FIX SPECIFIC TAILWIND CLASSES ===== */
+
+/* Border utilities */
+.theme-charcoal-aurora .border,
+.theme-charcoal-aurora .border-b,
+.theme-charcoal-aurora .border-t,
+.theme-charcoal-aurora .border-l,
+.theme-charcoal-aurora .border-r {
+  border-color: #1c1c1c !important;
+}
+
+/* Background gray utilities */
+.theme-charcoal-aurora .bg-gray-50 { background: #0e0e0e !important; }
+.theme-charcoal-aurora .bg-gray-100 { background: #101010 !important; }
+.theme-charcoal-aurora .bg-gray-200 { background: #141414 !important; }
+.theme-charcoal-aurora .bg-gray-300 { background: #181818 !important; }
+.theme-charcoal-aurora .bg-gray-700 { background: #0c0c0c !important; }
+.theme-charcoal-aurora .bg-gray-800 { background: #0a0a0a !important; }
+.theme-charcoal-aurora .bg-gray-900 { background: #080808 !important; }
+
+/* Text gray utilities */
+.theme-charcoal-aurora .text-gray-300 { color: #909090 !important; }
+.theme-charcoal-aurora .text-gray-400 { color: #707070 !important; }
+.theme-charcoal-aurora .text-gray-500 { color: #606060 !important; }
+.theme-charcoal-aurora .text-gray-600 { color: #808080 !important; }
+
+/* Text white - should be silver */
+.theme-charcoal-aurora .text-white {
+  color: #c0c0c0 !important;
+}
+
+/* ===== SPECIFIC COMPONENT OVERRIDES ===== */
+
+/* Explorer header text */
+.theme-charcoal-aurora [class*="EXPLORER"],
+.theme-charcoal-aurora .text-xs.font-medium {
+  color: #606060 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* "No files found" message */
+.theme-charcoal-aurora .text-vscode-text-muted,
+.theme-charcoal-aurora [class*="text-muted"] {
+  color: #505050 !important;
+}
+
+/* Main title - "AI Digital Friend Zone" */
+.theme-charcoal-aurora .text-2xl,
+.theme-charcoal-aurora .text-3xl,
+.theme-charcoal-aurora .text-4xl {
+  color: #b0b0b0 !important;
+}
+
+/* Subtitle/description text */
+.theme-charcoal-aurora .text-lg,
+.theme-charcoal-aurora .text-base {
+  color: #707070 !important;
+}
+
+/* Problems/Terminal tabs at bottom */
+.theme-charcoal-aurora [class*="Problems"],
+.theme-charcoal-aurora [class*="Terminal"] {
+  background: #0a0a0a !important;
+}
+
+/* Active tab in bottom panel */
+.theme-charcoal-aurora footer + div button[class*="border-b"],
+.theme-charcoal-aurora [class*="panel-tabs"] button {
+  color: #505050 !important;
+}
+
+.theme-charcoal-aurora footer + div button[class*="border-b-2"],
+.theme-charcoal-aurora [class*="panel-tabs"] button.active {
+  color: #00c8e0 !important;
+  border-bottom-color: #00c8e0 !important;
 }
 
 /* ============================================
@@ -1667,4 +2121,109 @@ code {
 .dark aside button span,
 [data-theme="dark"] aside button span {
   color: inherit;
+}
+/* ============================================
+   UNIVERSAL DARK THEME OVERRIDES
+   Applies to ALL dark themes to prevent white backgrounds
+   ============================================ */
+
+/* All dark themes - override white/light backgrounds */
+.dark .bg-white,
+.dark [class*="bg-white"],
+.theme-github-dark .bg-white,
+.theme-github-dark [class*="bg-white"],
+.theme-dracula .bg-white,
+.theme-dracula [class*="bg-white"],
+.theme-nord .bg-white,
+.theme-nord [class*="bg-white"],
+.theme-monokai .bg-white,
+.theme-monokai [class*="bg-white"],
+.theme-solarized-dark .bg-white,
+.theme-solarized-dark [class*="bg-white"],
+.theme-one-dark .bg-white,
+.theme-one-dark [class*="bg-white"],
+.high-contrast .bg-white,
+.high-contrast [class*="bg-white"] {
+  background: var(--vscode-sidebar) !important;
+}
+
+/* All dark themes - override gray backgrounds */
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-gray-200,
+.theme-github-dark .bg-gray-50,
+.theme-github-dark .bg-gray-100,
+.theme-github-dark .bg-gray-200,
+.theme-dracula .bg-gray-50,
+.theme-dracula .bg-gray-100,
+.theme-dracula .bg-gray-200,
+.theme-nord .bg-gray-50,
+.theme-nord .bg-gray-100,
+.theme-nord .bg-gray-200,
+.theme-monokai .bg-gray-50,
+.theme-monokai .bg-gray-100,
+.theme-monokai .bg-gray-200,
+.theme-solarized-dark .bg-gray-50,
+.theme-solarized-dark .bg-gray-100,
+.theme-solarized-dark .bg-gray-200,
+.theme-one-dark .bg-gray-50,
+.theme-one-dark .bg-gray-100,
+.theme-one-dark .bg-gray-200,
+.high-contrast .bg-gray-50,
+.high-contrast .bg-gray-100,
+.high-contrast .bg-gray-200 {
+  background: var(--vscode-panel) !important;
+}
+
+/* All dark themes - fix text colors */
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.theme-github-dark .text-gray-900,
+.theme-github-dark .text-gray-800,
+.theme-dracula .text-gray-900,
+.theme-dracula .text-gray-800,
+.theme-nord .text-gray-900,
+.theme-nord .text-gray-800,
+.theme-monokai .text-gray-900,
+.theme-monokai .text-gray-800,
+.theme-solarized-dark .text-gray-900,
+.theme-solarized-dark .text-gray-800,
+.theme-one-dark .text-gray-900,
+.theme-one-dark .text-gray-800,
+.high-contrast .text-gray-900,
+.high-contrast .text-gray-800 {
+  color: var(--vscode-text) !important;
+}
+
+/* All dark themes - fix border colors */
+.dark .border-gray-200,
+.dark .border-gray-300,
+.theme-github-dark .border-gray-200,
+.theme-github-dark .border-gray-300,
+.theme-dracula .border-gray-200,
+.theme-dracula .border-gray-300,
+.theme-nord .border-gray-200,
+.theme-nord .border-gray-300,
+.theme-monokai .border-gray-200,
+.theme-monokai .border-gray-300,
+.theme-solarized-dark .border-gray-200,
+.theme-solarized-dark .border-gray-300,
+.theme-one-dark .border-gray-200,
+.theme-one-dark .border-gray-300,
+.high-contrast .border-gray-200,
+.high-contrast .border-gray-300 {
+  border-color: var(--vscode-border) !important;
+}
+
+/* All dark themes - modal/dialog backgrounds */
+.dark .fixed.inset-0 > div:not([class*="bg-black"]),
+.theme-github-dark .fixed.inset-0 > div:not([class*="bg-black"]),
+.theme-dracula .fixed.inset-0 > div:not([class*="bg-black"]),
+.theme-nord .fixed.inset-0 > div:not([class*="bg-black"]),
+.theme-monokai .fixed.inset-0 > div:not([class*="bg-black"]),
+.theme-solarized-dark .fixed.inset-0 > div:not([class*="bg-black"]),
+.theme-one-dark .fixed.inset-0 > div:not([class*="bg-black"]),
+.high-contrast .fixed.inset-0 > div:not([class*="bg-black"]) {
+  background: var(--vscode-sidebar) !important;
 }

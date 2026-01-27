@@ -51,12 +51,13 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
 
   const activeFile = openFiles.find(f => f.id === activeFileId);
   
-  // Theme classes
-  const bgClass = theme === 'dark' ? 'bg-slate-900' : 'bg-gray-50';
-  const borderClass = theme === 'dark' ? 'border-slate-700' : 'border-gray-200';
-  const textClass = theme === 'dark' ? 'text-white' : 'text-gray-900';
-  const mutedTextClass = theme === 'dark' ? 'text-slate-400' : 'text-gray-500';
-  const inputBgClass = theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-300';
+  // Theme classes - Updated for charcoal-aurora
+  const isDark = theme !== 'light';
+  const bgClass = isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50';
+  const borderClass = isDark ? 'border-[#1c1c1c]' : 'border-gray-200';
+  const textClass = isDark ? 'text-[#a0a0a0]' : 'text-gray-900';
+  const mutedTextClass = isDark ? 'text-[#606060]' : 'text-gray-500';
+  const inputBgClass = isDark ? 'bg-[#0d0d0d] border-[#252525]' : 'bg-white border-gray-300';
 
   // Auto-scroll
   useEffect(() => {

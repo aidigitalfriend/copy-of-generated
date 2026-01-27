@@ -1658,34 +1658,34 @@ export const useStore = create<StoreState>()(
           case 'charcoal-aurora':
             root.classList.add('dark', 'theme-charcoal-aurora');
             setThemeVars({
-              bg: '#0a0a0a',
-              sidebar: '#0c0c0c',
-              panel: '#0d0d0d',
-              border: '#1a1a1a',
-              accent: '#00d4ff',
-              accentHover: '#00e5ff',
-              text: '#c8c8c8',
-              textMuted: '#666666',
-              selection: '#003344',
-              hover: '#141414',
-              active: '#1a1a1a',
+              bg: '#0d0d0d',
+              sidebar: '#0a0a0a',
+              panel: '#0a0a0a',
+              border: '#1c1c1c',
+              accent: '#00c8e0',
+              accentHover: '#00d4ff',
+              text: '#a0a0a0',
+              textMuted: '#505050',
+              selection: '#1a3040',
+              hover: '#161616',
+              active: '#1c1c1c',
             });
             break;
           default:
             // Default to charcoal-aurora theme
             root.classList.add('dark', 'theme-charcoal-aurora');
             setThemeVars({
-              bg: '#0a0a0a',
-              sidebar: '#0c0c0c',
-              panel: '#0d0d0d',
-              border: '#1a1a1a',
-              accent: '#00d4ff',
-              accentHover: '#00e5ff',
-              text: '#c8c8c8',
-              textMuted: '#666666',
-              selection: '#003344',
-              hover: '#141414',
-              active: '#1a1a1a',
+              bg: '#0d0d0d',
+              sidebar: '#0a0a0a',
+              panel: '#0a0a0a',
+              border: '#1c1c1c',
+              accent: '#00c8e0',
+              accentHover: '#00d4ff',
+              text: '#a0a0a0',
+              textMuted: '#505050',
+              selection: '#1a3040',
+              hover: '#161616',
+              active: '#1c1c1c',
             });
         }
       },
@@ -1840,8 +1840,8 @@ export const useStore = create<StoreState>()(
             activeWorkspaceId: null 
           };
         }
-        // Migrate to charcoal-aurora hardstyle theme for version < 5
-        if (version < 5) {
+        // Migrate to charcoal-aurora hardstyle theme for version < 6
+        if (version < 6) {
           return {
             ...state,
             theme: 'charcoal-aurora' as Theme,
@@ -1849,7 +1849,7 @@ export const useStore = create<StoreState>()(
         }
         return state;
       },
-      version: 5, // Version 5: Charcoal Aurora Hardstyle theme
+      version: 6, // Version 6: Dark Industrial Gaming Theme update
     }
   )
 );

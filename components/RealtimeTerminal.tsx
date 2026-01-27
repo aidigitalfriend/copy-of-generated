@@ -301,7 +301,7 @@ export const RealtimeTerminal: React.FC<RealtimeTerminalProps> = ({
   const splitResizeRef = useRef<{ splitId: string; startRatio: number; startX: number; startY: number } | null>(null);
 
   // Theme configuration
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = theme !== 'light' && theme !== 'high-contrast-light';
   const isHighContrast = theme === 'high-contrast';
   
   const terminalTheme = useMemo(() => {
