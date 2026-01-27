@@ -129,7 +129,7 @@ const DEFAULT_EDITOR_SETTINGS: EditorSettings = {
   autoSave: true,
   
   // Professional Features
-  theme: 'vs-dark',
+  theme: 'charcoal-aurora',
   iconTheme: 'material',
   cursorStyle: 'line',
   cursorBlinking: 'smooth',
@@ -1465,7 +1465,7 @@ export const useStore = create<StoreState>()(
         const root = document.documentElement;
         
         // Remove all theme classes first
-        root.classList.remove('dark', 'high-contrast', 'theme-github-dark', 'theme-dracula', 'theme-nord', 'theme-monokai', 'theme-solarized-dark', 'theme-one-dark', 'theme-steel');
+        root.classList.remove('dark', 'high-contrast', 'theme-github-dark', 'theme-dracula', 'theme-nord', 'theme-monokai', 'theme-solarized-dark', 'theme-one-dark', 'theme-steel', 'theme-charcoal-aurora');
         
         // Helper function to set all CSS variables at once
         const setThemeVars = (vars: {
@@ -1655,21 +1655,37 @@ export const useStore = create<StoreState>()(
               active: '#323844',
             });
             break;
-          default:
-            // Default to dark theme
-            root.classList.add('dark');
+          case 'charcoal-aurora':
+            root.classList.add('dark', 'theme-charcoal-aurora');
             setThemeVars({
-              bg: '#1e1e1e',
-              sidebar: '#252526',
-              panel: '#1e1e1e',
-              border: '#3c3c3c',
-              accent: '#0078d4',
-              accentHover: '#1c8ae0',
-              text: '#cccccc',
-              textMuted: '#858585',
-              selection: '#264f78',
-              hover: '#2a2d2e',
-              active: '#37373d',
+              bg: '#0a0c10',
+              sidebar: '#0e1117',
+              panel: '#0e1117',
+              border: '#1e2530',
+              accent: '#00d4aa',
+              accentHover: '#00f5c4',
+              text: '#e0e6ed',
+              textMuted: '#6b7a8f',
+              selection: '#1a3a4a',
+              hover: '#151b24',
+              active: '#1e2530',
+            });
+            break;
+          default:
+            // Default to charcoal-aurora theme
+            root.classList.add('dark', 'theme-charcoal-aurora');
+            setThemeVars({
+              bg: '#0a0c10',
+              sidebar: '#0e1117',
+              panel: '#0e1117',
+              border: '#1e2530',
+              accent: '#00d4aa',
+              accentHover: '#00f5c4',
+              text: '#e0e6ed',
+              textMuted: '#6b7a8f',
+              selection: '#1a3a4a',
+              hover: '#151b24',
+              active: '#1e2530',
             });
         }
       },
