@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { isDarkTheme } from '../utils/theme';
 import { motion, AnimatePresence } from 'framer-motion';
-import { isDarkTheme } from '../utils/theme';
 import { gitService, GitStatus, GitCommit, GitBranch } from '../services/git';
-import { isDarkTheme } from '../utils/theme';
 import { diffService } from '../services/diff';
-import { isDarkTheme } from '../utils/theme';
 import { useStore } from '../store/useStore';
 import { isDarkTheme } from '../utils/theme';
 

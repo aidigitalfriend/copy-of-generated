@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { isDarkTheme } from '../utils/theme';
 import { useStore } from '../store/useStore';
-import { isDarkTheme } from '../utils/theme';
 import { FileNode, Project, Workspace } from '../types';
-import { isDarkTheme } from '../utils/theme';
 import { motion, AnimatePresence } from 'framer-motion';
 import { isDarkTheme } from '../utils/theme';
 

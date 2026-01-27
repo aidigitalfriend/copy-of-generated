@@ -1,8 +1,6 @@
 
 import React from 'react';
-import { isDarkTheme } from '../utils/theme';
 import { AppConfig, ModelType } from '../types';
-import { isDarkTheme } from '../utils/theme';
 import { Icons } from '../constants';
 import { isDarkTheme } from '../utils/theme';
 

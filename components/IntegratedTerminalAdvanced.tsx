@@ -1,16 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo, createContext, useContext } from 'react';
-import { isDarkTheme } from '../utils/theme';
 import { Terminal as XTerminal } from '@xterm/xterm';
-import { isDarkTheme } from '../utils/theme';
 import { FitAddon } from '@xterm/addon-fit';
-import { isDarkTheme } from '../utils/theme';
 import { SearchAddon } from '@xterm/addon-search';
-import { isDarkTheme } from '../utils/theme';
 import { WebLinksAddon } from '@xterm/addon-web-links';
-import { isDarkTheme } from '../utils/theme';
 import '@xterm/xterm/css/xterm.css';
 import { socketService } from '../services/socket';
-import { isDarkTheme } from '../utils/theme';
 import { useStore } from '../store/useStore';
 import { isDarkTheme } from '../utils/theme';
 

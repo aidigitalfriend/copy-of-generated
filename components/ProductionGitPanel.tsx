@@ -905,7 +905,7 @@ export const ProductionGitPanel: React.FC<ProductionGitPanelProps> = ({ classNam
               <div className="flex items-center justify-between">
                 <div>
                   <p className={`text-sm ${textClass}`}>
-                    stash@{{{index}}}: {stash.message}
+                    stash@{index}: {stash.message}
                   </p>
                   <p className={`text-xs ${mutedClass}`}>
                     on {stash.branch} • {new Date(stash.timestamp).toLocaleDateString()}

@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { isDarkTheme } from '../utils/theme';
 import { useStore } from '../store/useStore';
-import { isDarkTheme } from '../utils/theme';
 import { FileNode, OpenFile } from '../types';
 import { isDarkTheme } from '../utils/theme';
 
