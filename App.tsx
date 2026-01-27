@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import { useStore } from './store/useStore';
 import { FileExplorer } from './components/FileExplorer';
 import { FileProjectManager } from './components/FileProjectManager';
@@ -7,38 +7,68 @@ import { Terminal } from './components/Terminal';
 import { RealTerminal } from './components/RealTerminal';
 import { IntegratedTerminal, IntegratedTerminalAdvanced } from './components/IntegratedTerminal';
 import { RealtimeTerminal } from './components/RealtimeTerminal';
-import { AIChat } from './components/AIChat';
-import { AgenticAIChat } from './components/AgenticAIChat';
-import { TemplateGallery } from './components/TemplateGallery';
-import PrebuiltTemplatesGallery from './components/PrebuiltTemplatesGallery';
-import { LivePreview } from './components/LivePreview';
-import { DeployPanel } from './components/DeployPanel';
-import { EnhancedDeployPanel } from './components/EnhancedDeployPanel';
-import { ExtensionsPanel } from './components/ExtensionsPanel';
-import { ExtensionMarketplacePanel } from './components/ExtensionMarketplacePanel';
-import { SettingsPanel } from './components/SettingsPanel';
-import { SearchPanel } from './components/SearchPanel';
-import { SearchReplaceAdvanced } from './components/SearchReplaceAdvanced';
-import { QuickOpen } from './components/QuickOpen';
-import { QuickOpenAdvanced } from './components/QuickOpenAdvanced';
-import { WorkspaceManager } from './components/WorkspaceManager';
-import { GitPanel } from './components/GitPanel';
-import { GitIntegrationAdvanced } from './components/GitIntegrationAdvanced';
-import { VersionControlPanel } from './components/VersionControlPanel';
 import { SplitPane, Sash } from './components/SplitPane';
-import { CodeIntelligencePanel } from './components/CodeIntelligencePanel';
-import { AIIntegrationPanel } from './components/AIIntegrationPanel';
-import { CollaborationPanel } from './components/CollaborationPanel';
-import { DebugPanel } from './components/DebugPanel';
-import { TaskRunnerPanel } from './components/TaskRunnerPanel';
-import { PackagingPanel } from './components/PackagingPanel';
-import { AnalyticsPanel } from './components/AnalyticsPanel';
-import { RemoteDevelopmentPanel } from './components/RemoteDevelopmentPanel';
-import { TechStackPanel } from './components/TechStackPanel';
+import { LazyLoadFallback, PanelLoadingFallback } from './components/LazyLoadFallback';
 import { FileNode, OpenFile, ProjectTemplate } from './types';
 import { voiceOutput, speechSupport } from './services/speech';
 import { mediaService } from './services/media';
 import { Diagnostic } from './services/codeIntelligence';
+
+// ============================================
+// Lazy-loaded components for code splitting
+// These panels are loaded on-demand to reduce initial bundle size
+// ============================================
+
+// AI Panels (loaded when AI tab is selected)
+const AIChat = lazy(() => import('./components/AIChat').then(m => ({ default: m.AIChat })));
+const AgenticAIChat = lazy(() => import('./components/AgenticAIChat').then(m => ({ default: m.AgenticAIChat })));
+const AIIntegrationPanel = lazy(() => import('./components/AIIntegrationPanel').then(m => ({ default: m.AIIntegrationPanel })));
+
+// Template Galleries
+const TemplateGallery = lazy(() => import('./components/TemplateGallery').then(m => ({ default: m.TemplateGallery })));
+const PrebuiltTemplatesGallery = lazy(() => import('./components/PrebuiltTemplatesGallery'));
+
+// Live Preview (heavy component with iframe)
+const LivePreview = lazy(() => import('./components/LivePreview').then(m => ({ default: m.LivePreview })));
+
+// DevOps Panels
+const DeployPanel = lazy(() => import('./components/DeployPanel').then(m => ({ default: m.DeployPanel })));
+const EnhancedDeployPanel = lazy(() => import('./components/EnhancedDeployPanel').then(m => ({ default: m.EnhancedDeployPanel })));
+const PackagingPanel = lazy(() => import('./components/PackagingPanel').then(m => ({ default: m.PackagingPanel })));
+const RemoteDevelopmentPanel = lazy(() => import('./components/RemoteDevelopmentPanel').then(m => ({ default: m.RemoteDevelopmentPanel })));
+
+// Extensions & Marketplace
+const ExtensionsPanel = lazy(() => import('./components/ExtensionsPanel').then(m => ({ default: m.ExtensionsPanel })));
+const ExtensionMarketplacePanel = lazy(() => import('./components/ExtensionMarketplacePanel').then(m => ({ default: m.ExtensionMarketplacePanel })));
+
+// Settings
+const SettingsPanel = lazy(() => import('./components/SettingsPanel').then(m => ({ default: m.SettingsPanel })));
+
+// Search
+const SearchPanel = lazy(() => import('./components/SearchPanel').then(m => ({ default: m.SearchPanel })));
+const SearchReplaceAdvanced = lazy(() => import('./components/SearchReplaceAdvanced').then(m => ({ default: m.SearchReplaceAdvanced })));
+
+// Quick actions
+const QuickOpen = lazy(() => import('./components/QuickOpen').then(m => ({ default: m.QuickOpen })));
+const QuickOpenAdvanced = lazy(() => import('./components/QuickOpenAdvanced').then(m => ({ default: m.QuickOpenAdvanced })));
+const WorkspaceManager = lazy(() => import('./components/WorkspaceManager').then(m => ({ default: m.WorkspaceManager })));
+
+// Git & Version Control
+const GitPanel = lazy(() => import('./components/GitPanel').then(m => ({ default: m.GitPanel })));
+const GitIntegrationAdvanced = lazy(() => import('./components/GitIntegrationAdvanced').then(m => ({ default: m.GitIntegrationAdvanced })));
+const VersionControlPanel = lazy(() => import('./components/VersionControlPanel').then(m => ({ default: m.VersionControlPanel })));
+
+// Code Intelligence
+const CodeIntelligencePanel = lazy(() => import('./components/CodeIntelligencePanel').then(m => ({ default: m.CodeIntelligencePanel })));
+
+// Collaboration & Debug
+const CollaborationPanel = lazy(() => import('./components/CollaborationPanel').then(m => ({ default: m.CollaborationPanel })));
+const DebugPanel = lazy(() => import('./components/DebugPanel').then(m => ({ default: m.DebugPanel })));
+
+// Task Runner & Analytics
+const TaskRunnerPanel = lazy(() => import('./components/TaskRunnerPanel').then(m => ({ default: m.TaskRunnerPanel })));
+const AnalyticsPanel = lazy(() => import('./components/AnalyticsPanel').then(m => ({ default: m.AnalyticsPanel })));
+const TechStackPanel = lazy(() => import('./components/TechStackPanel').then(m => ({ default: m.TechStackPanel })));
 
 type LeftTab = 'files' | 'templates' | 'prebuilt' | 'extensions' | 'marketplace' | 'search' | 'history' | 'git';
 type RightTab = 'ai' | 'ai-tools' | 'collab' | 'debug' | 'tasks' | 'package' | 'remote' | 'analytics' | 'techstack' | 'deploy' | 'settings';
@@ -989,39 +1019,61 @@ const App: React.FC = () => {
             {/* Panel Content */}
             <div className="flex-1 overflow-hidden">
               {leftTab === 'files' && <FileProjectManager onFileSelect={handleFileSelect} />}
-              {leftTab === 'templates' && <TemplateGallery />}
-              {leftTab === 'prebuilt' && (
-                <PrebuiltTemplatesGallery 
-                  onSelectTemplate={async (template: ProjectTemplate, templateFiles: FileNode[]) => {
-                    // Create project with template files
-                    const { createProject, setSidebarTab, setFiles, openFile } = useStore.getState();
-                    await createProject(template.name, template.id, templateFiles);
-                    setSidebarTab('files');
-                    setLeftTab('files');
-                    
-                    // Open the main file (index.html) in the editor
-                    const mainFile = templateFiles.find(f => f.name === 'index.html' || f.name === 'App.tsx');
-                    if (mainFile && mainFile.type === 'file') {
-                      openFile({
-                        id: mainFile.id || crypto.randomUUID(),
-                        name: mainFile.name,
-                        path: mainFile.path,
-                        content: mainFile.content || '',
-                        language: mainFile.language || 'html',
-                        isDirty: false,
-                      });
-                    }
-                    
-                    // Switch to split view to show preview
-                    setViewMode('split');
-                  }}
-                />
+              {leftTab === 'templates' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Templates" />}>
+                  <TemplateGallery />
+                </Suspense>
               )}
-              {leftTab === 'extensions' && <ExtensionsPanel />}
-              {leftTab === 'marketplace' && <ExtensionMarketplacePanel />}
+              {leftTab === 'prebuilt' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Templates" />}>
+                  <PrebuiltTemplatesGallery 
+                    onSelectTemplate={async (template: ProjectTemplate, templateFiles: FileNode[]) => {
+                      // Create project with template files
+                      const { createProject, setSidebarTab, setFiles, openFile } = useStore.getState();
+                      await createProject(template.name, template.id, templateFiles);
+                      setSidebarTab('files');
+                      setLeftTab('files');
+                      
+                      // Open the main file (index.html) in the editor
+                      const mainFile = templateFiles.find(f => f.name === 'index.html' || f.name === 'App.tsx');
+                      if (mainFile && mainFile.type === 'file') {
+                        openFile({
+                          id: mainFile.id || crypto.randomUUID(),
+                          name: mainFile.name,
+                          path: mainFile.path,
+                          content: mainFile.content || '',
+                          language: mainFile.language || 'html',
+                          isDirty: false,
+                        });
+                      }
+                      
+                      // Switch to split view to show preview
+                      setViewMode('split');
+                    }}
+                  />
+                </Suspense>
+              )}
+              {leftTab === 'extensions' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Extensions" />}>
+                  <ExtensionsPanel />
+                </Suspense>
+              )}
+              {leftTab === 'marketplace' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Marketplace" />}>
+                  <ExtensionMarketplacePanel />
+                </Suspense>
+              )}
               {leftTab === 'history' && <HistoryPanel />}
-              {leftTab === 'search' && <SearchReplaceAdvanced onFileSelect={handleFileSelect} />}
-              {leftTab === 'git' && <VersionControlPanel onFileSelect={handleFileSelect} />}
+              {leftTab === 'search' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Search" />}>
+                  <SearchReplaceAdvanced onFileSelect={handleFileSelect} />
+                </Suspense>
+              )}
+              {leftTab === 'git' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Version Control" />}>
+                  <VersionControlPanel onFileSelect={handleFileSelect} />
+                </Suspense>
+              )}
             </div>
             
             {/* Project Info */}
@@ -1057,7 +1109,9 @@ const App: React.FC = () => {
           
           {viewMode === 'preview' && (
             <div className="w-full h-full">
-              <LivePreview />
+              <Suspense fallback={<LazyLoadFallback message="Loading Preview..." size="lg" />}>
+                <LivePreview />
+              </Suspense>
             </div>
           )}
           
@@ -1078,7 +1132,9 @@ const App: React.FC = () => {
               ) : (
                 <CodeEditor onDiagnosticsChange={setCurrentDiagnostics} />
               )}
-              <LivePreview />
+              <Suspense fallback={<LazyLoadFallback message="Loading Preview..." size="lg" />}>
+                <LivePreview />
+              </Suspense>
             </SplitPane>
           )}
         </div>
@@ -1177,7 +1233,9 @@ const App: React.FC = () => {
                 )
               )}
               {bottomPanelTab === 'problems' && problemsPanelOpen && (
-                <CodeIntelligencePanel className="h-full" />
+                <Suspense fallback={<LazyLoadFallback message="Loading Problems..." size="sm" />}>
+                  <CodeIntelligencePanel className="h-full" />
+                </Suspense>
               )}
             </div>
           </div>
@@ -1354,17 +1412,61 @@ const App: React.FC = () => {
             
             {/* Panel Content */}
             <div className="flex-1 overflow-hidden">
-              {rightTab === 'ai' && <AgenticAIChat voiceEnabled={voiceEnabled} />}
-              {rightTab === 'ai-tools' && <AIIntegrationPanel />}
-              {rightTab === 'collab' && <CollaborationPanel />}
-              {rightTab === 'debug' && <DebugPanel />}
-              {rightTab === 'tasks' && <TaskRunnerPanel />}
-              {rightTab === 'package' && <PackagingPanel />}
-              {rightTab === 'remote' && <RemoteDevelopmentPanel />}
-              {rightTab === 'analytics' && <AnalyticsPanel />}
-              {rightTab === 'techstack' && <TechStackPanel />}
-              {rightTab === 'deploy' && <EnhancedDeployPanel />}
-              {rightTab === 'settings' && <SettingsPanel theme={theme} setTheme={setTheme} />}
+              {rightTab === 'ai' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="AI Chat" />}>
+                  <AgenticAIChat voiceEnabled={voiceEnabled} />
+                </Suspense>
+              )}
+              {rightTab === 'ai-tools' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="AI Tools" />}>
+                  <AIIntegrationPanel />
+                </Suspense>
+              )}
+              {rightTab === 'collab' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Collaboration" />}>
+                  <CollaborationPanel />
+                </Suspense>
+              )}
+              {rightTab === 'debug' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Debug" />}>
+                  <DebugPanel />
+                </Suspense>
+              )}
+              {rightTab === 'tasks' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Tasks" />}>
+                  <TaskRunnerPanel />
+                </Suspense>
+              )}
+              {rightTab === 'package' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Packaging" />}>
+                  <PackagingPanel />
+                </Suspense>
+              )}
+              {rightTab === 'remote' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Remote" />}>
+                  <RemoteDevelopmentPanel />
+                </Suspense>
+              )}
+              {rightTab === 'analytics' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Analytics" />}>
+                  <AnalyticsPanel />
+                </Suspense>
+              )}
+              {rightTab === 'techstack' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Tech Stack" />}>
+                  <TechStackPanel />
+                </Suspense>
+              )}
+              {rightTab === 'deploy' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Deploy" />}>
+                  <EnhancedDeployPanel />
+                </Suspense>
+              )}
+              {rightTab === 'settings' && (
+                <Suspense fallback={<PanelLoadingFallback panelName="Settings" />}>
+                  <SettingsPanel theme={theme} setTheme={setTheme} />
+                </Suspense>
+              )}
             </div>
           </div>
         )}
@@ -1497,17 +1599,21 @@ const App: React.FC = () => {
       )}
       
       {/* Quick Open Modal (Ctrl+P) */}
-      <QuickOpenAdvanced 
-        isOpen={quickOpenOpen}
-        onClose={() => setQuickOpenOpen(false)}
-        onFileSelect={handleFileSelect}
-      />
+      <Suspense fallback={null}>
+        <QuickOpenAdvanced 
+          isOpen={quickOpenOpen}
+          onClose={() => setQuickOpenOpen(false)}
+          onFileSelect={handleFileSelect}
+        />
+      </Suspense>
       
       {/* Workspace Manager Modal */}
-      <WorkspaceManager
-        isOpen={workspaceManagerOpen}
-        onClose={() => setWorkspaceManagerOpen(false)}
-      />
+      <Suspense fallback={null}>
+        <WorkspaceManager
+          isOpen={workspaceManagerOpen}
+          onClose={() => setWorkspaceManagerOpen(false)}
+        />
+      </Suspense>
     </div>
   );
 };
