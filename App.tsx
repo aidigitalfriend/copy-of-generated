@@ -841,8 +841,6 @@ const App: React.FC = () => {
   };
 
   // VS Code Theme classes - use isDark for all dark theme variants
-  const isDark = theme !== 'light';
-  
   const themeName = useStore((state) => state.theme);
   const isDark = !['light', 'high-contrast-light'].includes(themeName);
 
