@@ -891,11 +891,11 @@ const App: React.FC = () => {
     : 'bg-gray-100 border-gray-300 border-b';
   
   const iconBarBtnActive = isDark
-    ? 'text-white border-l-2 border-l-vscode-accent'
+    ? 'text-vscode-accent border-l-2 border-l-vscode-accent'
     : 'text-blue-600 border-l-2 border-l-blue-600';
   
   const iconBarBtnInactive = isDark
-    ? 'text-vscode-textMuted hover:text-white'
+    ? 'text-[#5a9a9a] hover:text-vscode-accent'
     : 'text-gray-500 hover:text-gray-900';
   
   const tooltipClasses = isDark

@@ -16,7 +16,9 @@
   --vscode-accent: #00d4aa;
   --vscode-accent-hover: #00f5c4;
   --vscode-text: #e0e6ed;
-  --vscode-text-muted: #6b7a8f;
+  --vscode-text-muted: #8b9cb3;
+  --vscode-icon: #00d4aa;
+  --vscode-icon-inactive: #5a8a8a;
   --vscode-selection: #1a3a4a;
   --vscode-hover: #151b24;
   --vscode-active: #1e2530;
@@ -1608,4 +1610,61 @@ code {
 
 .status-dot.busy {
   background: var(--vscode-warning);
+}
+
+/* ============================================
+   Sidebar Icon Visibility Enhancement
+   Makes icons visible with cyan/teal color scheme
+   ============================================ */
+
+/* Activity bar icons - cyan glow effect */
+.dark aside svg,
+[data-theme="dark"] aside svg,
+:root aside svg {
+  color: #5a9a9a;
+  transition: color 0.2s ease, filter 0.2s ease;
+}
+
+.dark aside button:hover svg,
+[data-theme="dark"] aside button:hover svg,
+:root aside button:hover svg {
+  color: var(--vscode-accent);
+  filter: drop-shadow(0 0 4px var(--vscode-accent));
+}
+
+.dark aside button.border-l-vscode-accent svg,
+[data-theme="dark"] aside button.border-l-vscode-accent svg,
+:root aside button.border-l-vscode-accent svg {
+  color: var(--vscode-accent);
+  filter: drop-shadow(0 0 6px var(--vscode-accent));
+}
+
+/* Panel text visibility */
+.dark .text-vscode-textMuted,
+[data-theme="dark"] .text-vscode-textMuted {
+  color: #8b9cb3 !important;
+}
+
+/* Sidebar panel labels and text */
+.dark aside span,
+[data-theme="dark"] aside span {
+  color: #b0bfcf;
+}
+
+/* Search panel visibility */
+.dark input::placeholder,
+[data-theme="dark"] input::placeholder {
+  color: #6b7a8f;
+}
+
+/* Status bar text visibility */
+.dark footer,
+[data-theme="dark"] footer {
+  color: #b0bfcf;
+}
+
+/* Button text in panels */
+.dark aside button span,
+[data-theme="dark"] aside button span {
+  color: inherit;
 }
