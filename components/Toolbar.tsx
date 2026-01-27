@@ -1,7 +1,10 @@
 
 import React from 'react';
+import { isDarkTheme } from '../utils/theme';
 import { AppConfig, ModelType } from '../types';
+import { isDarkTheme } from '../utils/theme';
 import { Icons } from '../constants';
+import { isDarkTheme } from '../utils/theme';
 
 interface ToolbarProps {
   app: AppConfig;
@@ -70,7 +73,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           {isOpen && <h3 className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Appearance</h3>}
           <div className={`flex gap-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl ${!isOpen && 'flex-col'}`}>
             <button 
-              onClick={() => theme === 'dark' && onToggleTheme()}
+              onClick={() => isDarkTheme(theme) && onToggleTheme()}
               className={`flex-1 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold transition-all ${theme === 'light' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'}`}
               title="Light Mode"
             >
@@ -79,7 +82,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             </button>
             <button 
               onClick={() => theme === 'light' && onToggleTheme()}
-              className={`flex-1 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold transition-all ${theme === 'dark' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'}`}
+              className={`flex-1 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold transition-all ${isDarkTheme(theme) ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'}`}
               title="Dark Mode"
             >
               <Icons.Moon />

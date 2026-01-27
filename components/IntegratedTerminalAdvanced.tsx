@@ -1,11 +1,18 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo, createContext, useContext } from 'react';
+import { isDarkTheme } from '../utils/theme';
 import { Terminal as XTerminal } from '@xterm/xterm';
+import { isDarkTheme } from '../utils/theme';
 import { FitAddon } from '@xterm/addon-fit';
+import { isDarkTheme } from '../utils/theme';
 import { SearchAddon } from '@xterm/addon-search';
+import { isDarkTheme } from '../utils/theme';
 import { WebLinksAddon } from '@xterm/addon-web-links';
+import { isDarkTheme } from '../utils/theme';
 import '@xterm/xterm/css/xterm.css';
 import { socketService } from '../services/socket';
+import { isDarkTheme } from '../utils/theme';
 import { useStore } from '../store/useStore';
+import { isDarkTheme } from '../utils/theme';
 
 // ============================================================================
 // Types & Interfaces
@@ -190,7 +197,7 @@ export const IntegratedTerminalAdvanced: React.FC<IntegratedTerminalProps> = ({
 
   // Theme Configuration
   const getTerminalTheme = useCallback(() => {
-    const isDark = theme === 'dark' || theme === 'high-contrast';
+    const isDark = isDarkTheme(theme) || theme === 'high-contrast';
     const isHighContrast = theme === 'high-contrast';
     
     return {
@@ -1000,7 +1007,7 @@ export const IntegratedTerminalAdvanced: React.FC<IntegratedTerminalProps> = ({
   // Theme Classes
   // ============================================================================
 
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = isDarkTheme(theme) || theme === 'high-contrast';
   const isHighContrast = theme === 'high-contrast';
   
   const bgColor = isHighContrast ? 'bg-black' : isDark ? 'bg-[#1e1e1e]' : 'bg-white';
@@ -1465,7 +1472,7 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ tab, isActive, onMount, onF
     }
   }, [onMount]);
 
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = isDarkTheme(theme) || theme === 'high-contrast';
   const bgColor = theme === 'high-contrast' ? '#000000' : isDark ? '#1e1e1e' : '#ffffff';
 
   return (
@@ -1497,7 +1504,7 @@ const SplitTerminalView: React.FC<SplitTerminalViewProps> = ({
   onSplitResize,
   theme 
 }) => {
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = isDarkTheme(theme) || theme === 'high-contrast';
 
   if (split.type === 'leaf' && split.terminalId) {
     const tab = tabs.find(t => t.id === split.terminalId);

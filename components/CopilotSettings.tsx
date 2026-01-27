@@ -4,9 +4,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { isDarkTheme } from '../utils/theme';
 import { motion, AnimatePresence } from 'framer-motion';
+import { isDarkTheme } from '../utils/theme';
 import { useStore } from '../store/useStore';
+import { isDarkTheme } from '../utils/theme';
 import { copilotService } from '../services/copilot';
+import { isDarkTheme } from '../utils/theme';
 
 // Provider configurations
 const PROVIDERS = [
@@ -95,7 +99,7 @@ export const CopilotSettings: React.FC<CopilotSettingsProps> = ({
   onClose,
 }) => {
   const { theme } = useStore();
-  const isDark = theme === 'dark';
+  const isDark = isDarkTheme(theme);
 
   // State for all provider settings
   const [activeProvider, setActiveProvider] = useState('openai');
@@ -504,7 +508,7 @@ export const QuickCopilotSettings: React.FC<QuickSettingsProps> = ({
   anchorPosition,
 }) => {
   const { theme } = useStore();
-  const isDark = theme === 'dark';
+  const isDark = isDarkTheme(theme);
 
   const [activeProvider, setActiveProvider] = useState(() =>
     localStorage.getItem('copilot_active_provider') || 'openai'

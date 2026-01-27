@@ -21,21 +21,21 @@ const applyInitialTheme = () => {
     // Use default theme
   }
   
-  // Apply charcoal-aurora theme classes immediately
+  // Apply charcoal-aurora hardstyle theme classes immediately
   root.classList.add('dark', 'theme-charcoal-aurora');
   
-  // Set CSS variables for charcoal-aurora
-  root.style.setProperty('--vscode-bg', '#0a0c10');
-  root.style.setProperty('--vscode-sidebar', '#0e1117');
-  root.style.setProperty('--vscode-panel', '#0e1117');
-  root.style.setProperty('--vscode-border', '#1e2530');
-  root.style.setProperty('--vscode-accent', '#00d4aa');
-  root.style.setProperty('--vscode-accent-hover', '#00f5c4');
-  root.style.setProperty('--vscode-text', '#e0e6ed');
-  root.style.setProperty('--vscode-text-muted', '#6b7a8f');
-  root.style.setProperty('--vscode-selection', '#1a3a4a');
-  root.style.setProperty('--vscode-hover', '#151b24');
-  root.style.setProperty('--vscode-active', '#1e2530');
+  // Set CSS variables for charcoal-aurora hardstyle
+  root.style.setProperty('--vscode-bg', '#0a0a0a');
+  root.style.setProperty('--vscode-sidebar', '#0c0c0c');
+  root.style.setProperty('--vscode-panel', '#0d0d0d');
+  root.style.setProperty('--vscode-border', '#1a1a1a');
+  root.style.setProperty('--vscode-accent', '#00d4ff');
+  root.style.setProperty('--vscode-accent-hover', '#00e5ff');
+  root.style.setProperty('--vscode-text', '#c8c8c8');
+  root.style.setProperty('--vscode-text-muted', '#666666');
+  root.style.setProperty('--vscode-selection', '#003344');
+  root.style.setProperty('--vscode-hover', '#141414');
+  root.style.setProperty('--vscode-active', '#1a1a1a');
 };
 
 // Apply theme before React renders

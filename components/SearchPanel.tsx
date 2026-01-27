@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { isDarkTheme } from '../utils/theme';
 import { useStore } from '../store/useStore';
+import { isDarkTheme } from '../utils/theme';
 import { FileNode, OpenFile } from '../types';
+import { isDarkTheme } from '../utils/theme';
 
 interface SearchMatch {
   file: FileNode;
@@ -37,7 +40,7 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({ onFileSelect }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const replaceInputRef = useRef<HTMLInputElement>(null);
 
-  const isDark = theme === 'dark';
+  const isDark = isDarkTheme(theme);
 
   // Flatten file tree to array of files
   const flattenFiles = useCallback((nodes: FileNode[]): FileNode[] => {

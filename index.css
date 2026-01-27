@@ -692,270 +692,264 @@
 }
 
 /* ============================================
-   Charcoal Aurora Metallic Theme
-   Deep charcoal with aurora accents & metallic effects
+   CHARCOAL AURORA - DEEP METALLIC HARDSTYLE THEME
+   Gaming/Industrial aesthetic with pure black & cyan accents
    ============================================ */
 .theme-charcoal-aurora {
-  --vscode-bg: #0a0c10;
-  --vscode-sidebar: #0e1117;
-  --vscode-activitybar: #080a0e;
-  --vscode-editor: #0a0c10;
-  --vscode-panel: #0e1117;
-  --vscode-border: #1e2530;
-  --vscode-accent: #00d4aa;
-  --vscode-accent-hover: #00f5c4;
-  --vscode-text: #e0e6ed;
-  --vscode-text-muted: #6b7a8f;
-  --vscode-selection: #1a3a4a;
-  --vscode-hover: #151b24;
-  --vscode-active: #1e2530;
-  --vscode-success: #00d68f;
-  --vscode-warning: #ffaa00;
-  --vscode-error: #ff4d6a;
+  /* Core backgrounds - Pure deep black */
+  --vscode-bg: #0a0a0a;
+  --vscode-sidebar: #0c0c0c;
+  --vscode-activitybar: #080808;
+  --vscode-editor: #0a0a0a;
+  --vscode-panel: #0d0d0d;
+  --vscode-border: #1a1a1a;
   
-  /* Aurora gradient colors */
-  --aurora-cyan: #00d4aa;
-  --aurora-magenta: #d946ef;
-  --aurora-blue: #3b82f6;
-  --aurora-green: #22c55e;
-  --aurora-purple: #a855f7;
+  /* Primary accent - Bright electric cyan */
+  --vscode-accent: #00d4ff;
+  --vscode-accent-hover: #00e5ff;
   
-  /* Metallic colors */
-  --metallic-silver: #8b99a8;
-  --metallic-chrome: #c0c8d0;
-  --metallic-gunmetal: #2a3441;
+  /* Text colors - Silver/Chrome */
+  --vscode-text: #c8c8c8;
+  --vscode-text-muted: #666666;
+  
+  /* Interactive states */
+  --vscode-selection: #003344;
+  --vscode-hover: #141414;
+  --vscode-active: #1a1a1a;
+  
+  /* Status colors */
+  --vscode-success: #00ff88;
+  --vscode-warning: #ff9500;
+  --vscode-error: #ff3333;
+  
+  /* Hardstyle accents */
+  --hardstyle-cyan: #00d4ff;
+  --hardstyle-red: #ff3333;
+  --hardstyle-silver: #888888;
+  --hardstyle-chrome: #aaaaaa;
+  --hardstyle-gunmetal: #1e1e1e;
+  --hardstyle-black: #0a0a0a;
 }
 
-/* Aurora glow effects */
+/* ===== TOP ACCENT LINE - Electric Cyan ===== */
 .theme-charcoal-aurora::before {
   content: '';
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
+  height: 2px;
   background: linear-gradient(90deg, 
-    transparent 0%,
-    #00d4aa 20%,
-    #d946ef 40%,
-    #3b82f6 60%,
-    #22c55e 80%,
-    transparent 100%
+    #0a0a0a 0%,
+    #00d4ff 15%,
+    #00d4ff 85%,
+    #0a0a0a 100%
   );
-  opacity: 0.6;
   z-index: 9999;
   pointer-events: none;
+  box-shadow: 
+    0 0 10px #00d4ff,
+    0 0 20px rgba(0, 212, 255, 0.5),
+    0 0 30px rgba(0, 212, 255, 0.3);
 }
 
-/* Metallic sidebar with aurora shimmer */
+/* ===== SIDEBAR & ACTIVITY BAR - Gunmetal Black ===== */
 .theme-charcoal-aurora .bg-vscode-sidebar,
 .theme-charcoal-aurora .bg-vscode-activitybar {
-  background: 
-    linear-gradient(180deg, rgba(0, 212, 170, 0.03) 0%, transparent 30%),
-    linear-gradient(180deg, #0e1117 0%, #080a0e 100%);
-  border-right: 1px solid #1e2530;
-  box-shadow: inset -1px 0 0 rgba(0, 212, 170, 0.1);
+  background: #0c0c0c;
+  border-right: 1px solid #1a1a1a;
 }
 
-/* Aurora-tinged panel backgrounds */
+/* ===== PANEL BACKGROUNDS - Deep Black ===== */
 .theme-charcoal-aurora .bg-vscode-panel {
-  background: 
-    radial-gradient(ellipse at top right, rgba(0, 212, 170, 0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at bottom left, rgba(217, 70, 239, 0.03) 0%, transparent 50%),
-    #0e1117;
+  background: #0d0d0d;
 }
 
-/* Deep charcoal editor with subtle metallic sheen */
+/* ===== EDITOR BACKGROUND - Pure Black ===== */
 .theme-charcoal-aurora .bg-vscode-bg {
-  background: 
-    linear-gradient(135deg, rgba(139, 153, 168, 0.02) 0%, transparent 50%),
-    linear-gradient(315deg, rgba(0, 212, 170, 0.02) 0%, transparent 50%),
-    #0a0c10;
+  background: #0a0a0a;
 }
 
-/* Metallic brushed effect on borders */
+/* ===== BORDERS - Dark Steel ===== */
 .theme-charcoal-aurora .border-vscode-border {
-  border-color: #1e2530;
-  box-shadow: 
-    inset 0 1px 0 rgba(139, 153, 168, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  border-color: #1a1a1a;
 }
 
-/* Aurora accent button with glow */
+/* ===== ACCENT BUTTONS - Cyan Glow ===== */
 .theme-charcoal-aurora .bg-vscode-accent {
-  background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%);
+  background: linear-gradient(180deg, #00d4ff 0%, #00a8cc 100%);
+  border: none;
   box-shadow: 
-    0 0 20px rgba(0, 212, 170, 0.4),
-    0 0 40px rgba(0, 212, 170, 0.2),
+    0 0 15px rgba(0, 212, 255, 0.6),
+    0 0 30px rgba(0, 212, 255, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  color: #000000;
+  font-weight: 600;
+  text-shadow: none;
 }
 
 .theme-charcoal-aurora .bg-vscode-accent:hover {
-  background: linear-gradient(135deg, #00f5c4 0%, #00d4aa 100%);
+  background: linear-gradient(180deg, #00e5ff 0%, #00d4ff 100%);
   box-shadow: 
-    0 0 30px rgba(0, 212, 170, 0.6),
-    0 0 60px rgba(0, 212, 170, 0.3),
+    0 0 20px rgba(0, 212, 255, 0.8),
+    0 0 40px rgba(0, 212, 255, 0.5),
+    0 0 60px rgba(0, 212, 255, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-/* Glowing accent text */
+/* ===== ACCENT TEXT - Cyan Glow ===== */
 .theme-charcoal-aurora .text-vscode-accent {
-  color: #00d4aa;
+  color: #00d4ff;
   text-shadow: 
-    0 0 10px rgba(0, 212, 170, 0.5),
-    0 0 20px rgba(0, 212, 170, 0.3);
+    0 0 8px rgba(0, 212, 255, 0.8),
+    0 0 16px rgba(0, 212, 255, 0.4);
 }
 
-/* Metallic hover states */
+/* ===== HOVER STATES - Subtle Lift ===== */
 .theme-charcoal-aurora button:not([disabled]):hover,
 .theme-charcoal-aurora .hover\:bg-vscode-hover:hover {
-  background: linear-gradient(180deg, #1a2028 0%, #151b24 100%);
-  box-shadow: 
-    inset 0 1px 0 rgba(139, 153, 168, 0.1),
-    0 2px 8px rgba(0, 0, 0, 0.3);
+  background: #181818;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .theme-charcoal-aurora button:not([disabled]):active {
-  background: linear-gradient(180deg, #0e1117 0%, #151b24 100%);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+  background: #101010;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
-/* Aurora scrollbar */
+/* ===== SCROLLBARS - Metallic Dark ===== */
 .theme-charcoal-aurora ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 .theme-charcoal-aurora ::-webkit-scrollbar-track {
-  background: #0a0c10;
-  border-left: 1px solid #1e2530;
+  background: #0a0a0a;
 }
 
 .theme-charcoal-aurora ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #2a3441 0%, #1e2530 100%);
-  border-radius: 5px;
-  border: 1px solid #1e2530;
+  background: linear-gradient(180deg, #333333 0%, #222222 100%);
+  border-radius: 4px;
+  border: 1px solid #1a1a1a;
 }
 
 .theme-charcoal-aurora ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #3a4555 0%, #2a3441 100%);
-  box-shadow: 0 0 10px rgba(0, 212, 170, 0.3);
+  background: linear-gradient(180deg, #444444 0%, #333333 100%);
+  border-color: #00d4ff;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
 }
 
-/* Aurora selection */
+/* ===== TEXT SELECTION - Cyan Tint ===== */
 .theme-charcoal-aurora ::selection {
-  background: rgba(0, 212, 170, 0.3);
-  color: #e0e6ed;
+  background: rgba(0, 212, 255, 0.25);
+  color: #ffffff;
 }
 
-/* Metallic input fields with aurora focus */
+/* ===== INPUT FIELDS - Recessed Steel ===== */
 .theme-charcoal-aurora input,
 .theme-charcoal-aurora textarea,
 .theme-charcoal-aurora select {
-  background: linear-gradient(180deg, #080a0e 0%, #0a0c10 100%);
-  border: 1px solid #1e2530;
-  color: #e0e6ed;
-  box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.3),
-    0 1px 0 rgba(139, 153, 168, 0.05);
+  background: #080808;
+  border: 1px solid #222222;
+  color: #c8c8c8;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .theme-charcoal-aurora input:focus,
 .theme-charcoal-aurora textarea:focus,
 .theme-charcoal-aurora select:focus {
-  border-color: #00d4aa;
+  border-color: #00d4ff;
   outline: none;
   box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.3),
-    0 0 0 3px rgba(0, 212, 170, 0.2),
-    0 0 20px rgba(0, 212, 170, 0.15);
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 0 2px rgba(0, 212, 255, 0.3),
+    0 0 15px rgba(0, 212, 255, 0.2);
 }
 
-/* Aurora-colored status bar */
+/* ===== STATUS BAR - Electric Cyan Strip ===== */
 .theme-charcoal-aurora footer,
 .theme-charcoal-aurora .status-bar {
   background: linear-gradient(90deg, 
-    #00d4aa 0%, 
-    #00b894 50%,
-    #009d7a 100%
+    #00a8cc 0%, 
+    #00d4ff 50%,
+    #00a8cc 100%
   ) !important;
+  color: #000000 !important;
+  font-weight: 500;
   box-shadow: 
-    0 -1px 0 rgba(0, 212, 170, 0.5),
-    0 -4px 20px rgba(0, 212, 170, 0.2);
+    0 -2px 10px rgba(0, 212, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Metallic tabs with aurora active indicator */
+.theme-charcoal-aurora footer *,
+.theme-charcoal-aurora .status-bar * {
+  color: #000000 !important;
+}
+
+/* ===== TABS - Steel with Cyan Indicator ===== */
 .theme-charcoal-aurora .tab-active,
 .theme-charcoal-aurora [class*="border-b-2"][class*="border-vscode-accent"] {
-  background: linear-gradient(180deg, #151b24 0%, #0e1117 100%);
-  border-bottom: 2px solid #00d4aa !important;
+  background: #141414;
+  border-bottom: 2px solid #00d4ff !important;
   box-shadow: 
-    inset 0 1px 0 rgba(139, 153, 168, 0.08),
-    0 2px 10px rgba(0, 212, 170, 0.2);
+    inset 0 -2px 10px rgba(0, 212, 255, 0.15),
+    0 2px 8px rgba(0, 212, 255, 0.1);
 }
 
-/* Terminal with aurora glow */
+/* ===== TERMINAL - Deep Black ===== */
 .theme-charcoal-aurora .xterm,
 .theme-charcoal-aurora [class*="terminal"] {
-  background: #080a0e !important;
+  background: #080808 !important;
 }
 
 .theme-charcoal-aurora .xterm-viewport {
-  background: #080a0e !important;
+  background: #080808 !important;
 }
 
-/* Aurora animations */
-@keyframes aurora-pulse {
+/* ===== ANIMATIONS - Subtle Cyan Pulse ===== */
+@keyframes hardstyle-glow {
   0%, 100% { 
-    opacity: 0.6;
-    filter: brightness(1);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.6), 0 0 30px rgba(0, 212, 255, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.8), 0 0 40px rgba(0, 212, 255, 0.5);
+  }
+}
+
+@keyframes hardstyle-text-glow {
+  0%, 100% { 
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.8), 0 0 16px rgba(0, 212, 255, 0.4);
+  }
+  50% { 
+    text-shadow: 0 0 12px rgba(0, 212, 255, 1), 0 0 24px rgba(0, 212, 255, 0.6);
+  }
+}
+
+@keyframes top-bar-pulse {
+  0%, 100% { 
+    opacity: 1;
+    box-shadow: 0 0 10px #00d4ff, 0 0 20px rgba(0, 212, 255, 0.5);
   }
   50% { 
     opacity: 0.9;
-    filter: brightness(1.2);
-  }
-}
-
-@keyframes aurora-glow {
-  0%, 100% { 
-    text-shadow: 0 0 10px rgba(0, 212, 170, 0.5), 0 0 20px rgba(0, 212, 170, 0.3);
-    box-shadow: 0 0 20px rgba(0, 212, 170, 0.4);
-  }
-  50% { 
-    text-shadow: 0 0 20px rgba(0, 212, 170, 0.8), 0 0 40px rgba(0, 212, 170, 0.5);
-    box-shadow: 0 0 30px rgba(0, 212, 170, 0.6);
-  }
-}
-
-@keyframes metallic-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes aurora-wave {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
+    box-shadow: 0 0 15px #00d4ff, 0 0 30px rgba(0, 212, 255, 0.7);
   }
 }
 
 /* Apply animations */
 .theme-charcoal-aurora::before {
-  animation: aurora-pulse 4s ease-in-out infinite;
+  animation: top-bar-pulse 3s ease-in-out infinite;
 }
 
 .theme-charcoal-aurora .text-vscode-accent {
-  animation: aurora-glow 3s ease-in-out infinite;
+  animation: hardstyle-text-glow 3s ease-in-out infinite;
 }
 
 .theme-charcoal-aurora .bg-vscode-accent {
-  animation: aurora-glow 2s ease-in-out infinite;
+  animation: hardstyle-glow 2s ease-in-out infinite;
 }
 
-/* Icon bar glow effect */
+/* ===== ACTIVE BORDERS - Cyan Glow Strip ===== */
 .theme-charcoal-aurora [class*="border-l-vscode-accent"],
 .theme-charcoal-aurora [class*="border-r-vscode-accent"] {
   position: relative;
@@ -968,8 +962,8 @@
   top: 0;
   bottom: 0;
   width: 2px;
-  background: #00d4aa;
-  box-shadow: 0 0 15px rgba(0, 212, 170, 0.8);
+  background: #00d4ff;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.9);
 }
 
 .theme-charcoal-aurora [class*="border-l-vscode-accent"]::before {
@@ -980,55 +974,379 @@
   right: 0;
 }
 
-/* Metallic dividers */
+/* ===== DIVIDERS - Steel Line ===== */
 .theme-charcoal-aurora hr,
 .theme-charcoal-aurora .divider {
   background: linear-gradient(90deg, 
     transparent 0%,
-    #2a3441 20%,
-    #3a4555 50%,
-    #2a3441 80%,
+    #333333 20%,
+    #444444 50%,
+    #333333 80%,
     transparent 100%
   );
   height: 1px;
   border: none;
 }
 
-/* Code syntax highlighting adjustments for aurora theme */
-.theme-charcoal-aurora .monaco-editor .mtk1 { color: #e0e6ed; } /* default text */
-.theme-charcoal-aurora .monaco-editor .mtk3 { color: #6b7a8f; } /* comments */
-.theme-charcoal-aurora .monaco-editor .mtk4 { color: #00d4aa; } /* numbers */
-.theme-charcoal-aurora .monaco-editor .mtk5 { color: #d946ef; } /* strings */
-.theme-charcoal-aurora .monaco-editor .mtk6 { color: #3b82f6; } /* keywords */
-.theme-charcoal-aurora .monaco-editor .mtk8 { color: #22c55e; } /* types */
-.theme-charcoal-aurora .monaco-editor .mtk10 { color: #a855f7; } /* functions */
+/* ===== SYNTAX HIGHLIGHTING - Hardstyle Colors ===== */
+.theme-charcoal-aurora .monaco-editor .mtk1 { color: #c8c8c8; } /* default text */
+.theme-charcoal-aurora .monaco-editor .mtk3 { color: #555555; } /* comments */
+.theme-charcoal-aurora .monaco-editor .mtk4 { color: #00d4ff; } /* numbers - cyan */
+.theme-charcoal-aurora .monaco-editor .mtk5 { color: #ff9500; } /* strings - orange */
+.theme-charcoal-aurora .monaco-editor .mtk6 { color: #00d4ff; } /* keywords - cyan */
+.theme-charcoal-aurora .monaco-editor .mtk8 { color: #00ff88; } /* types - green */
+.theme-charcoal-aurora .monaco-editor .mtk10 { color: #ff3333; } /* functions - red */
 
-/* File tree icons glow */
+/* ===== SVG ICONS - Subtle Glow ===== */
 .theme-charcoal-aurora svg {
-  filter: drop-shadow(0 0 2px rgba(0, 212, 170, 0.2));
+  filter: drop-shadow(0 0 1px rgba(0, 212, 255, 0.3));
 }
 
 .theme-charcoal-aurora svg:hover {
-  filter: drop-shadow(0 0 4px rgba(0, 212, 170, 0.4));
+  filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.6));
 }
 
-/* Panel headers with metallic gradient */
+/* ===== PANEL HEADERS - Dark Steel ===== */
 .theme-charcoal-aurora [class*="border-b"] {
-  background: linear-gradient(180deg, rgba(139, 153, 168, 0.05) 0%, transparent 100%);
+  background: #0c0c0c;
 }
 
-/* Badge/notification with aurora glow */
+/* ===== BADGES - Cyan Glow ===== */
 .theme-charcoal-aurora .badge,
 .theme-charcoal-aurora [class*="rounded-full"][class*="bg-"] {
-  box-shadow: 0 0 10px rgba(0, 212, 170, 0.3);
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
 }
 
-/* Dropdown/popover menus */
+/* ===== DROPDOWNS/POPOVERS - Dark with Cyan Accent ===== */
 .theme-charcoal-aurora [class*="shadow-"] {
+  background: #0d0d0d;
+  border: 1px solid #1a1a1a;
   box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(0, 212, 170, 0.1),
-    inset 0 1px 0 rgba(139, 153, 168, 0.1) !important;
+    0 8px 32px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(0, 212, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+}
+
+/* ===== ERROR/WARNING STATES - Red Accent ===== */
+.theme-charcoal-aurora .text-red-400,
+.theme-charcoal-aurora .text-red-500,
+.theme-charcoal-aurora .text-vscode-error {
+  color: #ff3333 !important;
+  text-shadow: 0 0 8px rgba(255, 51, 51, 0.6);
+}
+
+.theme-charcoal-aurora .bg-red-500,
+.theme-charcoal-aurora .bg-vscode-error {
+  background: linear-gradient(180deg, #ff3333 0%, #cc0000 100%) !important;
+  box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
+}
+
+/* ===== SUCCESS STATES - Green Accent ===== */
+.theme-charcoal-aurora .text-green-400,
+.theme-charcoal-aurora .text-green-500,
+.theme-charcoal-aurora .text-vscode-success {
+  color: #00ff88 !important;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+}
+
+/* ===== FILE TREE ITEMS ===== */
+.theme-charcoal-aurora [class*="file-item"]:hover,
+.theme-charcoal-aurora [class*="tree-item"]:hover {
+  background: #141414;
+  border-left: 2px solid #00d4ff;
+}
+
+/* ===== MONACO EDITOR SPECIFIC ===== */
+.theme-charcoal-aurora .monaco-editor {
+  background: #0a0a0a !important;
+}
+
+.theme-charcoal-aurora .monaco-editor .margin {
+  background: #0a0a0a !important;
+}
+
+.theme-charcoal-aurora .monaco-editor .line-numbers {
+  color: #444444 !important;
+}
+
+.theme-charcoal-aurora .monaco-editor .current-line {
+  background: rgba(0, 212, 255, 0.05) !important;
+  border-left: 2px solid #00d4ff !important;
+}
+
+/* ===== CONTEXT MENUS ===== */
+.theme-charcoal-aurora .context-menu,
+.theme-charcoal-aurora [role="menu"] {
+  background: #0d0d0d;
+  border: 1px solid #222222;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(0, 212, 255, 0.1);
+}
+
+/* ===== TOOLTIPS ===== */
+.theme-charcoal-aurora [class*="tooltip"],
+.theme-charcoal-aurora [role="tooltip"] {
+  background: #141414;
+  border: 1px solid #00d4ff;
+  color: #c8c8c8;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8), 0 0 10px rgba(0, 212, 255, 0.2);
+}
+
+/* ===== SIDEBAR ICONS - Make them VISIBLE ===== */
+.theme-charcoal-aurora svg {
+  color: #888888 !important;
+  filter: none !important;
+}
+
+.theme-charcoal-aurora svg:hover {
+  color: #00d4ff !important;
+  filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.6)) !important;
+}
+
+.theme-charcoal-aurora button svg,
+.theme-charcoal-aurora a svg {
+  color: #999999 !important;
+}
+
+.theme-charcoal-aurora button:hover svg,
+.theme-charcoal-aurora a:hover svg {
+  color: #00d4ff !important;
+}
+
+/* Activity bar icons */
+.theme-charcoal-aurora .bg-vscode-activitybar svg,
+.theme-charcoal-aurora [class*="activitybar"] svg {
+  color: #777777 !important;
+  opacity: 0.9;
+}
+
+.theme-charcoal-aurora .bg-vscode-activitybar svg:hover,
+.theme-charcoal-aurora [class*="activitybar"] svg:hover,
+.theme-charcoal-aurora .bg-vscode-activitybar button:hover svg {
+  color: #00d4ff !important;
+  opacity: 1;
+}
+
+/* Active sidebar icon */
+.theme-charcoal-aurora [class*="border-l-2"],
+.theme-charcoal-aurora [class*="border-l-vscode-accent"] {
+  border-left-color: #00d4ff !important;
+}
+
+.theme-charcoal-aurora [class*="border-l-2"] svg,
+.theme-charcoal-aurora [class*="border-l-vscode-accent"] svg {
+  color: #00d4ff !important;
+}
+
+/* ===== TABS - OPEN, RECENT, SPACES - High Contrast ===== */
+.theme-charcoal-aurora button,
+.theme-charcoal-aurora [role="tab"] {
+  color: #999999 !important;
+}
+
+.theme-charcoal-aurora button:hover,
+.theme-charcoal-aurora [role="tab"]:hover {
+  color: #ffffff !important;
+  background: #1a1a1a;
+}
+
+.theme-charcoal-aurora [aria-selected="true"],
+.theme-charcoal-aurora .tab-active,
+.theme-charcoal-aurora button[class*="border-b-2"],
+.theme-charcoal-aurora [class*="border-b-2"][class*="border-vscode-accent"] {
+  color: #00d4ff !important;
+  background: #141414 !important;
+  border-bottom: 2px solid #00d4ff !important;
+}
+
+/* Tab text specifically */
+.theme-charcoal-aurora [role="tablist"] button,
+.theme-charcoal-aurora [role="tablist"] [role="tab"] {
+  color: #888888 !important;
+  font-weight: 500;
+}
+
+.theme-charcoal-aurora [role="tablist"] button:hover,
+.theme-charcoal-aurora [role="tablist"] [role="tab"]:hover {
+  color: #ffffff !important;
+}
+
+.theme-charcoal-aurora [role="tablist"] [aria-selected="true"],
+.theme-charcoal-aurora [role="tablist"] .active {
+  color: #00d4ff !important;
+}
+
+/* ===== AI CHAT PANEL - Dark Background ===== */
+.theme-charcoal-aurora [class*="ai-chat"],
+.theme-charcoal-aurora [class*="AI_CHAT"],
+.theme-charcoal-aurora [class*="chat-panel"],
+.theme-charcoal-aurora [class*="ChatPanel"] {
+  background: #0c0c0c !important;
+  color: #c8c8c8 !important;
+}
+
+/* AI Chat container - force dark */
+.theme-charcoal-aurora aside,
+.theme-charcoal-aurora [class*="right-panel"],
+.theme-charcoal-aurora [class*="sidebar-right"] {
+  background: #0c0c0c !important;
+}
+
+/* The white card in AI Chat - make it dark */
+.theme-charcoal-aurora .bg-white,
+.theme-charcoal-aurora [class*="bg-white"] {
+  background: #141414 !important;
+  color: #c8c8c8 !important;
+  border: 1px solid #222222 !important;
+}
+
+/* Gray backgrounds */
+.theme-charcoal-aurora .bg-gray-50,
+.theme-charcoal-aurora .bg-gray-100,
+.theme-charcoal-aurora .bg-gray-200 {
+  background: #141414 !important;
+}
+
+.theme-charcoal-aurora .bg-gray-800,
+.theme-charcoal-aurora .bg-gray-900 {
+  background: #0c0c0c !important;
+}
+
+/* Text colors - ensure readability */
+.theme-charcoal-aurora .text-gray-400,
+.theme-charcoal-aurora .text-gray-500 {
+  color: #888888 !important;
+}
+
+.theme-charcoal-aurora .text-gray-600,
+.theme-charcoal-aurora .text-gray-700 {
+  color: #777777 !important;
+}
+
+.theme-charcoal-aurora .text-gray-800,
+.theme-charcoal-aurora .text-gray-900,
+.theme-charcoal-aurora .text-black {
+  color: #c8c8c8 !important;
+}
+
+.theme-charcoal-aurora .text-white {
+  color: #ffffff !important;
+}
+
+/* ===== SPECIFIC AI CHAT COMPONENTS ===== */
+/* "Ready to Build" card */
+.theme-charcoal-aurora [class*="rounded-lg"][class*="border"],
+.theme-charcoal-aurora [class*="rounded-xl"][class*="border"] {
+  background: #121212 !important;
+  border-color: #222222 !important;
+}
+
+/* Chat input area */
+.theme-charcoal-aurora [class*="chat-input"],
+.theme-charcoal-aurora textarea[placeholder*="Ask"],
+.theme-charcoal-aurora input[placeholder*="Ask"] {
+  background: #0a0a0a !important;
+  border: 1px solid #333333 !important;
+  color: #c8c8c8 !important;
+}
+
+.theme-charcoal-aurora [class*="chat-input"]:focus,
+.theme-charcoal-aurora textarea[placeholder*="Ask"]:focus {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2) !important;
+}
+
+/* ===== TERMINAL TABS ===== */
+.theme-charcoal-aurora [class*="terminal"] button,
+.theme-charcoal-aurora [class*="Terminal"] button {
+  color: #888888 !important;
+}
+
+.theme-charcoal-aurora [class*="terminal"] button:hover,
+.theme-charcoal-aurora [class*="Terminal"] button:hover {
+  color: #00d4ff !important;
+  background: #1a1a1a !important;
+}
+
+.theme-charcoal-aurora [class*="terminal"] [aria-selected="true"],
+.theme-charcoal-aurora [class*="Terminal"] .active {
+  color: #00d4ff !important;
+  background: #141414 !important;
+}
+
+/* Terminal header bar */
+.theme-charcoal-aurora [class*="terminal-header"],
+.theme-charcoal-aurora [class*="Terminal"] > div:first-child {
+  background: #0c0c0c !important;
+  border-bottom: 1px solid #1a1a1a !important;
+}
+
+/* ===== EXPLORER TEXT ===== */
+.theme-charcoal-aurora [class*="explorer"] span,
+.theme-charcoal-aurora [class*="Explorer"] span,
+.theme-charcoal-aurora [class*="file-tree"] span {
+  color: #c8c8c8 !important;
+}
+
+.theme-charcoal-aurora [class*="explorer"] .text-vscode-text-muted,
+.theme-charcoal-aurora [class*="Explorer"] .text-vscode-text-muted {
+  color: #666666 !important;
+}
+
+/* ===== PANEL HEADERS ===== */
+.theme-charcoal-aurora h1,
+.theme-charcoal-aurora h2,
+.theme-charcoal-aurora h3,
+.theme-charcoal-aurora h4 {
+  color: #e0e0e0 !important;
+}
+
+/* ===== LINK/ANCHOR COLORS ===== */
+.theme-charcoal-aurora a {
+  color: #00d4ff !important;
+}
+
+.theme-charcoal-aurora a:hover {
+  color: #00e5ff !important;
+  text-decoration: underline;
+}
+
+/* ===== KEYBOARD SHORTCUTS/BADGES ===== */
+.theme-charcoal-aurora kbd,
+.theme-charcoal-aurora [class*="kbd"],
+.theme-charcoal-aurora [class*="shortcut"] {
+  background: #1a1a1a !important;
+  border: 1px solid #333333 !important;
+  color: #888888 !important;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+/* ===== "No files open" and similar text ===== */
+.theme-charcoal-aurora [class*="empty-state"],
+.theme-charcoal-aurora [class*="placeholder"] {
+  color: #666666 !important;
+}
+
+/* ===== RIGHT SIDEBAR SPECIFIC (AI Chat) ===== */
+.theme-charcoal-aurora > div > aside:last-child,
+.theme-charcoal-aurora [class*="w-80"],
+.theme-charcoal-aurora [class*="w-96"] {
+  background: #0c0c0c !important;
+}
+
+/* AI Chat header */
+.theme-charcoal-aurora [class*="AI CHAT"],
+.theme-charcoal-aurora [class*="ai-chat-header"] {
+  background: #0a0a0a !important;
+  border-bottom: 1px solid #1a1a1a !important;
+}
+
+/* ===== SCROLLBAR TRACK IN SIDEBARS ===== */
+.theme-charcoal-aurora aside::-webkit-scrollbar-track {
+  background: #0c0c0c !important;
 }
 
 /* ============================================

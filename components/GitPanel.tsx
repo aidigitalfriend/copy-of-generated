@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { isDarkTheme } from '../utils/theme';
 import { motion, AnimatePresence } from 'framer-motion';
+import { isDarkTheme } from '../utils/theme';
 import { gitService, GitStatus, GitCommit, GitBranch } from '../services/git';
+import { isDarkTheme } from '../utils/theme';
 import { diffService } from '../services/diff';
+import { isDarkTheme } from '../utils/theme';
 import { useStore } from '../store/useStore';
+import { isDarkTheme } from '../utils/theme';
 
 interface GitPanelProps {
   className?: string;
@@ -29,7 +34,7 @@ export const GitPanel: React.FC<GitPanelProps> = ({ className = '' }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isDark = theme === 'dark';
+  const isDark = isDarkTheme(theme);
 
   // Load git status
   const loadStatus = async () => {

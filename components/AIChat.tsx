@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore';
 import { ChatMessage } from '../types';
 import { voiceInput, voiceOutput, speechSupport } from '../services/speech';
 import { aiService } from '../services/ai';
+import { isDarkTheme } from '../utils/theme';
 
 interface AIChatProps {
   voiceEnabled?: boolean;
@@ -29,12 +30,13 @@ export const AIChat: React.FC<AIChatProps> = ({ voiceEnabled: externalVoiceEnabl
 
   const activeFile = openFiles.find(f => f.id === activeFileId);
   
-  // Theme classes
-  const bgClass = theme === 'dark' ? 'bg-slate-900' : 'bg-gray-50';
-  const borderClass = theme === 'dark' ? 'border-slate-700' : 'border-gray-200';
-  const textClass = theme === 'dark' ? 'text-white' : 'text-gray-900';
-  const mutedTextClass = theme === 'dark' ? 'text-slate-400' : 'text-gray-500';
-  const inputBgClass = theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-300';
+  // Theme classes - supports all dark themes including charcoal-aurora
+  const isDark = isDarkTheme(theme);
+  const bgClass = isDark ? 'bg-vscode-sidebar' : 'bg-gray-50';
+  const borderClass = isDark ? 'border-vscode-border' : 'border-gray-200';
+  const textClass = isDark ? 'text-vscode-text' : 'text-gray-900';
+  const mutedTextClass = isDark ? 'text-vscode-textMuted' : 'text-gray-500';
+  const inputBgClass = isDark ? 'bg-vscode-input border-vscode-border' : 'bg-white border-gray-300';
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -208,7 +210,7 @@ export const AIChat: React.FC<AIChatProps> = ({ voiceEnabled: externalVoiceEnabl
               </svg>
             </button>
             {showActionsDropdown && (
-              <div className={`absolute right-0 mt-1 w-48 rounded-lg shadow-xl z-50 py-1 ${theme === 'dark' ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-gray-200'}`}>
+              <div className={`absolute right-0 mt-1 w-48 rounded-lg shadow-xl z-50 py-1 ${isDark ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-gray-200'}`}>
                 {quickActions.map((action) => (
                   <button
                     key={`action-${action.label}`}
@@ -216,7 +218,7 @@ export const AIChat: React.FC<AIChatProps> = ({ voiceEnabled: externalVoiceEnabl
                       setInput(action.prompt);
                       setShowActionsDropdown(false);
                     }}
-                    className={`w-full px-3 py-2 text-left text-sm transition-colors ${theme === 'dark' ? 'text-slate-300 hover:bg-slate-700 hover:text-white' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}`}
+                    className={`w-full px-3 py-2 text-left text-sm transition-colors ${isDark ? 'text-slate-300 hover:bg-slate-700 hover:text-white' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}`}
                   >
                     {action.label}
                   </button>
@@ -258,7 +260,7 @@ export const AIChat: React.FC<AIChatProps> = ({ voiceEnabled: externalVoiceEnabl
               <div className={`max-w-[80%] rounded-2xl px-4 py-2.5
                 ${message.role === 'user' 
                   ? 'bg-indigo-600 text-white rounded-br-sm' 
-                  : theme === 'dark' ? 'bg-slate-700 text-slate-100 rounded-bl-sm' : 'bg-gray-200 text-gray-800 rounded-bl-sm'}`}>
+                  : isDark ? 'bg-slate-700 text-slate-100 rounded-bl-sm' : 'bg-gray-200 text-gray-800 rounded-bl-sm'}`}>
                 <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
                 {message.attachments && message.attachments.length > 0 && (
                   <div className="mt-2 pt-2 border-t border-white/10">
@@ -276,11 +278,11 @@ export const AIChat: React.FC<AIChatProps> = ({ voiceEnabled: externalVoiceEnabl
             <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-sm">
               🤖
             </div>
-            <div className={`${theme === 'dark' ? 'bg-slate-700' : 'bg-gray-200'} rounded-2xl rounded-bl-sm px-4 py-3`}>
+            <div className={`${isDark ? 'bg-slate-700' : 'bg-gray-200'} rounded-2xl rounded-bl-sm px-4 py-3`}>
               <div className="flex gap-1">
-                <div className={`w-2 h-2 ${theme === 'dark' ? 'bg-slate-400' : 'bg-gray-400'} rounded-full animate-bounce`} style={{ animationDelay: '0ms' }} />
-                <div className={`w-2 h-2 ${theme === 'dark' ? 'bg-slate-400' : 'bg-gray-400'} rounded-full animate-bounce`} style={{ animationDelay: '150ms' }} />
-                <div className={`w-2 h-2 ${theme === 'dark' ? 'bg-slate-400' : 'bg-gray-400'} rounded-full animate-bounce`} style={{ animationDelay: '300ms' }} />
+                <div className={`w-2 h-2 ${isDark ? 'bg-slate-400' : 'bg-gray-400'} rounded-full animate-bounce`} style={{ animationDelay: '0ms' }} />
+                <div className={`w-2 h-2 ${isDark ? 'bg-slate-400' : 'bg-gray-400'} rounded-full animate-bounce`} style={{ animationDelay: '150ms' }} />
+                <div className={`w-2 h-2 ${isDark ? 'bg-slate-400' : 'bg-gray-400'} rounded-full animate-bounce`} style={{ animationDelay: '300ms' }} />
               </div>
             </div>
           </div>
@@ -289,7 +291,7 @@ export const AIChat: React.FC<AIChatProps> = ({ voiceEnabled: externalVoiceEnabl
 
       {/* Context indicator */}
       {activeFile && (
-        <div className={`px-4 py-2 ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700/50' : 'bg-gray-100 border-gray-200'} border-t`}>
+        <div className={`px-4 py-2 ${isDark ? 'bg-slate-800/50 border-slate-700/50' : 'bg-gray-100 border-gray-200'} border-t`}>
           <div className={`flex items-center gap-3 text-xs ${mutedTextClass}`}>
             <span className="flex items-center gap-1">
               <span>📎</span>
@@ -326,7 +328,7 @@ export const AIChat: React.FC<AIChatProps> = ({ voiceEnabled: externalVoiceEnabl
             </button>
             <button
               onClick={handleVoiceInput}
-              className={`p-3 rounded-xl transition-colors ${isListening ? 'bg-red-600 text-white animate-pulse' : theme === 'dark' ? 'bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700'}`}
+              className={`p-3 rounded-xl transition-colors ${isListening ? 'bg-red-600 text-white animate-pulse' : isDark ? 'bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700'}`}
               title={isListening ? "Stop Listening" : "Voice Input"}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

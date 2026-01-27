@@ -1658,34 +1658,34 @@ export const useStore = create<StoreState>()(
           case 'charcoal-aurora':
             root.classList.add('dark', 'theme-charcoal-aurora');
             setThemeVars({
-              bg: '#0a0c10',
-              sidebar: '#0e1117',
-              panel: '#0e1117',
-              border: '#1e2530',
-              accent: '#00d4aa',
-              accentHover: '#00f5c4',
-              text: '#e0e6ed',
-              textMuted: '#6b7a8f',
-              selection: '#1a3a4a',
-              hover: '#151b24',
-              active: '#1e2530',
+              bg: '#0a0a0a',
+              sidebar: '#0c0c0c',
+              panel: '#0d0d0d',
+              border: '#1a1a1a',
+              accent: '#00d4ff',
+              accentHover: '#00e5ff',
+              text: '#c8c8c8',
+              textMuted: '#666666',
+              selection: '#003344',
+              hover: '#141414',
+              active: '#1a1a1a',
             });
             break;
           default:
             // Default to charcoal-aurora theme
             root.classList.add('dark', 'theme-charcoal-aurora');
             setThemeVars({
-              bg: '#0a0c10',
-              sidebar: '#0e1117',
-              panel: '#0e1117',
-              border: '#1e2530',
-              accent: '#00d4aa',
-              accentHover: '#00f5c4',
-              text: '#e0e6ed',
-              textMuted: '#6b7a8f',
-              selection: '#1a3a4a',
-              hover: '#151b24',
-              active: '#1e2530',
+              bg: '#0a0a0a',
+              sidebar: '#0c0c0c',
+              panel: '#0d0d0d',
+              border: '#1a1a1a',
+              accent: '#00d4ff',
+              accentHover: '#00e5ff',
+              text: '#c8c8c8',
+              textMuted: '#666666',
+              selection: '#003344',
+              hover: '#141414',
+              active: '#1a1a1a',
             });
         }
       },
@@ -1816,7 +1816,6 @@ export const useStore = create<StoreState>()(
     }),
     {
       name: 'ai-friend-zone-storage',
-      version: 3, // Increment version to trigger migration
       partialize: (state) => ({
         projects: state.projects,
         workspaces: state.workspaces,
@@ -1841,8 +1840,8 @@ export const useStore = create<StoreState>()(
             activeWorkspaceId: null 
           };
         }
-        // Migrate to charcoal-aurora theme for version < 4
-        if (version < 4) {
+        // Migrate to charcoal-aurora hardstyle theme for version < 5
+        if (version < 5) {
           return {
             ...state,
             theme: 'charcoal-aurora' as Theme,
@@ -1850,7 +1849,7 @@ export const useStore = create<StoreState>()(
         }
         return state;
       },
-      version: 4, // Bumped version to trigger migration
+      version: 5, // Version 5: Charcoal Aurora Hardstyle theme
     }
   )
 );

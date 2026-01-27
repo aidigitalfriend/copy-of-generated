@@ -4,6 +4,7 @@ import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
 import { socketService } from '../services/socket';
 import { useStore } from '../store/useStore';
+import { isDarkTheme } from '../utils/theme';
 
 // Re-export the advanced terminal for easy access
 export { IntegratedTerminalAdvanced } from './IntegratedTerminalAdvanced';
@@ -85,7 +86,7 @@ export const IntegratedTerminal: React.FC<IntegratedTerminalProps> = ({
   
   // Theme colors
   const getTerminalTheme = useCallback(() => {
-    const isDark = theme === 'dark' || theme === 'high-contrast';
+    const isDark = isDarkTheme(theme) || theme === 'high-contrast';
     const isHighContrast = theme === 'high-contrast';
     
     return {
@@ -548,7 +549,7 @@ export const IntegratedTerminal: React.FC<IntegratedTerminalProps> = ({
   }, []);
 
   // Theme classes
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = isDarkTheme(theme) || theme === 'high-contrast';
   const isHighContrast = theme === 'high-contrast';
   
   const bgColor = isHighContrast ? 'bg-black' : isDark ? 'bg-[#1e1e1e]' : 'bg-white';
@@ -835,7 +836,7 @@ const TerminalContent: React.FC<TerminalContentProps> = ({ tab, isActive, onMoun
     }
   }, [onMount]);
 
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = isDarkTheme(theme) || theme === 'high-contrast';
   const bgColor = theme === 'high-contrast' ? '#000000' : isDark ? '#1e1e1e' : '#ffffff';
 
   return (

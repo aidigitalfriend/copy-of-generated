@@ -293,7 +293,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
                     editorSettings.fontLigatures
                       ? 'bg-vscode-accent text-white'
-                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                      : `${isDarkTheme(theme) ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
                   }`}
                 >
                   {editorSettings.fontLigatures ? 'On' : 'Off'}
@@ -373,7 +373,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
                     editorSettings.terminal?.cursorBlink !== false
                       ? 'bg-vscode-accent text-white'
-                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                      : `${isDarkTheme(theme) ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
                   }`}
                 >
                   {editorSettings.terminal?.cursorBlink !== false ? 'On' : 'Off'}
@@ -427,7 +427,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
                     editorSettings.terminal?.copyOnSelect
                       ? 'bg-vscode-accent text-white'
-                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                      : `${isDarkTheme(theme) ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
                   }`}
                 >
                   {editorSettings.terminal?.copyOnSelect ? 'On' : 'Off'}
@@ -446,7 +446,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
                     editorSettings.terminal?.enableBell
                       ? 'bg-vscode-accent text-white'
-                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                      : `${isDarkTheme(theme) ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
                   }`}
                 >
                   {editorSettings.terminal?.enableBell ? 'On' : 'Off'}
@@ -462,35 +462,35 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className={`flex items-center justify-between ${textMuted}`}>
                     <span>New Terminal</span>
-                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+Shift+`</kbd>
+                    <kbd className={`px-2 py-0.5 rounded ${isDarkTheme(theme) ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+Shift+`</kbd>
                   </div>
                   <div className={`flex items-center justify-between ${textMuted}`}>
                     <span>Toggle Terminal</span>
-                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+`</kbd>
+                    <kbd className={`px-2 py-0.5 rounded ${isDarkTheme(theme) ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+`</kbd>
                   </div>
                   <div className={`flex items-center justify-between ${textMuted}`}>
                     <span>Split Horizontal</span>
-                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+Shift+5</kbd>
+                    <kbd className={`px-2 py-0.5 rounded ${isDarkTheme(theme) ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+Shift+5</kbd>
                   </div>
                   <div className={`flex items-center justify-between ${textMuted}`}>
                     <span>Close Terminal</span>
-                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+W</kbd>
+                    <kbd className={`px-2 py-0.5 rounded ${isDarkTheme(theme) ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+W</kbd>
                   </div>
                   <div className={`flex items-center justify-between ${textMuted}`}>
                     <span>Previous Tab</span>
-                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+PageUp</kbd>
+                    <kbd className={`px-2 py-0.5 rounded ${isDarkTheme(theme) ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+PageUp</kbd>
                   </div>
                   <div className={`flex items-center justify-between ${textMuted}`}>
                     <span>Next Tab</span>
-                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+PageDown</kbd>
+                    <kbd className={`px-2 py-0.5 rounded ${isDarkTheme(theme) ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+PageDown</kbd>
                   </div>
                   <div className={`flex items-center justify-between ${textMuted}`}>
                     <span>Find in Terminal</span>
-                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+Shift+F</kbd>
+                    <kbd className={`px-2 py-0.5 rounded ${isDarkTheme(theme) ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+Shift+F</kbd>
                   </div>
                   <div className={`flex items-center justify-between ${textMuted}`}>
                     <span>Clear Terminal</span>
-                    <kbd className={`px-2 py-0.5 rounded ${theme === 'dark' ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+L</kbd>
+                    <kbd className={`px-2 py-0.5 rounded ${isDarkTheme(theme) ? 'bg-vscode-hover' : 'bg-gray-200'}`}>Ctrl+L</kbd>
                   </div>
                 </div>
               </div>
@@ -543,7 +543,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
                     uiLayout?.compactMode
                       ? 'bg-vscode-accent text-white'
-                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                      : `${isDarkTheme(theme) ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
                   }`}
                 >
                   {uiLayout?.compactMode ? 'On' : 'Off'}
@@ -578,7 +578,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
                     editorSettings.wordWrap
                       ? 'bg-vscode-accent text-white'
-                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                      : `${isDarkTheme(theme) ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
                   }`}
                 >
                   {editorSettings.wordWrap ? 'On' : 'Off'}
@@ -592,7 +592,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
                     editorSettings.minimap
                       ? 'bg-vscode-accent text-white'
-                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                      : `${isDarkTheme(theme) ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
                   }`}
                 >
                   {editorSettings.minimap ? 'On' : 'Off'}
@@ -606,7 +606,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
                     editorSettings.lineNumbers
                       ? 'bg-vscode-accent text-white'
-                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                      : `${isDarkTheme(theme) ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
                   }`}
                 >
                   {editorSettings.lineNumbers ? 'On' : 'Off'}
@@ -620,7 +620,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
                     editorSettings.autoSave
                       ? 'bg-vscode-accent text-white'
-                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                      : `${isDarkTheme(theme) ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
                   }`}
                 >
                   {editorSettings.autoSave ? 'On' : 'Off'}
@@ -634,7 +634,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
                   className={`text-sm px-4 py-1.5 font-medium rounded transition-colors ${
                     editorSettings.bracketPairColorization
                       ? 'bg-vscode-accent text-white'
-                      : `${theme === 'dark' ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
+                      : `${isDarkTheme(theme) ? 'bg-vscode-bg border border-vscode-border' : theme === 'high-contrast' ? 'bg-black border-2 border-white' : 'bg-gray-100 border border-gray-300'} ${textMuted}`
                   }`}
                 >
                   {editorSettings.bracketPairColorization ? 'On' : 'Off'}
@@ -689,7 +689,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
               <div className={`p-3 ${bgCard} space-y-2`}>
                 <div className="flex items-center justify-between">
                   <label className={`text-sm ${textSecondary}`}>Temperature</label>
-                  <span className={`text-sm ${theme === 'dark' ? 'text-vscode-accent' : theme === 'high-contrast' ? 'text-white' : 'text-blue-600'} font-mono`}>
+                  <span className={`text-sm ${isDarkTheme(theme) ? 'text-vscode-accent' : theme === 'high-contrast' ? 'text-white' : 'text-blue-600'} font-mono`}>
                     {aiConfig.temperature}
                   </span>
                 </div>
@@ -708,7 +708,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ theme, setTheme })
               <div className={`p-3 ${bgCard} space-y-2`}>
                 <div className="flex items-center justify-between">
                   <label className={`text-sm ${textSecondary}`}>Max Tokens</label>
-                  <span className={`text-sm ${theme === 'dark' ? 'text-vscode-accent' : theme === 'high-contrast' ? 'text-white' : 'text-blue-600'} font-mono`}>
+                  <span className={`text-sm ${isDarkTheme(theme) ? 'text-vscode-accent' : theme === 'high-contrast' ? 'text-white' : 'text-blue-600'} font-mono`}>
                     {aiConfig.maxTokens}
                   </span>
                 </div>

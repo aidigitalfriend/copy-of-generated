@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { isDarkTheme } from '../utils/theme';
 import { useStore } from '../store/useStore';
+import { isDarkTheme } from '../utils/theme';
 import { FileNode, OpenFile } from '../types';
+import { isDarkTheme } from '../utils/theme';
 
 interface QuickOpenProps {
   isOpen: boolean;
@@ -30,7 +33,7 @@ export const QuickOpen: React.FC<QuickOpenProps> = ({ isOpen, onClose, mode: ini
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const isDark = theme === 'dark';
+  const isDark = isDarkTheme(theme);
 
   // Focus input when opened
   useEffect(() => {
@@ -125,7 +128,7 @@ export const QuickOpen: React.FC<QuickOpenProps> = ({ isOpen, onClose, mode: ini
       icon: <span className="text-lg">🎨</span>,
       action: () => {
         const { theme, setTheme } = useStore.getState();
-        setTheme(theme === 'dark' ? 'light' : 'dark');
+        setTheme(isDarkTheme(theme) ? 'light' : 'dark');
       },
       type: 'command' as const,
     },

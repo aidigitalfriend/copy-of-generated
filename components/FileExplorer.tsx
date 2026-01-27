@@ -1,6 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { isDarkTheme } from '../utils/theme';
 import { FileNode } from '../types';
+import { isDarkTheme } from '../utils/theme';
 import { useStore } from '../store/useStore';
+import { isDarkTheme } from '../utils/theme';
 
 // File error tracking - can be extended to integrate with linting/TypeScript
 interface FileError {
@@ -374,7 +377,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileSelect,
   const filteredFiles = useMemo(() => filterFiles(files, searchQuery), [files, searchQuery, filterFiles]);
 
   // Theme classes - VS Code design
-  const isDark = theme === 'dark';
+  const isDark = isDarkTheme(theme);
   const bgClass = isDark ? 'bg-vscode-sidebar' : 'bg-white';
   const headerBg = isDark ? 'bg-vscode-bg' : 'bg-gray-50';
   const borderClass = isDark ? 'border-vscode-border' : 'border-gray-200';

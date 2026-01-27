@@ -252,11 +252,13 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   const activeFile = openFiles.find(f => f.id === activeFileId);
   
   // Theme classes - VS Code style
-  const bgClass = theme === 'dark' ? 'bg-vscode-sidebar' : 'bg-white';
-  const borderClass = theme === 'dark' ? 'border-vscode-border' : 'border-gray-200';
-  const textClass = theme === 'dark' ? 'text-vscode-text' : 'text-gray-800';
-  const mutedTextClass = theme === 'dark' ? 'text-vscode-textMuted' : 'text-gray-500';
-  const inputBgClass = theme === 'dark' ? 'bg-vscode-input border-vscode-border' : 'bg-white border-gray-300';
+  // Check if it's a dark theme (dark, charcoal-aurora, or any theme that starts with theme- which are all dark)
+  const isDarkTheme = isDarkTheme || theme === 'charcoal-aurora' || theme.startsWith('theme-') || ['dracula', 'nord', 'monokai', 'one-dark', 'github-dark', 'solarized-dark', 'steel'].includes(theme);
+  const bgClass = isDarkTheme ? 'bg-vscode-sidebar' : 'bg-white';
+  const borderClass = isDarkTheme ? 'border-vscode-border' : 'border-gray-200';
+  const textClass = isDarkTheme ? 'text-vscode-text' : 'text-gray-800';
+  const mutedTextClass = isDarkTheme ? 'text-vscode-textMuted' : 'text-gray-500';
+  const inputBgClass = isDarkTheme ? 'bg-vscode-input border-vscode-border' : 'bg-white border-gray-300';
 
   // Auto-scroll
   useEffect(() => {
@@ -868,15 +870,15 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
             
             if (isInline) {
               return (
-                <code className={`${theme === 'dark' ? 'bg-vscode-input text-vscode-accent' : 'bg-gray-100 text-gray-800'} px-1.5 py-0.5 text-sm font-mono rounded`}>
+                <code className={`${isDarkTheme ? 'bg-vscode-input text-vscode-accent' : 'bg-gray-100 text-gray-800'} px-1.5 py-0.5 text-sm font-mono rounded`}>
                   {children}
                 </code>
               );
             }
             
             return (
-              <div className={`relative mt-2 overflow-hidden rounded border ${theme === 'dark' ? 'bg-vscode-bg border-vscode-border' : 'bg-gray-50 border-gray-200'}`}>
-                <div className={`flex items-center justify-between px-3 py-1.5 ${theme === 'dark' ? 'bg-vscode-sidebar text-vscode-textMuted' : 'bg-gray-100 text-gray-600'} text-xs font-medium`}>
+              <div className={`relative mt-2 overflow-hidden rounded border ${isDarkTheme ? 'bg-vscode-bg border-vscode-border' : 'bg-gray-50 border-gray-200'}`}>
+                <div className={`flex items-center justify-between px-3 py-1.5 ${isDarkTheme ? 'bg-vscode-sidebar text-vscode-textMuted' : 'bg-gray-100 text-gray-600'} text-xs font-medium`}>
                   <span>{match[1]}</span>
                   <button
                     onClick={() => navigator.clipboard.writeText(String(children))}
@@ -886,7 +888,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                   </button>
                 </div>
                 <pre className="p-3 overflow-x-auto text-sm">
-                  <code className={`${className} ${theme === 'dark' ? 'text-vscode-text' : 'text-gray-800'}`}>{children}</code>
+                  <code className={`${className} ${isDarkTheme ? 'text-vscode-text' : 'text-gray-800'}`}>{children}</code>
                 </pre>
               </div>
             );
@@ -913,7 +915,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
   return (
     <div className={`flex flex-col h-full ${bgClass} font-mono`}>
       {/* Header */}
-      <div className={`flex items-center justify-between px-3 py-2 border-b ${theme === 'dark' ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-200 bg-gray-50'}`}>
+      <div className={`flex items-center justify-between px-3 py-2 border-b ${isDarkTheme ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-200 bg-gray-50'}`}>
         <div className="flex items-center gap-2">
           <span className="text-vscode-accent">⚡</span>
           <span className={`font-semibold text-sm ${textClass}`}>AI CHAT</span>
@@ -948,7 +950,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
             className={`p-1.5 rounded transition-colors ${
               showChatHistory 
                 ? 'bg-vscode-accent text-white' 
-                : theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+                : isDarkTheme ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
             }`}
             title="Chat History"
           >
@@ -961,7 +963,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
               createChatSession();
             }}
             className={`p-1.5 rounded transition-colors ${
-              theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+              isDarkTheme ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
             }`}
             title="New Chat"
           >
@@ -977,7 +979,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                 }
               }}
               className={`p-1.5 rounded transition-colors ${
-                theme === 'dark' ? 'text-vscode-textMuted hover:text-red-400 hover:bg-red-500/10' : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+                isDarkTheme ? 'text-vscode-textMuted hover:text-red-400 hover:bg-red-500/10' : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
               }`}
               title="Delete Chat"
             >
@@ -994,7 +996,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                 }
               }}
               className={`p-1.5 rounded transition-colors ${
-                theme === 'dark' ? 'text-vscode-textMuted hover:text-red-400 hover:bg-red-500/10' : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+                isDarkTheme ? 'text-vscode-textMuted hover:text-red-400 hover:bg-red-500/10' : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
               }`}
               title="Clear Chat"
             >
@@ -1006,7 +1008,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
           <button
             onClick={() => setShowExtensionSettings(true)}
             className={`p-1.5 rounded transition-colors ${
-              theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+              isDarkTheme ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
             }`}
             title={`AI Settings (${extensionConfig.provider} - ${extensionConfig.model})`}
           >
@@ -1020,8 +1022,8 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
 
       {/* Chat History Sidebar */}
       {showChatHistory && (
-        <div className={`border-b ${theme === 'dark' ? 'border-vscode-border bg-vscode-bg' : 'border-gray-200 bg-white'} max-h-64 overflow-y-auto`}>
-          <div className={`px-3 py-2 text-xs font-semibold ${mutedTextClass} sticky top-0 ${theme === 'dark' ? 'bg-vscode-bg' : 'bg-white'} border-b ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-100'}`}>
+        <div className={`border-b ${isDarkTheme ? 'border-vscode-border bg-vscode-bg' : 'border-gray-200 bg-white'} max-h-64 overflow-y-auto`}>
+          <div className={`px-3 py-2 text-xs font-semibold ${mutedTextClass} sticky top-0 ${isDarkTheme ? 'bg-vscode-bg' : 'bg-white'} border-b ${isDarkTheme ? 'border-vscode-border' : 'border-gray-100'}`}>
             CHAT HISTORY ({chatSessions.length})
           </div>
           
@@ -1036,8 +1038,8 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                   key={session.id}
                   className={`group flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors ${
                     session.id === activeChatSessionId
-                      ? theme === 'dark' ? 'bg-vscode-accent/20 border-l-2 border-vscode-accent' : 'bg-blue-50 border-l-2 border-blue-500'
-                      : theme === 'dark' ? 'hover:bg-white/5' : 'hover:bg-gray-50'
+                      ? isDarkTheme ? 'bg-vscode-accent/20 border-l-2 border-vscode-accent' : 'bg-blue-50 border-l-2 border-blue-500'
+                      : isDarkTheme ? 'hover:bg-white/5' : 'hover:bg-gray-50'
                   }`}
                   onClick={() => {
                     if (editingSessionId !== session.id) {
@@ -1069,7 +1071,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                             setEditingSessionId(null);
                           }
                         }}
-                        className={`w-full px-1 py-0.5 text-sm rounded ${theme === 'dark' ? 'bg-vscode-input border-vscode-border text-white' : 'bg-white border-gray-300'} border outline-none focus:border-vscode-accent`}
+                        className={`w-full px-1 py-0.5 text-sm rounded ${isDarkTheme ? 'bg-vscode-input border-vscode-border text-white' : 'bg-white border-gray-300'} border outline-none focus:border-vscode-accent`}
                         autoFocus
                         onClick={(e) => e.stopPropagation()}
                       />
@@ -1091,7 +1093,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                         setEditingSessionId(session.id);
                         setEditingName(session.name);
                       }}
-                      className={`p-1 rounded ${theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-gray-200'}`}
+                      className={`p-1 rounded ${isDarkTheme ? 'hover:bg-white/10' : 'hover:bg-gray-200'}`}
                       title="Rename"
                     >
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1105,7 +1107,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                           deleteChatSession(session.id);
                         }
                       }}
-                      className={`p-1 rounded ${theme === 'dark' ? 'hover:bg-red-500/20 text-red-400' : 'hover:bg-red-50 text-red-500'}`}
+                      className={`p-1 rounded ${isDarkTheme ? 'hover:bg-red-500/20 text-red-400' : 'hover:bg-red-50 text-red-500'}`}
                       title="Delete"
                     >
                       <TrashIcon />
@@ -1117,14 +1119,14 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
           )}
           
           {/* New Chat at Bottom */}
-          <div className={`px-3 py-2 border-t ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-100'}`}>
+          <div className={`px-3 py-2 border-t ${isDarkTheme ? 'border-vscode-border' : 'border-gray-100'}`}>
             <button
               onClick={() => {
                 createChatSession();
                 setShowChatHistory(false);
               }}
               className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors ${
-                theme === 'dark' 
+                isDarkTheme 
                   ? 'bg-vscode-accent/20 text-vscode-accent hover:bg-vscode-accent/30' 
                   : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
               }`}
@@ -1150,7 +1152,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                   key={i}
                   onClick={() => setInput(action.prompt)}
                   className={`px-2.5 py-1 text-xs font-medium transition-all rounded ${
-                    theme === 'dark' 
+                    isDarkTheme 
                       ? 'text-vscode-textMuted hover:text-white hover:bg-white/5' 
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                   }`}
@@ -1175,13 +1177,13 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
               {msg.role === 'user' ? (
                 <p className="whitespace-pre-wrap font-medium">{msg.content}</p>
               ) : (
-                <div className={`px-4 py-3 rounded-lg ${theme === 'dark' ? 'bg-vscode-sidebar border border-vscode-border text-vscode-text' : 'bg-white border border-gray-200 text-gray-800 shadow-sm'}`}>
+                <div className={`px-4 py-3 rounded-lg ${isDarkTheme ? 'bg-vscode-sidebar border border-vscode-border text-vscode-text' : 'bg-white border border-gray-200 text-gray-800 shadow-sm'}`}>
                   <div className="prose prose-sm max-w-none dark:prose-invert">
                     {renderContent(msg.content)}
                   </div>
                   
                   {/* Message Action Icons */}
-                  <div className={`flex items-center gap-1 mt-3 pt-2 border-t ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-100'}`}>
+                  <div className={`flex items-center gap-1 mt-3 pt-2 border-t ${isDarkTheme ? 'border-vscode-border' : 'border-gray-100'}`}>
                     {/* Regenerate */}
                     <button
                       onClick={() => {
@@ -1195,7 +1197,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                           }
                         }
                       }}
-                      className={`p-1.5 rounded transition-colors ${theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
+                      className={`p-1.5 rounded transition-colors ${isDarkTheme ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
                       title="Regenerate response"
                     >
                       <RefreshIcon />
@@ -1212,7 +1214,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                           console.error('Failed to copy:', err);
                         }
                       }}
-                      className={`p-1.5 rounded transition-colors ${copiedMessageId === msg.id ? 'text-green-500' : theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
+                      className={`p-1.5 rounded transition-colors ${copiedMessageId === msg.id ? 'text-green-500' : isDarkTheme ? 'text-vscode-textMuted hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
                       title={copiedMessageId === msg.id ? 'Copied!' : 'Copy response'}
                     >
                       {copiedMessageId === msg.id ? <CheckIcon /> : <CopyIcon />}
@@ -1226,7 +1228,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                           [msg.id]: prev[msg.id] === 'up' ? null : 'up'
                         }));
                       }}
-                      className={`p-1.5 rounded transition-colors ${messageFeedback[msg.id] === 'up' ? 'text-green-500' : theme === 'dark' ? 'text-vscode-textMuted hover:text-green-400 hover:bg-white/10' : 'text-gray-400 hover:text-green-500 hover:bg-gray-100'}`}
+                      className={`p-1.5 rounded transition-colors ${messageFeedback[msg.id] === 'up' ? 'text-green-500' : isDarkTheme ? 'text-vscode-textMuted hover:text-green-400 hover:bg-white/10' : 'text-gray-400 hover:text-green-500 hover:bg-gray-100'}`}
                       title="Good response"
                     >
                       <ThumbsUpIcon filled={messageFeedback[msg.id] === 'up'} />
@@ -1240,7 +1242,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                           [msg.id]: prev[msg.id] === 'down' ? null : 'down'
                         }));
                       }}
-                      className={`p-1.5 rounded transition-colors ${messageFeedback[msg.id] === 'down' ? 'text-red-500' : theme === 'dark' ? 'text-vscode-textMuted hover:text-red-400 hover:bg-white/10' : 'text-gray-400 hover:text-red-500 hover:bg-gray-100'}`}
+                      className={`p-1.5 rounded transition-colors ${messageFeedback[msg.id] === 'down' ? 'text-red-500' : isDarkTheme ? 'text-vscode-textMuted hover:text-red-400 hover:bg-white/10' : 'text-gray-400 hover:text-red-500 hover:bg-gray-100'}`}
                       title="Bad response"
                     >
                       <ThumbsDownIcon filled={messageFeedback[msg.id] === 'down'} />
@@ -1256,12 +1258,12 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
         {isStreaming && (
           <div className="flex justify-start">
             <div className={`max-w-[85%] px-4 py-3 rounded-lg border ${
-              theme === 'dark' ? 'bg-vscode-sidebar border-vscode-accent text-vscode-text' : 'bg-white border-blue-300 text-gray-800'
+              isDarkTheme ? 'bg-vscode-sidebar border-vscode-accent text-vscode-text' : 'bg-white border-blue-300 text-gray-800'
             }`}>
               {/* Active agent indicator */}
               {agentStatus && (
                 <div className={`flex items-center gap-2 mb-3 p-2 rounded border ${
-                  theme === 'dark' ? 'bg-vscode-bg border-green-500/50' : 'bg-green-50 border-green-300'
+                  isDarkTheme ? 'bg-vscode-bg border-green-500/50' : 'bg-green-50 border-green-300'
                 }`}>
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                   <span className="text-sm font-medium">
@@ -1275,12 +1277,12 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
               {/* Currently streaming file indicator */}
               {currentStreamingFile && (
                 <div className={`flex items-center gap-2 mb-3 p-2 rounded border ${
-                  theme === 'dark' ? 'bg-vscode-bg border-blue-500/50' : 'bg-blue-50 border-blue-300'
+                  isDarkTheme ? 'bg-vscode-bg border-blue-500/50' : 'bg-blue-50 border-blue-300'
                 }`}>
                   <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                   <span className="text-sm font-medium">
                     {currentStreamingFile.type === 'create' ? '▶ Creating' : '▶ Editing'}: 
-                    <code className={`ml-1 font-mono ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>{currentStreamingFile.path}</code>
+                    <code className={`ml-1 font-mono ${isDarkTheme ? 'text-blue-400' : 'text-blue-600'}`}>{currentStreamingFile.path}</code>
                   </span>
                 </div>
               )}
@@ -1301,7 +1303,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
       </div>
 
       {/* Input Area */}
-      <div className={`p-4 border-t ${theme === 'dark' ? 'border-vscode-border' : 'border-gray-200'}`}>
+      <div className={`p-4 border-t ${isDarkTheme ? 'border-vscode-border' : 'border-gray-200'}`}>
         {/* Uploaded files preview */}
         {uploadedFiles.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-2">
@@ -1309,7 +1311,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
               <div
                 key={index}
                 className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded border ${
-                  theme === 'dark' ? 'bg-vscode-sidebar border-vscode-border text-vscode-text' : 'bg-gray-50 border-gray-300 text-gray-700'
+                  isDarkTheme ? 'bg-vscode-sidebar border-vscode-border text-vscode-text' : 'bg-gray-50 border-gray-300 text-gray-700'
                 }`}
               >
                 {file.isImage ? (
@@ -1350,7 +1352,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
             <button
               onClick={() => setShowAgentSelector(!showAgentSelector)}
               className={`p-1 transition-colors flex items-center gap-0.5 text-xs rounded ${
-                theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/5' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                isDarkTheme ? 'text-vscode-textMuted hover:text-white hover:bg-white/5' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
               } ${selectedAgent !== 'orchestrator' ? 'text-green-400' : ''}`}
               title={`Current: ${AGENTS.find(a => a.id === selectedAgent)?.name || 'Orchestrator'}`}
             >
@@ -1363,9 +1365,9 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
             {/* Agent dropdown */}
             {showAgentSelector && (
               <div className={`absolute bottom-full left-0 mb-2 w-56 shadow-2xl rounded-lg border ${
-                theme === 'dark' ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'
+                isDarkTheme ? 'bg-[#252526] border-[#3c3c3c]' : 'bg-white border-gray-200'
               } max-h-80 overflow-y-auto z-50`}>
-                <div className={`px-3 py-2 text-xs font-semibold ${theme === 'dark' ? 'text-[#808080] bg-[#1e1e1e]' : 'text-gray-500 bg-gray-50'} border-b ${theme === 'dark' ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
+                <div className={`px-3 py-2 text-xs font-semibold ${isDarkTheme ? 'text-[#808080] bg-[#1e1e1e]' : 'text-gray-500 bg-gray-50'} border-b ${isDarkTheme ? 'border-[#3c3c3c]' : 'border-gray-200'}`}>
                   Select Agent
                 </div>
                 {AGENTS.map((agent) => (
@@ -1375,10 +1377,10 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                       setSelectedAgent(agent.id);
                       setShowAgentSelector(false);
                     }}
-                    className={`w-full px-3 py-2 text-left flex items-center gap-2 transition-colors border-b ${theme === 'dark' ? 'border-[#3c3c3c]/50' : 'border-gray-100'} ${
+                    className={`w-full px-3 py-2 text-left flex items-center gap-2 transition-colors border-b ${isDarkTheme ? 'border-[#3c3c3c]/50' : 'border-gray-100'} ${
                       selectedAgent === agent.id
                         ? 'bg-blue-600 text-white'
-                        : theme === 'dark' ? 'bg-[#252526] hover:bg-[#37373d] text-[#cccccc]' : 'bg-white hover:bg-gray-100 text-gray-700'
+                        : isDarkTheme ? 'bg-[#252526] hover:bg-[#37373d] text-[#cccccc]' : 'bg-white hover:bg-gray-100 text-gray-700'
                     }`}
                   >
                     <span className="text-lg">{agent.icon}</span>
@@ -1401,7 +1403,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
           <button
             onClick={handleFileUpload}
             className={`p-1 transition-colors flex-shrink-0 rounded ${
-              theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/5' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
+              isDarkTheme ? 'text-vscode-textMuted hover:text-white hover:bg-white/5' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
             }`}
             title="Upload files or images"
             disabled={isAiLoading || isStreaming}
@@ -1436,7 +1438,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
                 className={`p-1 transition-colors text-xs rounded ${
                   isListening 
                     ? 'bg-red-500/20 text-red-400' 
-                    : theme === 'dark' ? 'text-vscode-textMuted hover:text-white hover:bg-white/5' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
+                    : isDarkTheme ? 'text-vscode-textMuted hover:text-white hover:bg-white/5' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
                 }`}
                 title={isListening ? 'Stop listening' : 'Voice input'}
               >
@@ -1450,7 +1452,7 @@ export const AgenticAIChat: React.FC<AgenticAIChatProps> = ({
               className={`p-1 transition-all rounded ${
                 (input.trim() || uploadedFiles.length > 0) && !isAiLoading && !isStreaming
                   ? 'text-vscode-accent hover:bg-vscode-accent/10'
-                  : theme === 'dark' ? 'text-vscode-textMuted/50' : 'text-gray-300'
+                  : isDarkTheme ? 'text-vscode-textMuted/50' : 'text-gray-300'
               }`}
             >
               {isAiLoading || isStreaming ? (

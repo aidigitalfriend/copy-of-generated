@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { isDarkTheme } from '../utils/theme';
 import { useStore } from '../store/useStore';
+import { isDarkTheme } from '../utils/theme';
 import { FileNode, Project, Workspace } from '../types';
+import { isDarkTheme } from '../utils/theme';
 import { motion, AnimatePresence } from 'framer-motion';
+import { isDarkTheme } from '../utils/theme';
 
 // ============================================================================
 // Types
@@ -97,7 +101,7 @@ export const QuickOpenAdvanced: React.FC<QuickOpenAdvancedProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const isDark = theme === 'dark' || theme === 'high-contrast';
+  const isDark = isDarkTheme(theme) || theme === 'high-contrast';
 
   // ============================================================================
   // Reset state when opened
