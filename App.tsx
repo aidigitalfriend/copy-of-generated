@@ -710,9 +710,10 @@ const App: React.FC = () => {
         setRightTab('ai');
         setRightSidebarOpen(true);
       }
-      // AI Code Review: Ctrl+Shift+R
-      if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+      // AI Code Review: Ctrl+Alt+R (using Alt to avoid conflict with browser reload)
+      if (e.ctrlKey && e.altKey && e.key === 'r') {
         e.preventDefault();
+        e.stopPropagation();
         setRightTab('ai-code-review');
         setRightSidebarOpen(true);
       }
@@ -776,7 +777,7 @@ const App: React.FC = () => {
   // Right sidebar items with SVG icons
   const rightSidebarItems = [
     { id: 'ai' as RightTab, label: 'AI Chat', tooltip: 'AI Assistant (Ctrl+Shift+A)' },
-    { id: 'ai-code-review' as RightTab, label: 'Code Review', tooltip: 'AI Code Review with Realtime Analysis (Ctrl+Shift+R)' },
+    { id: 'ai-code-review' as RightTab, label: 'Code Review', tooltip: 'AI Code Review with Realtime Analysis (Ctrl+Alt+R)' },
     { id: 'ai-tools' as RightTab, label: 'AI Tools', tooltip: 'AI Code Review, Docs, Security (Ctrl+Shift+I)' },
     { id: 'collab' as RightTab, label: 'Collaborate', tooltip: 'Real-Time Collaboration (Ctrl+Shift+C)' },
     { id: 'debug' as RightTab, label: 'Debug', tooltip: 'Debugging (F5)' },

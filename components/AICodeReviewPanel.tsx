@@ -19,11 +19,8 @@ import {
   aiCodeAssistant,
   AIAssistantProvider,
   CodeReviewResult,
-  CodeReviewIssue,
   DocumentationResult,
-  ExplanationResult,
   SecurityScanResult,
-  SecurityVulnerability,
 } from '../services/aiCodeAssistant';
 
 // ============================================================================
@@ -156,7 +153,7 @@ const PROVIDER_ICONS: Record<AIAssistantProvider, string> = {
 export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
   className = '',
 }) => {
-  const { theme, activeFile, openFiles } = useStore();
+  const { theme, activeFileId, openFiles } = useStore();
   const isDark = theme !== 'light';
 
   // ============================================================================
@@ -209,22 +206,22 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
   // ============================================================================
 
   const currentCode = useMemo(() => {
-    if (!activeFile) return '';
-    const file = openFiles.find(f => f.id === activeFile);
+    if (!activeFileId) return '';
+    const file = openFiles.find(f => f.id === activeFileId);
     return file?.content || '';
-  }, [activeFile, openFiles]);
+  }, [activeFileId, openFiles]);
 
   const currentLanguage = useMemo(() => {
-    if (!activeFile) return 'javascript';
-    const file = openFiles.find(f => f.id === activeFile);
+    if (!activeFileId) return 'javascript';
+    const file = openFiles.find(f => f.id === activeFileId);
     return file?.language || 'javascript';
-  }, [activeFile, openFiles]);
+  }, [activeFileId, openFiles]);
 
   const currentFilename = useMemo(() => {
-    if (!activeFile) return 'untitled';
-    const file = openFiles.find(f => f.id === activeFile);
+    if (!activeFileId) return 'untitled';
+    const file = openFiles.find(f => f.id === activeFileId);
     return file?.name || 'untitled';
-  }, [activeFile, openFiles]);
+  }, [activeFileId, openFiles]);
 
   // ============================================================================
   // Configure AI
@@ -246,10 +243,13 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
     setIsConfigured(true);
     setError(null);
 
-    // Save to localStorage
+    // Save non-sensitive config to localStorage
     localStorage.setItem('ai-code-review-config', JSON.stringify({ provider, model, realtimeEnabled, realtimeDelay, autoScanSecurity }));
+    
+    // Store API key in sessionStorage for security (cleared when browser closes)
+    // This reduces risk compared to localStorage which persists indefinitely
     if (apiKey) {
-      localStorage.setItem(`ai-key-${provider}`, apiKey);
+      sessionStorage.setItem(`ai-key-${provider}`, apiKey);
     }
   }, [provider, apiKey, model, realtimeEnabled, realtimeDelay, autoScanSecurity]);
 
@@ -265,7 +265,8 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
         setRealtimeDelay(savedDelay || 2000);
         setAutoScanSecurity(savedAutoScan || false);
         
-        const savedKey = localStorage.getItem(`ai-key-${savedProvider}`);
+        // Try to get API key from sessionStorage (session-only storage for security)
+        const savedKey = sessionStorage.getItem(`ai-key-${savedProvider}`);
         if (savedKey) {
           setApiKey(savedKey);
           aiCodeAssistant.configure({
@@ -289,23 +290,25 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
     if (!currentCode || !isConfigured || isLoading) return;
     if (currentCode === lastCodeRef.current) return;
     
-    lastCodeRef.current = currentCode;
+    const codeToReview = currentCode;
     setIsLoading(true);
     setError(null);
 
     try {
       const result = await aiCodeAssistant.reviewCode({
-        code: currentCode,
+        code: codeToReview,
         language: currentLanguage,
         filename: currentFilename,
         reviewType,
       });
       setReviewResult(result);
+      // Only update lastCodeRef after successful review
+      lastCodeRef.current = codeToReview;
 
       // Auto security scan if enabled
       if (autoScanSecurity) {
         const secResult = await aiCodeAssistant.scanSecurity({
-          code: currentCode,
+          code: codeToReview,
           language: currentLanguage,
           filename: currentFilename,
         });
@@ -313,6 +316,7 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
       }
     } catch (err) {
       setError((err as Error).message);
+      // Don't update lastCodeRef on error so it can retry
     } finally {
       setIsLoading(false);
     }
@@ -473,7 +477,18 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
       <div className="flex items-center gap-2">
         <select
           value={reviewType}
-          onChange={(e) => setReviewType(e.target.value as any)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (
+              value === 'full' ||
+              value === 'bugs' ||
+              value === 'performance' ||
+              value === 'style' ||
+              value === 'security'
+            ) {
+              setReviewType(value);
+            }
+          }}
           className={`flex-1 px-3 py-1.5 text-sm rounded border ${inputClass}`}
         >
           <option value="full">Full Review</option>
@@ -629,7 +644,18 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
       <div className="flex items-center gap-2">
         <select
           value={docStyle}
-          onChange={(e) => setDocStyle(e.target.value as any)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (
+              value === 'jsdoc' ||
+              value === 'tsdoc' ||
+              value === 'docstring' ||
+              value === 'javadoc' ||
+              value === 'markdown'
+            ) {
+              setDocStyle(value);
+            }
+          }}
           className={`flex-1 px-3 py-1.5 text-sm rounded border ${inputClass}`}
         >
           <option value="jsdoc">JSDoc</option>
@@ -739,11 +765,11 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
           className="space-y-4"
         >
           {/* Security Score */}
-          <div className={`p-4 rounded ${getScoreBg(securityResult.score)} border ${borderClass}`}>
+          <div className={`p-4 rounded ${getScoreBg(100 - (securityResult.riskScore ?? 0))} border ${borderClass}`}>
             <div className="flex items-center justify-between mb-2">
               <span className={`text-sm font-medium ${textClass}`}>Security Score</span>
-              <span className={`text-2xl font-bold ${getScoreColor(securityResult.score)}`}>
-                {securityResult.score}/100
+              <span className={`text-2xl font-bold ${getScoreColor(100 - (securityResult.riskScore ?? 0))}`}>
+                {100 - (securityResult.riskScore ?? 0)}/100
               </span>
             </div>
             <p className={`text-sm ${mutedClass}`}>
@@ -769,7 +795,7 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className={`text-sm font-medium ${config.text}`}>
-                              {vuln.type}
+                              {vuln.id ? `${vuln.id}: ${vuln.title}` : vuln.title}
                             </span>
                             {vuln.owasp && (
                               <span className={`text-xs ${mutedClass}`}>{vuln.owasp}</span>
@@ -1039,7 +1065,7 @@ export const AICodeReviewPanel: React.FC<AICodeReviewPanelProps> = ({
       </div>
 
       {/* Current File Info */}
-      {activeFile && (
+      {activeFileId && (
         <div className={`p-2 border-t ${borderClass} ${bgSecondary}`}>
           <div className={`flex items-center gap-2 text-xs ${mutedClass}`}>
             <Icons.Code />
