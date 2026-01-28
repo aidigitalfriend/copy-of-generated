@@ -711,7 +711,7 @@ const App: React.FC = () => {
         setRightSidebarOpen(true);
       }
       // AI Code Review: Ctrl+Alt+R (using Alt to avoid conflict with browser reload)
-      if (e.ctrlKey && e.altKey && e.key === 'r') {
+      if (e.ctrlKey && e.altKey && (e.key === 'r' || e.key === 'R')) {
         e.preventDefault();
         e.stopPropagation();
         setRightTab('ai-code-review');
