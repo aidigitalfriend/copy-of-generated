@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import electronService, { WindowState, ProcessInfo } from '../services/electron';
+import electronService, { WindowStateInfo, ProcessInfo } from '../services/electron';
 import wasmTextEngine, { TextBuffer, RenderMetrics } from '../services/wasmTextEngine';
 import lspService, { LanguageServer, LanguageCapabilities } from '../services/lspService';
 import cliService, { CLITool, CLICommand } from '../services/cliTools';
@@ -9,7 +9,7 @@ type TabType = 'electron' | 'wasm' | 'lsp' | 'cli' | 'protocols';
 
 export const TechStackPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('electron');
-  const [windowState, setWindowState] = useState<WindowState>(electronService.getWindowState());
+  const [windowState, setWindowState] = useState<WindowStateInfo>(electronService.getWindowState());
   const [processes, setProcesses] = useState<ProcessInfo[]>(electronService.getProcesses());
   const [renderMetrics, setRenderMetrics] = useState<RenderMetrics | null>(null);
   const [languageServers, setLanguageServers] = useState<LanguageServer[]>(lspService.getServers());

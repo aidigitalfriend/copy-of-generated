@@ -170,6 +170,27 @@ export interface AutoUpdater {
   downloadProgress: number;
 }
 
+// Process information for Electron processes
+export interface ProcessInfo {
+  pid: number;
+  type: 'main' | 'renderer' | 'gpu' | 'utility' | 'worker';
+  cpu: number;
+  memory: number;
+  name: string;
+}
+
+// Window state object for TechStackPanel
+export interface WindowStateInfo {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+  isMaximized: boolean;
+  isMinimized: boolean;
+  isFullScreen: boolean;
+  isFocused: boolean;
+}
+
 type EventCallback = (event: { type: string; data: any }) => void;
 
 class ElectronService {
@@ -264,6 +285,59 @@ class ElectronService {
 
   getAllWindows(): ElectronWindow[] {
     return Array.from(this.windows.values());
+  }
+
+  // Get current window state info for TechStackPanel
+  getWindowState(): WindowStateInfo {
+    const mainWindow = this.windows.get(1) || this.createWindow({ title: 'Main Window' });
+    return {
+      width: mainWindow.bounds.width,
+      height: mainWindow.bounds.height,
+      x: mainWindow.bounds.x,
+      y: mainWindow.bounds.y,
+      isMaximized: mainWindow.maximized,
+      isMinimized: mainWindow.minimized,
+      isFullScreen: mainWindow.fullscreen,
+      isFocused: mainWindow.focused,
+    };
+  }
+
+  // Get simulated process information for TechStackPanel
+  getProcesses(): ProcessInfo[] {
+    return [
+      { pid: 1, type: 'main', cpu: 2.5, memory: 150 * 1024 * 1024, name: 'Main Process' },
+      { pid: 2, type: 'renderer', cpu: 8.3, memory: 280 * 1024 * 1024, name: 'Editor Window' },
+      { pid: 3, type: 'gpu', cpu: 1.2, memory: 85 * 1024 * 1024, name: 'GPU Process' },
+      { pid: 4, type: 'utility', cpu: 0.5, memory: 45 * 1024 * 1024, name: 'Utility Process' },
+    ];
+  }
+
+  // Window control methods for TechStackPanel
+  minimizeWindow(): void {
+    const mainWindow = this.windows.get(1);
+    if (mainWindow) {
+      mainWindow.minimized = true;
+      mainWindow.state = 'minimized';
+      this.emit('windowMinimized', mainWindow);
+    }
+  }
+
+  maximizeWindow(): void {
+    const mainWindow = this.windows.get(1);
+    if (mainWindow) {
+      mainWindow.maximized = !mainWindow.maximized;
+      mainWindow.state = mainWindow.maximized ? 'maximized' : 'normal';
+      this.emit('windowMaximized', mainWindow);
+    }
+  }
+
+  toggleFullScreen(): void {
+    const mainWindow = this.windows.get(1);
+    if (mainWindow) {
+      mainWindow.fullscreen = !mainWindow.fullscreen;
+      mainWindow.state = mainWindow.fullscreen ? 'fullscreen' : 'normal';
+      this.emit('windowFullscreen', mainWindow);
+    }
   }
 
   closeWindow(id: number): void {
