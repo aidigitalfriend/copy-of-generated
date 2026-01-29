@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store/useStore';
-import { ChatMessage } from '../types';
+import { ChatMessage, AIProvider } from '../types';
 import { voiceInput, voiceOutput, speechSupport } from '../services/speech';
 import { aiService } from '../services/ai';
 import { isDarkTheme } from '../utils/theme';
+import usageCreditsService, { MODEL_PRICING, ModelPricing } from '../services/usageCredits';
 
 interface AIChatProps {
   voiceEnabled?: boolean;
@@ -15,6 +16,7 @@ export const AIChat: React.FC<AIChatProps> = ({ voiceEnabled: externalVoiceEnabl
     addMessage, 
     clearChat, 
     aiConfig,
+    setAiConfig,
     isAiLoading,
     setAiLoading,
     openFiles,
@@ -24,11 +26,25 @@ export const AIChat: React.FC<AIChatProps> = ({ voiceEnabled: externalVoiceEnabl
   
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [showModelSelector, setShowModelSelector] = useState(false);
+  const [credits, setCredits] = useState(usageCreditsService.getCredits());
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const activeFile = openFiles.find(f => f.id === activeFileId);
+  
+  // Get available models grouped by provider
+  const modelsByProvider = MODEL_PRICING.reduce((acc, model) => {
+    if (!acc[model.provider]) acc[model.provider] = [];
+    acc[model.provider].push(model);
+    return acc;
+  }, {} as Record<string, ModelPricing[]>);
+  
+  // Current model info
+  const currentModel = MODEL_PRICING.find(
+    m => m.provider === aiConfig.provider && m.model === aiConfig.model
+  ) || MODEL_PRICING[0];
   
   // Theme classes - supports all dark themes including charcoal-aurora
   const isDark = isDarkTheme(theme);
@@ -43,6 +59,46 @@ export const AIChat: React.FC<AIChatProps> = ({ voiceEnabled: externalVoiceEnabl
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [chatHistory]);
+
+  // Subscribe to credit updates
+  useEffect(() => {
+    const unsubscribe = usageCreditsService.subscribe(() => {
+      setCredits(usageCreditsService.getCredits());
+    });
+    return unsubscribe;
+  }, []);
+
+  // Get provider color
+  const getProviderColor = (provider: string): string => {
+    const colors: Record<string, string> = {
+      gemini: '#4285f4',
+      openai: '#10a37f',
+      anthropic: '#d4a574',
+      mistral: '#ff6b35',
+      groq: '#f97316',
+      xai: '#1da1f2',
+      cerebras: '#8b5cf6',
+    };
+    return colors[provider] || '#6b7280';
+  };
+
+  const getTierBadgeClass = (tier: string): string => {
+    switch (tier) {
+      case 'free': return 'bg-green-500/20 text-green-400';
+      case 'standard': return 'bg-blue-500/20 text-blue-400';
+      case 'premium': return 'bg-purple-500/20 text-purple-400';
+      default: return 'bg-gray-500/20 text-gray-400';
+    }
+  };
+
+  // Handle model selection
+  const handleSelectModel = (model: ModelPricing) => {
+    setAiConfig({ 
+      provider: model.provider, 
+      model: model.model 
+    });
+    setShowModelSelector(false);
+  };
 
   // Voice input handler
   const handleVoiceInput = async () => {
@@ -188,6 +244,91 @@ export const AIChat: React.FC<AIChatProps> = ({ voiceEnabled: externalVoiceEnabl
 
   return (
     <div className={`flex flex-col h-full ${bgClass}`}>
+      {/* Credits Bar */}
+      <div className={`px-4 py-2 border-b ${borderClass} ${isDark ? 'bg-vscode-bg' : 'bg-gray-100'}`}>
+        <div className="flex items-center justify-between">
+          <span className={`text-xs ${mutedTextClass}`}>Credits</span>
+          <span className={`text-sm font-medium ${credits.remainingCredits < 100 ? 'text-red-500' : isDark ? 'text-green-400' : 'text-green-600'}`}>
+            {credits.remainingCredits.toLocaleString()} remaining
+          </span>
+        </div>
+        <div className={`w-full h-1 rounded-full mt-1 ${isDark ? 'bg-vscode-hover' : 'bg-gray-200'}`}>
+          <div 
+            className={`h-full rounded-full transition-all ${
+              credits.remainingCredits > credits.totalCredits * 0.5 ? 'bg-green-500' :
+              credits.remainingCredits > credits.totalCredits * 0.2 ? 'bg-yellow-500' : 'bg-red-500'
+            }`}
+            style={{ width: `${Math.min((credits.remainingCredits / Math.max(credits.totalCredits, 1)) * 100, 100)}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Model Selector */}
+      <div className={`px-4 py-2 border-b ${borderClass}`}>
+        <div className="relative">
+          <button
+            onClick={() => setShowModelSelector(!showModelSelector)}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg border ${borderClass} ${isDark ? 'bg-vscode-input hover:bg-vscode-hover' : 'bg-white hover:bg-gray-50'} transition-colors`}
+          >
+            <div className="flex items-center gap-2">
+              <div 
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: getProviderColor(currentModel.provider) }}
+              />
+              <span className={`text-sm font-medium ${textClass}`}>{currentModel.displayName}</span>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded ${getTierBadgeClass(currentModel.tier)}`}>
+                {currentModel.tier}
+              </span>
+            </div>
+            <svg className={`w-4 h-4 ${mutedTextClass} transition-transform ${showModelSelector ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {/* Model Dropdown */}
+          {showModelSelector && (
+            <div className={`absolute left-0 right-0 mt-1 max-h-80 overflow-y-auto rounded-lg border shadow-xl z-50 ${borderClass} ${isDark ? 'bg-vscode-sidebar' : 'bg-white'}`}>
+              {Object.entries(modelsByProvider).map(([provider, models]) => (
+                <div key={provider}>
+                  <div className={`px-3 py-2 text-xs font-medium uppercase tracking-wider ${mutedTextClass} ${isDark ? 'bg-vscode-bg' : 'bg-gray-50'} sticky top-0`}>
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: getProviderColor(provider) }}
+                      />
+                      {provider}
+                    </div>
+                  </div>
+                  {models.map(model => (
+                    <button
+                      key={model.model}
+                      onClick={() => handleSelectModel(model)}
+                      className={`w-full px-3 py-2 text-left transition-colors ${
+                        aiConfig.model === model.model 
+                          ? isDark ? 'bg-vscode-accent/20' : 'bg-blue-50'
+                          : isDark ? 'hover:bg-vscode-hover' : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className={`text-sm ${textClass}`}>{model.displayName}</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${getTierBadgeClass(model.tier)}`}>
+                          {model.tier}
+                        </span>
+                      </div>
+                      <div className={`text-xs ${mutedTextClass} mt-0.5`}>{model.description}</div>
+                      <div className={`flex gap-3 text-[10px] ${mutedTextClass} mt-1`}>
+                        <span>In: {model.inputCostPer1K} cr/1K</span>
+                        <span>Out: {model.outputCostPer1K} cr/1K</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Header with Actions Dropdown */}
       <div className={`flex items-center justify-between px-4 py-3 border-b ${borderClass}`}>
         <div className="flex items-center gap-2">
