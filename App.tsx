@@ -395,6 +395,8 @@ const App: React.FC = () => {
   const {
     files,
     openFile,
+    openFiles,
+    activeFileId,
     theme,
     setTheme,
     currentProject,
@@ -1258,60 +1260,142 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Status Bar */}
-        <footer className={`h-6 border-t flex items-center justify-between px-3 text-xs ${isDark ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'}`}>
-          <div className="flex items-center gap-3">
+        {/* Status Bar - VS Code Style */}
+        <footer className={`h-6 border-t flex items-center justify-between px-2 text-xs select-none ${isDark ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'}`}>
+          {/* Left Side Status Items */}
+          <div className="flex items-center gap-0">
+            {/* Git Branch */}
             <button 
-              onClick={() => { setTerminalOpen(!terminalOpen); setBottomPanelTab('terminal'); }}
-              className="flex items-center gap-1 hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"
-              title="Toggle Terminal (Ctrl+`)"
+              onClick={() => { setLeftTab('git'); setLeftSidebarOpen(true); }}
+              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+              title="Source Control"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <circle cx="12" cy="5" r="2" />
+                <circle cx="12" cy="19" r="2" />
+                <circle cx="19" cy="12" r="2" />
+                <path d="M12 7v10M14 12h3" />
               </svg>
-              Terminal
+              <span>main</span>
+              <svg className="w-2.5 h-2.5 opacity-70" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
             </button>
+
+            {/* Sync Status */}
+            <button 
+              className="flex items-center gap-1 hover:bg-white/10 px-1.5 py-0.5 transition-colors h-full"
+              title="Synchronize Changes"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+
+            {/* Errors/Warnings */}
             <button 
               onClick={() => { setProblemsPanelOpen(!problemsPanelOpen); setBottomPanelTab('problems'); }}
-              className="flex items-center gap-1 hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"
-              title="Toggle Problems Panel"
+              className="flex items-center gap-1.5 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+              title="No Problems"
             >
-              {currentDiagnostics.filter(d => d.severity === 'error').length > 0 && (
-                <span className="flex items-center gap-1">
-                  <span className="text-red-300">⨉</span>
-                  {currentDiagnostics.filter(d => d.severity === 'error').length}
-                </span>
-              )}
-              {currentDiagnostics.filter(d => d.severity === 'warning').length > 0 && (
-                <span className="flex items-center gap-1 ml-1">
-                  <span className="text-yellow-300">⚠</span>
-                  {currentDiagnostics.filter(d => d.severity === 'warning').length}
-                </span>
-              )}
-              {currentDiagnostics.length === 0 && (
-                <span className="flex items-center gap-1">
-                  <span className="text-green-300">✓</span>
-                  No problems
-                </span>
-              )}
+              <span className="flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M15 9l-6 6M9 9l6 6" />
+                </svg>
+                <span>{currentDiagnostics.filter(d => d.severity === 'error').length}</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span>{currentDiagnostics.filter(d => d.severity === 'warning').length}</span>
+              </span>
             </button>
-            <span className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-green-400" />
-              Ready
-            </span>
-            {currentProject && <span>{currentProject.template}</span>}
           </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setCommandPaletteOpen(true)}
-              className="hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"
-              title="Command Palette (Ctrl+Shift+P)"
+
+          {/* Right Side Status Items */}
+          <div className="flex items-center gap-0">
+            {/* Line & Column */}
+            <button 
+              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+              title="Go to Line/Column"
             >
-              <kbd className="text-[10px]">Ctrl+Shift+P</kbd>
+              Ln 1, Col 1
             </button>
-            <span>TypeScript</span>
-            <span>UTF-8</span>
-            <span>Spaces: 2</span>
+
+            {/* Spaces */}
+            <button 
+              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+              title="Select Indentation"
+            >
+              Spaces: 2
+            </button>
+
+            {/* Encoding */}
+            <button 
+              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+              title="Select Encoding"
+            >
+              UTF-8
+            </button>
+
+            {/* Line Ending */}
+            <button 
+              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+              title="Select End of Line Sequence"
+            >
+              LF
+            </button>
+
+            {/* Language Mode */}
+            <button 
+              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+              title="Select Language Mode"
+            >
+              {(() => {
+                const activeFile = openFiles.find(f => f.id === activeFileId);
+                if (!activeFile) return 'Plain Text';
+                const ext = activeFile.name.split('.').pop()?.toLowerCase() || '';
+                const langMap: Record<string, string> = {
+                  'ts': 'TypeScript', 'tsx': 'TypeScript React', 'js': 'JavaScript', 'jsx': 'JavaScript React',
+                  'py': 'Python', 'html': 'HTML', 'css': 'CSS', 'scss': 'SCSS', 'json': 'JSON',
+                  'md': 'Markdown', 'yaml': 'YAML', 'yml': 'YAML', 'xml': 'XML', 'sql': 'SQL',
+                  'sh': 'Shell Script', 'bash': 'Shell Script', 'go': 'Go', 'rs': 'Rust', 'java': 'Java',
+                  'c': 'C', 'cpp': 'C++', 'h': 'C', 'hpp': 'C++', 'cs': 'C#', 'php': 'PHP', 'rb': 'Ruby',
+                  'swift': 'Swift', 'kt': 'Kotlin', 'vue': 'Vue', 'svelte': 'Svelte'
+                };
+                return langMap[ext] || 'Plain Text';
+              })()}
+            </button>
+
+            {/* Copilot Status */}
+            <button 
+              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+              title="GitHub Copilot"
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </button>
+
+            {/* Prettier */}
+            <button 
+              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+              title="Format Document"
+            >
+              <span className="text-[10px]">Prettier</span>
+            </button>
+
+            {/* Notifications */}
+            <button 
+              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+              title="No Notifications"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </button>
           </div>
         </footer>
       </main>
