@@ -927,8 +927,95 @@ const App: React.FC = () => {
     }
   };
 
+  // State for hamburger menus
+  const [leftMenuOpen, setLeftMenuOpen] = useState(false);
+  const [rightMenuOpen, setRightMenuOpen] = useState(false);
+
+  // Theme-aware menu styles for hamburger dropdowns
+  const getMenuBgColor = () => {
+    switch (themeName) {
+      case 'github-dark': return '#161b22';
+      case 'dracula': return '#282a36';
+      case 'nord': return '#2e3440';
+      case 'monokai': return '#272822';
+      case 'solarized-dark': return '#002b36';
+      case 'one-dark': return '#21252b';
+      case 'steel': return '#1e2a38';
+      case 'charcoal-aurora': return '#1a1a2e';
+      case 'high-contrast': return '#000000';
+      case 'light': return '#ffffff';
+      default: return isDark ? '#252526' : '#ffffff';
+    }
+  };
+
+  const getMenuBorderColor = () => {
+    switch (themeName) {
+      case 'github-dark': return '#30363d';
+      case 'dracula': return '#44475a';
+      case 'nord': return '#3b4252';
+      case 'monokai': return '#3e3d32';
+      case 'solarized-dark': return '#073642';
+      case 'one-dark': return '#181a1f';
+      case 'steel': return '#2d3e50';
+      case 'charcoal-aurora': return '#16213e';
+      case 'high-contrast': return '#ffffff';
+      case 'light': return '#e0e0e0';
+      default: return isDark ? '#3c3c3c' : '#e0e0e0';
+    }
+  };
+
+  const getMenuHoverColor = () => {
+    switch (themeName) {
+      case 'github-dark': return '#30363d';
+      case 'dracula': return '#44475a';
+      case 'nord': return '#3b4252';
+      case 'monokai': return '#3e3d32';
+      case 'solarized-dark': return '#073642';
+      case 'one-dark': return '#2c313a';
+      case 'steel': return '#2d3e50';
+      case 'charcoal-aurora': return '#16213e';
+      case 'high-contrast': return '#1a1a1a';
+      case 'light': return '#f0f0f0';
+      default: return isDark ? '#2a2d2e' : '#f0f0f0';
+    }
+  };
+
+  const getMenuTextColor = () => {
+    switch (themeName) {
+      case 'github-dark': return '#c9d1d9';
+      case 'dracula': return '#f8f8f2';
+      case 'nord': return '#eceff4';
+      case 'monokai': return '#f8f8f2';
+      case 'solarized-dark': return '#839496';
+      case 'one-dark': return '#abb2bf';
+      case 'steel': return '#e0e6ed';
+      case 'charcoal-aurora': return '#e0e6ed';
+      case 'high-contrast': return '#ffffff';
+      case 'light': return '#333333';
+      default: return isDark ? '#cccccc' : '#333333';
+    }
+  };
+
+  const getMenuAccentColor = () => {
+    switch (themeName) {
+      case 'github-dark': return '#58a6ff';
+      case 'dracula': return '#bd93f9';
+      case 'nord': return '#88c0d0';
+      case 'monokai': return '#a6e22e';
+      case 'solarized-dark': return '#268bd2';
+      case 'one-dark': return '#61afef';
+      case 'steel': return '#5fa8d3';
+      case 'charcoal-aurora': return '#00d9ff';
+      case 'high-contrast': return '#00ff00';
+      case 'light': return '#0066cc';
+      default: return isDark ? '#0e639c' : '#0066cc';
+    }
+  };
+
   return (
-    <div className={`flex h-screen w-full overflow-hidden bg-vscode-bg text-vscode-text ${getThemeClass()}`}>
+    <div className={`flex flex-col h-screen w-full overflow-hidden bg-vscode-bg text-vscode-text ${getThemeClass()}`}>
+      {/* Main Content Area - fills remaining height */}
+      <div className="flex flex-1 overflow-hidden">
       {/* ===== LEFT SIDEBAR ===== */}
       <aside className="flex h-full">
         {/* Icon Bar - VS Code Style */}
@@ -1260,144 +1347,6 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Status Bar - VS Code Style */}
-        <footer className={`h-6 border-t flex items-center justify-between px-2 text-xs select-none ${isDark ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'}`}>
-          {/* Left Side Status Items */}
-          <div className="flex items-center gap-0">
-            {/* Git Branch */}
-            <button 
-              onClick={() => { setLeftTab('git'); setLeftSidebarOpen(true); }}
-              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
-              title="Source Control"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <circle cx="12" cy="5" r="2" />
-                <circle cx="12" cy="19" r="2" />
-                <circle cx="19" cy="12" r="2" />
-                <path d="M12 7v10M14 12h3" />
-              </svg>
-              <span>main</span>
-              <svg className="w-2.5 h-2.5 opacity-70" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-            </button>
-
-            {/* Sync Status */}
-            <button 
-              className="flex items-center gap-1 hover:bg-white/10 px-1.5 py-0.5 transition-colors h-full"
-              title="Synchronize Changes"
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </button>
-
-            {/* Errors/Warnings */}
-            <button 
-              onClick={() => { setProblemsPanelOpen(!problemsPanelOpen); setBottomPanelTab('problems'); }}
-              className="flex items-center gap-1.5 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
-              title="No Problems"
-            >
-              <span className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M15 9l-6 6M9 9l6 6" />
-                </svg>
-                <span>{currentDiagnostics.filter(d => d.severity === 'error').length}</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <span>{currentDiagnostics.filter(d => d.severity === 'warning').length}</span>
-              </span>
-            </button>
-          </div>
-
-          {/* Right Side Status Items */}
-          <div className="flex items-center gap-0">
-            {/* Line & Column */}
-            <button 
-              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
-              title="Go to Line/Column"
-            >
-              Ln 1, Col 1
-            </button>
-
-            {/* Spaces */}
-            <button 
-              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
-              title="Select Indentation"
-            >
-              Spaces: 2
-            </button>
-
-            {/* Encoding */}
-            <button 
-              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
-              title="Select Encoding"
-            >
-              UTF-8
-            </button>
-
-            {/* Line Ending */}
-            <button 
-              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
-              title="Select End of Line Sequence"
-            >
-              LF
-            </button>
-
-            {/* Language Mode */}
-            <button 
-              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
-              title="Select Language Mode"
-            >
-              {(() => {
-                const activeFile = openFiles.find(f => f.id === activeFileId);
-                if (!activeFile) return 'Plain Text';
-                const ext = activeFile.name.split('.').pop()?.toLowerCase() || '';
-                const langMap: Record<string, string> = {
-                  'ts': 'TypeScript', 'tsx': 'TypeScript React', 'js': 'JavaScript', 'jsx': 'JavaScript React',
-                  'py': 'Python', 'html': 'HTML', 'css': 'CSS', 'scss': 'SCSS', 'json': 'JSON',
-                  'md': 'Markdown', 'yaml': 'YAML', 'yml': 'YAML', 'xml': 'XML', 'sql': 'SQL',
-                  'sh': 'Shell Script', 'bash': 'Shell Script', 'go': 'Go', 'rs': 'Rust', 'java': 'Java',
-                  'c': 'C', 'cpp': 'C++', 'h': 'C', 'hpp': 'C++', 'cs': 'C#', 'php': 'PHP', 'rb': 'Ruby',
-                  'swift': 'Swift', 'kt': 'Kotlin', 'vue': 'Vue', 'svelte': 'Svelte'
-                };
-                return langMap[ext] || 'Plain Text';
-              })()}
-            </button>
-
-            {/* Copilot Status */}
-            <button 
-              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
-              title="GitHub Copilot"
-            >
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-              </svg>
-            </button>
-
-            {/* Prettier */}
-            <button 
-              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
-              title="Format Document"
-            >
-              <span className="text-[10px]">Prettier</span>
-            </button>
-
-            {/* Notifications */}
-            <button 
-              className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
-              title="No Notifications"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-            </button>
-          </div>
-        </footer>
       </main>
 
       {/* ===== RIGHT SIDEBAR ===== */}
@@ -1572,6 +1521,434 @@ const App: React.FC = () => {
           </div>
         )}
       </aside>
+      </div>
+      {/* End of Main Content Area wrapper */}
+      
+      {/* Full-Width Status Bar - VS Code Style */}
+      <footer className={`h-6 border-t flex items-center justify-between text-xs select-none shrink-0 ${isDark ? 'bg-vscode-accent text-white' : 'bg-blue-600 text-white'}`}>
+        {/* Left Hamburger Menu */}
+        <div className="relative">
+          <button 
+            onClick={() => { setLeftMenuOpen(!leftMenuOpen); setRightMenuOpen(false); }}
+            className="flex items-center justify-center w-8 h-6 hover:bg-white/20 transition-colors"
+            title="Main Menu"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          
+          {/* Left Dropdown Menu */}
+          {leftMenuOpen && (
+            <div 
+              className="absolute bottom-full left-0 mb-0 w-56 rounded-t-md shadow-2xl z-50 overflow-hidden"
+              style={{ 
+                backgroundColor: getMenuBgColor(), 
+                borderWidth: '1px',
+                borderColor: getMenuBorderColor(),
+                boxShadow: `0 -4px 20px rgba(0,0,0,0.3), 0 0 1px ${getMenuBorderColor()}`
+              }}
+            >
+              <div className="py-1">
+                <button 
+                  onClick={() => { setCommandPaletteOpen(true); setLeftMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Command Palette...
+                  </span>
+                  <span className="text-[10px] opacity-50">Ctrl+Shift+P</span>
+                </button>
+                <button 
+                  onClick={() => { setQuickOpenOpen(true); setLeftMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                    Quick Open...
+                  </span>
+                  <span className="text-[10px] opacity-50">Ctrl+P</span>
+                </button>
+                <div className="my-1 h-px mx-2" style={{ backgroundColor: getMenuBorderColor() }} />
+                <button 
+                  onClick={() => { setLeftTab('explorer'); setLeftSidebarOpen(true); setLeftMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                    </svg>
+                    Explorer
+                  </span>
+                  <span className="text-[10px] opacity-50">Ctrl+Shift+E</span>
+                </button>
+                <button 
+                  onClick={() => { setLeftTab('search'); setLeftSidebarOpen(true); setLeftMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                    Search
+                  </span>
+                  <span className="text-[10px] opacity-50">Ctrl+Shift+F</span>
+                </button>
+                <button 
+                  onClick={() => { setLeftTab('git'); setLeftSidebarOpen(true); setLeftMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <circle cx="12" cy="5" r="2" />
+                      <circle cx="12" cy="19" r="2" />
+                      <circle cx="19" cy="12" r="2" />
+                      <path d="M12 7v10M14 12h3" />
+                    </svg>
+                    Source Control
+                  </span>
+                  <span className="text-[10px] opacity-50">Ctrl+Shift+G</span>
+                </button>
+                <div className="my-1 h-px mx-2" style={{ backgroundColor: getMenuBorderColor() }} />
+                <button 
+                  onClick={() => { setTerminalOpen(!terminalOpen); setLeftMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Toggle Terminal
+                  </span>
+                  <span className="text-[10px] opacity-50">Ctrl+`</span>
+                </button>
+                <button 
+                  onClick={() => { setLeftSidebarOpen(!leftSidebarOpen); setLeftMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h8m-8 6h16" />
+                    </svg>
+                    Toggle Sidebar
+                  </span>
+                  <span className="text-[10px] opacity-50">Ctrl+B</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Left Side Status Items */}
+        <div className="flex items-center gap-0 flex-1">
+          {/* Terminal Toggle - Always Visible */}
+          <button 
+            onClick={() => setTerminalOpen(!terminalOpen)}
+            className={`flex items-center gap-1.5 hover:bg-white/20 px-2 py-0.5 transition-colors h-full ${terminalOpen ? 'bg-white/10' : ''}`}
+            title={terminalOpen ? "Hide Terminal (Ctrl+`)" : "Show Terminal (Ctrl+`)"}
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span className="text-[11px]">Terminal</span>
+          </button>
+
+          <div className="w-px h-4 bg-white/20 mx-1" />
+
+          {/* Git Branch */}
+          <button 
+            onClick={() => { setLeftTab('git'); setLeftSidebarOpen(true); }}
+            className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+            title="Source Control"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <circle cx="12" cy="5" r="2" />
+              <circle cx="12" cy="19" r="2" />
+              <circle cx="19" cy="12" r="2" />
+              <path d="M12 7v10M14 12h3" />
+            </svg>
+            <span>main</span>
+            <svg className="w-2.5 h-2.5 opacity-70" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </button>
+
+          {/* Sync Status */}
+          <button 
+            className="flex items-center gap-1 hover:bg-white/10 px-1.5 py-0.5 transition-colors h-full"
+            title="Synchronize Changes"
+          >
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+
+          {/* Errors/Warnings */}
+          <button 
+            onClick={() => { setProblemsPanelOpen(!problemsPanelOpen); setBottomPanelTab('problems'); }}
+            className="flex items-center gap-1.5 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+            title="No Problems"
+          >
+            <span className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M15 9l-6 6M9 9l6 6" />
+              </svg>
+              <span>{currentDiagnostics.filter(d => d.severity === 'error').length}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>{currentDiagnostics.filter(d => d.severity === 'warning').length}</span>
+            </span>
+          </button>
+        </div>
+
+        {/* Right Side Status Items */}
+        <div className="flex items-center gap-0">
+          {/* Line & Column */}
+          <button 
+            className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+            title="Go to Line/Column"
+          >
+            Ln 1, Col 1
+          </button>
+
+          {/* Spaces */}
+          <button 
+            className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+            title="Select Indentation"
+          >
+            Spaces: 2
+          </button>
+
+          {/* Encoding */}
+          <button 
+            className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+            title="Select Encoding"
+          >
+            UTF-8
+          </button>
+
+          {/* Line Ending */}
+          <button 
+            className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+            title="Select End of Line Sequence"
+          >
+            LF
+          </button>
+
+          {/* Language Mode */}
+          <button 
+            className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+            title="Select Language Mode"
+          >
+            {(() => {
+              const activeFile = openFiles.find(f => f.id === activeFileId);
+              if (!activeFile) return 'Plain Text';
+              const ext = activeFile.name.split('.').pop()?.toLowerCase() || '';
+              const langMap: Record<string, string> = {
+                'ts': 'TypeScript', 'tsx': 'TypeScript React', 'js': 'JavaScript', 'jsx': 'JavaScript React',
+                'py': 'Python', 'html': 'HTML', 'css': 'CSS', 'scss': 'SCSS', 'json': 'JSON',
+                'md': 'Markdown', 'yaml': 'YAML', 'yml': 'YAML', 'xml': 'XML', 'sql': 'SQL',
+                'sh': 'Shell Script', 'bash': 'Shell Script', 'go': 'Go', 'rs': 'Rust', 'java': 'Java',
+                'c': 'C', 'cpp': 'C++', 'h': 'C', 'hpp': 'C++', 'cs': 'C#', 'php': 'PHP', 'rb': 'Ruby',
+                'swift': 'Swift', 'kt': 'Kotlin', 'vue': 'Vue', 'svelte': 'Svelte'
+              };
+              return langMap[ext] || 'Plain Text';
+            })()}
+          </button>
+
+          {/* Copilot Status */}
+          <button 
+            className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+            title="GitHub Copilot"
+          >
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          </button>
+
+          {/* Prettier */}
+          <button 
+            className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+            title="Format Document"
+          >
+            <span className="text-[10px]">Prettier</span>
+          </button>
+
+          {/* Notifications */}
+          <button 
+            className="flex items-center gap-1 hover:bg-white/10 px-2 py-0.5 transition-colors h-full"
+            title="No Notifications"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Right Hamburger Menu */}
+        <div className="relative">
+          <button 
+            onClick={() => { setRightMenuOpen(!rightMenuOpen); setLeftMenuOpen(false); }}
+            className="flex items-center justify-center w-8 h-6 hover:bg-white/20 transition-colors"
+            title="More Options"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          
+          {/* Right Dropdown Menu */}
+          {rightMenuOpen && (
+            <div 
+              className="absolute bottom-full right-0 mb-0 w-56 rounded-t-md shadow-2xl z-50 overflow-hidden"
+              style={{ 
+                backgroundColor: getMenuBgColor(), 
+                borderWidth: '1px',
+                borderColor: getMenuBorderColor(),
+                boxShadow: `0 -4px 20px rgba(0,0,0,0.3), 0 0 1px ${getMenuBorderColor()}`
+              }}
+            >
+              <div className="py-1">
+                <button 
+                  onClick={() => { setRightTab('copilot'); setRightSidebarOpen(true); setRightMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    GitHub Copilot
+                  </span>
+                </button>
+                <button 
+                  onClick={() => { setRightTab('ai'); setRightSidebarOpen(true); setRightMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    AI Chat
+                  </span>
+                </button>
+                <div className="my-1 h-px mx-2" style={{ backgroundColor: getMenuBorderColor() }} />
+                <button 
+                  onClick={() => { setRightTab('extensions'); setRightSidebarOpen(true); setRightMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    Extensions
+                  </span>
+                  <span className="text-[10px] opacity-50">Ctrl+Shift+X</span>
+                </button>
+                <button 
+                  onClick={() => { setRightTab('debug'); setRightSidebarOpen(true); setRightMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Run and Debug
+                  </span>
+                  <span className="text-[10px] opacity-50">Ctrl+Shift+D</span>
+                </button>
+                <div className="my-1 h-px mx-2" style={{ backgroundColor: getMenuBorderColor() }} />
+                <button 
+                  onClick={() => { setRightTab('settings'); setRightSidebarOpen(true); setRightMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Settings
+                  </span>
+                  <span className="text-[10px] opacity-50">Ctrl+,</span>
+                </button>
+                <button 
+                  onClick={() => { setRightTab('techstack'); setRightSidebarOpen(true); setRightMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                    Tech Stack
+                  </span>
+                </button>
+                <button 
+                  onClick={() => { setRightTab('deploy'); setRightSidebarOpen(true); setRightMenuOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs transition-all duration-150"
+                  style={{ color: getMenuTextColor() }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = getMenuHoverColor(); e.currentTarget.style.paddingLeft = '14px'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.paddingLeft = '12px'; }}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: getMenuAccentColor() }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    Deploy
+                  </span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </footer>
       
       {/* Hidden elements for camera capture */}
       <canvas ref={canvasRef} className="hidden" />
