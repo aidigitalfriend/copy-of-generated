@@ -251,6 +251,273 @@
 }
 
 /* ============================================
+   SLATE COLOR OVERRIDES FOR ALL DARK THEMES
+   Components like AIChat use slate-* colors
+   ============================================ */
+
+/* Slate backgrounds */
+.dark .bg-slate-50,
+.dark .bg-slate-100,
+.dark .bg-slate-200,
+.theme-github-dark .bg-slate-50,
+.theme-github-dark .bg-slate-100,
+.theme-github-dark .bg-slate-200,
+.theme-dracula .bg-slate-50,
+.theme-dracula .bg-slate-100,
+.theme-dracula .bg-slate-200,
+.theme-nord .bg-slate-50,
+.theme-nord .bg-slate-100,
+.theme-nord .bg-slate-200,
+.theme-monokai .bg-slate-50,
+.theme-monokai .bg-slate-100,
+.theme-monokai .bg-slate-200,
+.theme-solarized-dark .bg-slate-50,
+.theme-solarized-dark .bg-slate-100,
+.theme-solarized-dark .bg-slate-200,
+.theme-one-dark .bg-slate-50,
+.theme-one-dark .bg-slate-100,
+.theme-one-dark .bg-slate-200,
+.theme-steel .bg-slate-50,
+.theme-steel .bg-slate-100,
+.theme-steel .bg-slate-200,
+.theme-charcoal-aurora .bg-slate-50,
+.theme-charcoal-aurora .bg-slate-100,
+.theme-charcoal-aurora .bg-slate-200 {
+  background: var(--vscode-panel, #0d0d0d) !important;
+}
+
+.dark .bg-slate-700,
+.dark .bg-slate-800,
+.dark .bg-slate-900,
+.theme-github-dark .bg-slate-700,
+.theme-github-dark .bg-slate-800,
+.theme-github-dark .bg-slate-900,
+.theme-dracula .bg-slate-700,
+.theme-dracula .bg-slate-800,
+.theme-dracula .bg-slate-900,
+.theme-nord .bg-slate-700,
+.theme-nord .bg-slate-800,
+.theme-nord .bg-slate-900,
+.theme-monokai .bg-slate-700,
+.theme-monokai .bg-slate-800,
+.theme-monokai .bg-slate-900,
+.theme-solarized-dark .bg-slate-700,
+.theme-solarized-dark .bg-slate-800,
+.theme-solarized-dark .bg-slate-900,
+.theme-one-dark .bg-slate-700,
+.theme-one-dark .bg-slate-800,
+.theme-one-dark .bg-slate-900,
+.theme-steel .bg-slate-700,
+.theme-steel .bg-slate-800,
+.theme-steel .bg-slate-900,
+.theme-charcoal-aurora .bg-slate-700,
+.theme-charcoal-aurora .bg-slate-800,
+.theme-charcoal-aurora .bg-slate-900 {
+  background: var(--vscode-sidebar, #0d0d0d) !important;
+}
+
+/* Slate text colors */
+.dark .text-slate-100,
+.dark .text-slate-200,
+.dark .text-slate-300,
+.theme-github-dark .text-slate-100,
+.theme-github-dark .text-slate-200,
+.theme-github-dark .text-slate-300,
+.theme-dracula .text-slate-100,
+.theme-dracula .text-slate-200,
+.theme-dracula .text-slate-300,
+.theme-nord .text-slate-100,
+.theme-nord .text-slate-200,
+.theme-nord .text-slate-300,
+.theme-monokai .text-slate-100,
+.theme-monokai .text-slate-200,
+.theme-monokai .text-slate-300,
+.theme-solarized-dark .text-slate-100,
+.theme-solarized-dark .text-slate-200,
+.theme-solarized-dark .text-slate-300,
+.theme-one-dark .text-slate-100,
+.theme-one-dark .text-slate-200,
+.theme-one-dark .text-slate-300,
+.theme-steel .text-slate-100,
+.theme-steel .text-slate-200,
+.theme-steel .text-slate-300,
+.theme-charcoal-aurora .text-slate-100,
+.theme-charcoal-aurora .text-slate-200,
+.theme-charcoal-aurora .text-slate-300 {
+  color: var(--vscode-text, #a0a0a0) !important;
+}
+
+.dark .text-slate-400,
+.dark .text-slate-500,
+.dark .text-slate-600,
+.theme-github-dark .text-slate-400,
+.theme-github-dark .text-slate-500,
+.theme-github-dark .text-slate-600,
+.theme-dracula .text-slate-400,
+.theme-dracula .text-slate-500,
+.theme-dracula .text-slate-600,
+.theme-nord .text-slate-400,
+.theme-nord .text-slate-500,
+.theme-nord .text-slate-600,
+.theme-monokai .text-slate-400,
+.theme-monokai .text-slate-500,
+.theme-monokai .text-slate-600,
+.theme-solarized-dark .text-slate-400,
+.theme-solarized-dark .text-slate-500,
+.theme-solarized-dark .text-slate-600,
+.theme-one-dark .text-slate-400,
+.theme-one-dark .text-slate-500,
+.theme-one-dark .text-slate-600,
+.theme-steel .text-slate-400,
+.theme-steel .text-slate-500,
+.theme-steel .text-slate-600,
+.theme-charcoal-aurora .text-slate-400,
+.theme-charcoal-aurora .text-slate-500,
+.theme-charcoal-aurora .text-slate-600 {
+  color: var(--vscode-text-muted, #707070) !important;
+}
+
+/* Slate borders */
+.dark .border-slate-200,
+.dark .border-slate-300,
+.dark .border-slate-600,
+.dark .border-slate-700,
+.theme-github-dark .border-slate-200,
+.theme-github-dark .border-slate-300,
+.theme-github-dark .border-slate-600,
+.theme-github-dark .border-slate-700,
+.theme-dracula .border-slate-200,
+.theme-dracula .border-slate-300,
+.theme-dracula .border-slate-600,
+.theme-dracula .border-slate-700,
+.theme-nord .border-slate-200,
+.theme-nord .border-slate-300,
+.theme-nord .border-slate-600,
+.theme-nord .border-slate-700,
+.theme-monokai .border-slate-200,
+.theme-monokai .border-slate-300,
+.theme-monokai .border-slate-600,
+.theme-monokai .border-slate-700,
+.theme-solarized-dark .border-slate-200,
+.theme-solarized-dark .border-slate-300,
+.theme-solarized-dark .border-slate-600,
+.theme-solarized-dark .border-slate-700,
+.theme-one-dark .border-slate-200,
+.theme-one-dark .border-slate-300,
+.theme-one-dark .border-slate-600,
+.theme-one-dark .border-slate-700,
+.theme-steel .border-slate-200,
+.theme-steel .border-slate-300,
+.theme-steel .border-slate-600,
+.theme-steel .border-slate-700,
+.theme-charcoal-aurora .border-slate-200,
+.theme-charcoal-aurora .border-slate-300,
+.theme-charcoal-aurora .border-slate-600,
+.theme-charcoal-aurora .border-slate-700 {
+  border-color: var(--vscode-border, #1c1c1c) !important;
+}
+
+/* Hover states for slate */
+.dark .hover\:bg-slate-700:hover,
+.theme-github-dark .hover\:bg-slate-700:hover,
+.theme-dracula .hover\:bg-slate-700:hover,
+.theme-nord .hover\:bg-slate-700:hover,
+.theme-monokai .hover\:bg-slate-700:hover,
+.theme-solarized-dark .hover\:bg-slate-700:hover,
+.theme-one-dark .hover\:bg-slate-700:hover,
+.theme-steel .hover\:bg-slate-700:hover,
+.theme-charcoal-aurora .hover\:bg-slate-700:hover {
+  background: var(--vscode-hover, #161616) !important;
+}
+
+/* ============================================
+   ADDITIONAL GRAY COLOR OVERRIDES
+   More comprehensive coverage
+   ============================================ */
+
+/* Gray text muted colors */
+.dark .text-gray-400,
+.dark .text-gray-500,
+.dark .text-gray-600,
+.theme-github-dark .text-gray-400,
+.theme-github-dark .text-gray-500,
+.theme-github-dark .text-gray-600,
+.theme-github-dark .text-gray-700,
+.theme-dracula .text-gray-400,
+.theme-dracula .text-gray-500,
+.theme-dracula .text-gray-600,
+.theme-dracula .text-gray-700,
+.theme-nord .text-gray-400,
+.theme-nord .text-gray-500,
+.theme-nord .text-gray-600,
+.theme-nord .text-gray-700,
+.theme-monokai .text-gray-400,
+.theme-monokai .text-gray-500,
+.theme-monokai .text-gray-600,
+.theme-monokai .text-gray-700,
+.theme-solarized-dark .text-gray-400,
+.theme-solarized-dark .text-gray-500,
+.theme-solarized-dark .text-gray-600,
+.theme-solarized-dark .text-gray-700,
+.theme-one-dark .text-gray-400,
+.theme-one-dark .text-gray-500,
+.theme-one-dark .text-gray-600,
+.theme-steel .text-gray-400,
+.theme-steel .text-gray-500,
+.theme-steel .text-gray-600,
+.theme-steel .text-gray-700,
+.theme-charcoal-aurora .text-gray-400,
+.theme-charcoal-aurora .text-gray-500,
+.theme-charcoal-aurora .text-gray-600,
+.theme-charcoal-aurora .text-gray-700 {
+  color: var(--vscode-text-muted, #707070) !important;
+}
+
+/* Hover states for gray backgrounds */
+.dark .hover\:bg-gray-100:hover,
+.dark .hover\:bg-gray-200:hover,
+.theme-github-dark .hover\:bg-gray-100:hover,
+.theme-github-dark .hover\:bg-gray-200:hover,
+.theme-dracula .hover\:bg-gray-100:hover,
+.theme-dracula .hover\:bg-gray-200:hover,
+.theme-nord .hover\:bg-gray-100:hover,
+.theme-nord .hover\:bg-gray-200:hover,
+.theme-monokai .hover\:bg-gray-100:hover,
+.theme-monokai .hover\:bg-gray-200:hover,
+.theme-solarized-dark .hover\:bg-gray-100:hover,
+.theme-solarized-dark .hover\:bg-gray-200:hover,
+.theme-one-dark .hover\:bg-gray-100:hover,
+.theme-one-dark .hover\:bg-gray-200:hover,
+.theme-steel .hover\:bg-gray-100:hover,
+.theme-steel .hover\:bg-gray-200:hover,
+.theme-charcoal-aurora .hover\:bg-gray-100:hover,
+.theme-charcoal-aurora .hover\:bg-gray-200:hover {
+  background: var(--vscode-hover, #161616) !important;
+}
+
+/* Hover text states */
+.dark .hover\:text-gray-900:hover,
+.dark .hover\:text-white:hover,
+.theme-github-dark .hover\:text-gray-900:hover,
+.theme-github-dark .hover\:text-white:hover,
+.theme-dracula .hover\:text-gray-900:hover,
+.theme-dracula .hover\:text-white:hover,
+.theme-nord .hover\:text-gray-900:hover,
+.theme-nord .hover\:text-white:hover,
+.theme-monokai .hover\:text-gray-900:hover,
+.theme-monokai .hover\:text-white:hover,
+.theme-solarized-dark .hover\:text-gray-900:hover,
+.theme-solarized-dark .hover\:text-white:hover,
+.theme-one-dark .hover\:text-gray-900:hover,
+.theme-one-dark .hover\:text-white:hover,
+.theme-steel .hover\:text-gray-900:hover,
+.theme-steel .hover\:text-white:hover,
+.theme-charcoal-aurora .hover\:text-gray-900:hover,
+.theme-charcoal-aurora .hover\:text-white:hover {
+  color: var(--vscode-text, #e0e0e0) !important;
+}
+
+/* ============================================
    GitHub Dark Theme
    ============================================ */
 .theme-github-dark {
@@ -2226,4 +2493,367 @@ code {
 .theme-one-dark .fixed.inset-0 > div:not([class*="bg-black"]),
 .high-contrast .fixed.inset-0 > div:not([class*="bg-black"]) {
   background: var(--vscode-sidebar) !important;
+}
+
+/* ============================================
+   HARDCODED HEX COLOR OVERRIDES FOR ALL THEMES
+   Override inline Tailwind arbitrary values like bg-[#xxx]
+   ============================================ */
+
+/* Override bg-[#0a0a0a], bg-[#0d0d0d], bg-[#1e1e1e] etc. for all dark themes */
+.theme-github-dark [class*="bg-\[#0"],
+.theme-github-dark [class*="bg-\[#1"],
+.theme-github-dark [class*="bg-\[#2"] {
+  background: var(--vscode-sidebar) !important;
+}
+
+.theme-dracula [class*="bg-\[#0"],
+.theme-dracula [class*="bg-\[#1"],
+.theme-dracula [class*="bg-\[#2"] {
+  background: var(--vscode-sidebar) !important;
+}
+
+.theme-nord [class*="bg-\[#0"],
+.theme-nord [class*="bg-\[#1"],
+.theme-nord [class*="bg-\[#2"],
+.theme-nord [class*="bg-\[#3"] {
+  background: var(--vscode-sidebar) !important;
+}
+
+.theme-monokai [class*="bg-\[#0"],
+.theme-monokai [class*="bg-\[#1"],
+.theme-monokai [class*="bg-\[#2"] {
+  background: var(--vscode-sidebar) !important;
+}
+
+.theme-solarized-dark [class*="bg-\[#0"],
+.theme-solarized-dark [class*="bg-\[#1"],
+.theme-solarized-dark [class*="bg-\[#2"] {
+  background: var(--vscode-sidebar) !important;
+}
+
+.theme-one-dark [class*="bg-\[#0"],
+.theme-one-dark [class*="bg-\[#1"],
+.theme-one-dark [class*="bg-\[#2"],
+.theme-one-dark [class*="bg-\[#3"] {
+  background: var(--vscode-sidebar) !important;
+}
+
+.theme-steel [class*="bg-\[#0"],
+.theme-steel [class*="bg-\[#1"],
+.theme-steel [class*="bg-\[#2"] {
+  background: var(--vscode-sidebar) !important;
+}
+
+/* Override border-[#xxx] for all dark themes */
+.theme-github-dark [class*="border-\[#"],
+.theme-dracula [class*="border-\[#"],
+.theme-nord [class*="border-\[#"],
+.theme-monokai [class*="border-\[#"],
+.theme-solarized-dark [class*="border-\[#"],
+.theme-one-dark [class*="border-\[#"],
+.theme-steel [class*="border-\[#"] {
+  border-color: var(--vscode-border) !important;
+}
+
+/* Override text-[#xxx] colors for all dark themes */
+.theme-github-dark [class*="text-\[#8"],
+.theme-github-dark [class*="text-\[#a"],
+.theme-github-dark [class*="text-\[#b"],
+.theme-github-dark [class*="text-\[#c"],
+.theme-github-dark [class*="text-\[#d"],
+.theme-github-dark [class*="text-\[#e"],
+.theme-github-dark [class*="text-\[#f"],
+.theme-dracula [class*="text-\[#8"],
+.theme-dracula [class*="text-\[#a"],
+.theme-dracula [class*="text-\[#b"],
+.theme-dracula [class*="text-\[#c"],
+.theme-dracula [class*="text-\[#d"],
+.theme-dracula [class*="text-\[#e"],
+.theme-dracula [class*="text-\[#f"],
+.theme-nord [class*="text-\[#8"],
+.theme-nord [class*="text-\[#a"],
+.theme-nord [class*="text-\[#b"],
+.theme-nord [class*="text-\[#c"],
+.theme-nord [class*="text-\[#d"],
+.theme-nord [class*="text-\[#e"],
+.theme-nord [class*="text-\[#f"],
+.theme-monokai [class*="text-\[#8"],
+.theme-monokai [class*="text-\[#a"],
+.theme-monokai [class*="text-\[#b"],
+.theme-monokai [class*="text-\[#c"],
+.theme-monokai [class*="text-\[#d"],
+.theme-monokai [class*="text-\[#e"],
+.theme-monokai [class*="text-\[#f"],
+.theme-solarized-dark [class*="text-\[#8"],
+.theme-solarized-dark [class*="text-\[#a"],
+.theme-solarized-dark [class*="text-\[#b"],
+.theme-solarized-dark [class*="text-\[#c"],
+.theme-solarized-dark [class*="text-\[#d"],
+.theme-solarized-dark [class*="text-\[#e"],
+.theme-solarized-dark [class*="text-\[#f"],
+.theme-one-dark [class*="text-\[#8"],
+.theme-one-dark [class*="text-\[#a"],
+.theme-one-dark [class*="text-\[#b"],
+.theme-one-dark [class*="text-\[#c"],
+.theme-one-dark [class*="text-\[#d"],
+.theme-one-dark [class*="text-\[#e"],
+.theme-one-dark [class*="text-\[#f"],
+.theme-steel [class*="text-\[#8"],
+.theme-steel [class*="text-\[#a"],
+.theme-steel [class*="text-\[#b"],
+.theme-steel [class*="text-\[#c"],
+.theme-steel [class*="text-\[#d"],
+.theme-steel [class*="text-\[#e"],
+.theme-steel [class*="text-\[#f"] {
+  color: var(--vscode-text) !important;
+}
+
+/* ============================================
+   THEME-SPECIFIC ACCENT COLORS
+   Ensure accent colors are properly applied
+   ============================================ */
+
+/* GitHub Dark accent - blue */
+.theme-github-dark .bg-blue-600,
+.theme-github-dark .bg-blue-500 {
+  background: #58a6ff !important;
+}
+
+.theme-github-dark .text-blue-600,
+.theme-github-dark .text-blue-500,
+.theme-github-dark .text-blue-400 {
+  color: #58a6ff !important;
+}
+
+/* Dracula accent - purple */
+.theme-dracula .bg-blue-600,
+.theme-dracula .bg-blue-500 {
+  background: #bd93f9 !important;
+}
+
+.theme-dracula .text-blue-600,
+.theme-dracula .text-blue-500,
+.theme-dracula .text-blue-400 {
+  color: #bd93f9 !important;
+}
+
+/* Nord accent - cyan */
+.theme-nord .bg-blue-600,
+.theme-nord .bg-blue-500 {
+  background: #88c0d0 !important;
+}
+
+.theme-nord .text-blue-600,
+.theme-nord .text-blue-500,
+.theme-nord .text-blue-400 {
+  color: #88c0d0 !important;
+}
+
+/* Monokai accent - green */
+.theme-monokai .bg-blue-600,
+.theme-monokai .bg-blue-500 {
+  background: #a6e22e !important;
+}
+
+.theme-monokai .text-blue-600,
+.theme-monokai .text-blue-500,
+.theme-monokai .text-blue-400 {
+  color: #a6e22e !important;
+}
+
+/* Solarized Dark accent - blue */
+.theme-solarized-dark .bg-blue-600,
+.theme-solarized-dark .bg-blue-500 {
+  background: #268bd2 !important;
+}
+
+.theme-solarized-dark .text-blue-600,
+.theme-solarized-dark .text-blue-500,
+.theme-solarized-dark .text-blue-400 {
+  color: #268bd2 !important;
+}
+
+/* One Dark accent - blue */
+.theme-one-dark .bg-blue-600,
+.theme-one-dark .bg-blue-500 {
+  background: #61afef !important;
+}
+
+.theme-one-dark .text-blue-600,
+.theme-one-dark .text-blue-500,
+.theme-one-dark .text-blue-400 {
+  color: #61afef !important;
+}
+
+/* Steel accent - metallic blue-gray */
+.theme-steel .bg-blue-600,
+.theme-steel .bg-blue-500 {
+  background: #7b8a9e !important;
+}
+
+.theme-steel .text-blue-600,
+.theme-steel .text-blue-500,
+.theme-steel .text-blue-400 {
+  color: #95a5bb !important;
+}
+
+/* ============================================
+   COMPREHENSIVE HARDCODED COLOR OVERRIDES
+   For all themes - targeting specific hex values
+   ============================================ */
+
+/* Target specific hex background colors used in components */
+.theme-github-dark [style*="background"],
+.theme-dracula [style*="background"],
+.theme-nord [style*="background"],
+.theme-monokai [style*="background"],
+.theme-solarized-dark [style*="background"],
+.theme-one-dark [style*="background"],
+.theme-steel [style*="background"] {
+  background: var(--vscode-sidebar) !important;
+}
+
+/* Common dark backgrounds - make them use theme colors */
+.theme-github-dark .bg-\[\#252526\],
+.theme-github-dark .bg-\[\#3c3c3c\],
+.theme-github-dark .bg-\[\#2a2d2e\],
+.theme-github-dark .bg-\[\#1a1a1a\],
+.theme-github-dark .bg-\[\#094771\] {
+  background: var(--vscode-panel) !important;
+}
+
+.theme-dracula .bg-\[\#252526\],
+.theme-dracula .bg-\[\#3c3c3c\],
+.theme-dracula .bg-\[\#2a2d2e\],
+.theme-dracula .bg-\[\#1a1a1a\],
+.theme-dracula .bg-\[\#094771\] {
+  background: var(--vscode-panel) !important;
+}
+
+.theme-nord .bg-\[\#252526\],
+.theme-nord .bg-\[\#3c3c3c\],
+.theme-nord .bg-\[\#2a2d2e\],
+.theme-nord .bg-\[\#1a1a1a\],
+.theme-nord .bg-\[\#094771\] {
+  background: var(--vscode-panel) !important;
+}
+
+.theme-monokai .bg-\[\#252526\],
+.theme-monokai .bg-\[\#3c3c3c\],
+.theme-monokai .bg-\[\#2a2d2e\],
+.theme-monokai .bg-\[\#1a1a1a\],
+.theme-monokai .bg-\[\#094771\] {
+  background: var(--vscode-panel) !important;
+}
+
+.theme-solarized-dark .bg-\[\#252526\],
+.theme-solarized-dark .bg-\[\#3c3c3c\],
+.theme-solarized-dark .bg-\[\#2a2d2e\],
+.theme-solarized-dark .bg-\[\#1a1a1a\],
+.theme-solarized-dark .bg-\[\#094771\] {
+  background: var(--vscode-panel) !important;
+}
+
+.theme-one-dark .bg-\[\#252526\],
+.theme-one-dark .bg-\[\#3c3c3c\],
+.theme-one-dark .bg-\[\#2a2d2e\],
+.theme-one-dark .bg-\[\#1a1a1a\],
+.theme-one-dark .bg-\[\#094771\] {
+  background: var(--vscode-panel) !important;
+}
+
+.theme-steel .bg-\[\#252526\],
+.theme-steel .bg-\[\#3c3c3c\],
+.theme-steel .bg-\[\#2a2d2e\],
+.theme-steel .bg-\[\#1a1a1a\],
+.theme-steel .bg-\[\#094771\] {
+  background: var(--vscode-panel) !important;
+}
+
+/* Override hardcoded border colors */
+.theme-github-dark .border-\[\#3c3c3c\],
+.theme-dracula .border-\[\#3c3c3c\],
+.theme-nord .border-\[\#3c3c3c\],
+.theme-monokai .border-\[\#3c3c3c\],
+.theme-solarized-dark .border-\[\#3c3c3c\],
+.theme-one-dark .border-\[\#3c3c3c\],
+.theme-steel .border-\[\#3c3c3c\] {
+  border-color: var(--vscode-border) !important;
+}
+
+/* Override hardcoded text colors - text-white in dark themes */
+.theme-github-dark .text-white,
+.theme-dracula .text-white,
+.theme-nord .text-white,
+.theme-monokai .text-white,
+.theme-solarized-dark .text-white,
+.theme-one-dark .text-white,
+.theme-steel .text-white {
+  color: var(--vscode-text) !important;
+}
+
+/* Override text-gray-XXX in themed contexts */
+.theme-github-dark .text-gray-400,
+.theme-github-dark .text-gray-500,
+.theme-dracula .text-gray-400,
+.theme-dracula .text-gray-500,
+.theme-nord .text-gray-400,
+.theme-nord .text-gray-500,
+.theme-monokai .text-gray-400,
+.theme-monokai .text-gray-500,
+.theme-solarized-dark .text-gray-400,
+.theme-solarized-dark .text-gray-500,
+.theme-one-dark .text-gray-400,
+.theme-one-dark .text-gray-500,
+.theme-steel .text-gray-400,
+.theme-steel .text-gray-500 {
+  color: var(--vscode-text-muted) !important;
+}
+
+/* Hover backgrounds */
+.theme-github-dark .hover\:bg-\[\#2a2d2e\]:hover,
+.theme-github-dark .hover\:bg-\[\#4c4c4c\]:hover,
+.theme-dracula .hover\:bg-\[\#2a2d2e\]:hover,
+.theme-dracula .hover\:bg-\[\#4c4c4c\]:hover,
+.theme-nord .hover\:bg-\[\#2a2d2e\]:hover,
+.theme-nord .hover\:bg-\[\#4c4c4c\]:hover,
+.theme-monokai .hover\:bg-\[\#2a2d2e\]:hover,
+.theme-monokai .hover\:bg-\[\#4c4c4c\]:hover,
+.theme-solarized-dark .hover\:bg-\[\#2a2d2e\]:hover,
+.theme-solarized-dark .hover\:bg-\[\#4c4c4c\]:hover,
+.theme-one-dark .hover\:bg-\[\#2a2d2e\]:hover,
+.theme-one-dark .hover\:bg-\[\#4c4c4c\]:hover,
+.theme-steel .hover\:bg-\[\#2a2d2e\]:hover,
+.theme-steel .hover\:bg-\[\#4c4c4c\]:hover {
+  background: var(--vscode-hover) !important;
+}
+
+/* Hover text - ensure proper contrast */
+.theme-github-dark .hover\:text-white:hover,
+.theme-dracula .hover\:text-white:hover,
+.theme-nord .hover\:text-white:hover,
+.theme-monokai .hover\:text-white:hover,
+.theme-solarized-dark .hover\:text-white:hover,
+.theme-one-dark .hover\:text-white:hover,
+.theme-steel .hover\:text-white:hover {
+  color: var(--vscode-text) !important;
+}
+
+/* Progress bars and colored backgrounds - preserve but adjust */
+.theme-github-dark .bg-blue-500,
+.theme-github-dark .bg-green-500,
+.theme-dracula .bg-blue-500,
+.theme-dracula .bg-green-500,
+.theme-nord .bg-blue-500,
+.theme-nord .bg-green-500,
+.theme-monokai .bg-blue-500,
+.theme-monokai .bg-green-500,
+.theme-solarized-dark .bg-blue-500,
+.theme-solarized-dark .bg-green-500,
+.theme-one-dark .bg-blue-500,
+.theme-one-dark .bg-green-500,
+.theme-steel .bg-blue-500,
+.theme-steel .bg-green-500 {
+  background: var(--vscode-accent) !important;
 }

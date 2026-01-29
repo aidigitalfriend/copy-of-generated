@@ -134,7 +134,7 @@ export const TechStackPanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[#1e1e1e] text-white">
+    <div className="h-full flex flex-col bg-vscode-sidebar text-vscode-text">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 bg-[#252526] border-b border-[#3c3c3c]">
         <div className="flex items-center gap-2">
@@ -147,15 +147,15 @@ export const TechStackPanel: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[#3c3c3c] bg-[#252526] overflow-x-auto">
+      <div className="flex border-b border-vscode-border bg-vscode-panel overflow-x-auto">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1 px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
               activeTab === tab.id
-                ? 'text-white border-b-2 border-blue-500 bg-[#1e1e1e]'
-                : 'text-gray-400 hover:text-white'
+                ? 'text-vscode-text border-b-2 border-vscode-accent bg-vscode-bg'
+                : 'text-vscode-textMuted hover:text-vscode-text'
             }`}
           >
             <span>{tab.icon}</span>
@@ -170,30 +170,30 @@ export const TechStackPanel: React.FC = () => {
         {activeTab === 'electron' && (
           <div className="p-3 space-y-4">
             {/* Window State */}
-            <div className="bg-[#252526] rounded-lg p-3">
-              <h3 className="text-sm font-medium text-white mb-3 flex items-center gap-2">
+            <div className="bg-vscode-panel rounded-lg p-3">
+              <h3 className="text-sm font-medium text-vscode-text mb-3 flex items-center gap-2">
                 <span>🪟</span> Window State
               </h3>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <div className="text-gray-500">Size</div>
-                  <div className="text-white">{windowState.width} × {windowState.height}</div>
+                  <div className="text-vscode-textMuted">Size</div>
+                  <div className="text-vscode-text">{windowState.width} × {windowState.height}</div>
                 </div>
                 <div>
-                  <div className="text-gray-500">Position</div>
-                  <div className="text-white">({windowState.x}, {windowState.y})</div>
+                  <div className="text-vscode-textMuted">Position</div>
+                  <div className="text-vscode-text">({windowState.x}, {windowState.y})</div>
                 </div>
                 <div>
-                  <div className="text-gray-500">State</div>
-                  <div className="text-white capitalize">
+                  <div className="text-vscode-textMuted">State</div>
+                  <div className="text-vscode-text capitalize">
                     {windowState.isMaximized ? 'Maximized' : 
                      windowState.isMinimized ? 'Minimized' : 
                      windowState.isFullScreen ? 'Fullscreen' : 'Normal'}
                   </div>
                 </div>
                 <div>
-                  <div className="text-gray-500">Focused</div>
-                  <div className={windowState.isFocused ? 'text-green-400' : 'text-gray-400'}>
+                  <div className="text-vscode-textMuted">Focused</div>
+                  <div className={windowState.isFocused ? 'text-green-400' : 'text-vscode-textMuted'}>
                     {windowState.isFocused ? 'Yes' : 'No'}
                   </div>
                 </div>
@@ -201,19 +201,19 @@ export const TechStackPanel: React.FC = () => {
               <div className="flex gap-2 mt-3">
                 <button
                   onClick={() => electronService.minimizeWindow()}
-                  className="px-2 py-1 bg-[#3c3c3c] hover:bg-[#4c4c4c] rounded text-xs"
+                  className="px-2 py-1 bg-vscode-hover hover:bg-vscode-active rounded text-xs"
                 >
                   Minimize
                 </button>
                 <button
                   onClick={() => electronService.maximizeWindow()}
-                  className="px-2 py-1 bg-[#3c3c3c] hover:bg-[#4c4c4c] rounded text-xs"
+                  className="px-2 py-1 bg-vscode-hover hover:bg-vscode-active rounded text-xs"
                 >
                   Maximize
                 </button>
                 <button
                   onClick={() => electronService.toggleFullScreen()}
-                  className="px-2 py-1 bg-[#3c3c3c] hover:bg-[#4c4c4c] rounded text-xs"
+                  className="px-2 py-1 bg-vscode-hover hover:bg-vscode-active rounded text-xs"
                 >
                   Fullscreen
                 </button>
@@ -221,20 +221,20 @@ export const TechStackPanel: React.FC = () => {
             </div>
 
             {/* Processes */}
-            <div className="bg-[#252526] rounded-lg p-3">
-              <h3 className="text-sm font-medium text-white mb-3 flex items-center gap-2">
+            <div className="bg-vscode-panel rounded-lg p-3">
+              <h3 className="text-sm font-medium text-vscode-text mb-3 flex items-center gap-2">
                 <span>⚙️</span> Processes
               </h3>
               <div className="space-y-2">
                 {processes.map(proc => (
-                  <div key={proc.pid} className="flex items-center justify-between p-2 bg-[#1e1e1e] rounded">
+                  <div key={proc.pid} className="flex items-center justify-between p-2 bg-vscode-bg rounded">
                     <div>
-                      <div className="text-xs text-white">{proc.type}</div>
-                      <div className="text-[10px] text-gray-500">PID: {proc.pid}</div>
+                      <div className="text-xs text-vscode-text">{proc.type}</div>
+                      <div className="text-[10px] text-vscode-textMuted">PID: {proc.pid}</div>
                     </div>
                     <div className="text-right text-xs">
-                      <div className="text-gray-400">CPU: {proc.cpu.toFixed(1)}%</div>
-                      <div className="text-gray-400">MEM: {formatBytes(proc.memory)}</div>
+                      <div className="text-vscode-textMuted">CPU: {proc.cpu.toFixed(1)}%</div>
+                      <div className="text-vscode-textMuted">MEM: {formatBytes(proc.memory)}</div>
                     </div>
                   </div>
                 ))}
@@ -242,22 +242,22 @@ export const TechStackPanel: React.FC = () => {
             </div>
 
             {/* IPC Stats */}
-            <div className="bg-[#252526] rounded-lg p-3">
-              <h3 className="text-sm font-medium text-white mb-3 flex items-center gap-2">
+            <div className="bg-vscode-panel rounded-lg p-3">
+              <h3 className="text-sm font-medium text-vscode-text mb-3 flex items-center gap-2">
                 <span>📨</span> IPC Communication
               </h3>
               <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="p-2 bg-[#1e1e1e] rounded text-center">
+                <div className="p-2 bg-vscode-bg rounded text-center">
                   <div className="text-xl font-bold text-blue-400">1,247</div>
-                  <div className="text-gray-500">Messages</div>
+                  <div className="text-vscode-textMuted">Messages</div>
                 </div>
-                <div className="p-2 bg-[#1e1e1e] rounded text-center">
+                <div className="p-2 bg-vscode-bg rounded text-center">
                   <div className="text-xl font-bold text-green-400">0.8ms</div>
-                  <div className="text-gray-500">Avg Latency</div>
+                  <div className="text-vscode-textMuted">Avg Latency</div>
                 </div>
-                <div className="p-2 bg-[#1e1e1e] rounded text-center">
+                <div className="p-2 bg-vscode-bg rounded text-center">
                   <div className="text-xl font-bold text-purple-400">12</div>
-                  <div className="text-gray-500">Channels</div>
+                  <div className="text-vscode-textMuted">Channels</div>
                 </div>
               </div>
             </div>

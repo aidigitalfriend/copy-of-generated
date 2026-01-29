@@ -137,9 +137,9 @@ export const AIExtensionPanel: React.FC<AIExtensionPanelProps> = ({ className = 
   };
   
   return (
-    <div className={`flex flex-col h-full ${isDark ? 'bg-[#0a0a0a] text-[#a0a0a0]' : 'bg-white text-gray-900'} ${className}`}>
+    <div className={`flex flex-col h-full ${isDark ? 'bg-vscode-sidebar text-vscode-text' : 'bg-white text-gray-900'} ${className}`}>
       {/* Header */}
-      <div className={`flex items-center justify-between px-4 py-2 border-b ${isDark ? 'border-[#1c1c1c] bg-[#0a0a0a]' : 'border-gray-200'}`}>
+      <div className={`flex items-center justify-between px-4 py-2 border-b ${isDark ? 'border-vscode-border bg-vscode-sidebar' : 'border-gray-200'}`}>
         <div className="flex items-center gap-2">
           <span className="text-lg">🤖</span>
           <h2 className="font-medium">AI Assistant</h2>

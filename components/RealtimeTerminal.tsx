@@ -304,15 +304,29 @@ export const RealtimeTerminal: React.FC<RealtimeTerminalProps> = ({
   const isDark = theme !== 'light' && theme !== 'high-contrast-light';
   const isHighContrast = theme === 'high-contrast';
   
+  // Get theme from CSS variables
   const terminalTheme = useMemo(() => {
-    if (isHighContrast) return TERMINAL_THEMES.highContrast;
-    return isDark ? TERMINAL_THEMES.dark : TERMINAL_THEMES.light;
-  }, [isDark, isHighContrast]);
+    const getComputedColor = (varName: string, fallback: string) => {
+      const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      return value || fallback;
+    };
+    
+    // Use CSS variables for dynamic theming
+    const baseTheme = isHighContrast ? TERMINAL_THEMES.highContrast : isDark ? TERMINAL_THEMES.dark : TERMINAL_THEMES.light;
+    return {
+      ...baseTheme,
+      background: getComputedColor('--vscode-panel', baseTheme.background),
+      foreground: getComputedColor('--vscode-text', baseTheme.foreground),
+      cursor: getComputedColor('--vscode-accent', baseTheme.cursor),
+      cursorAccent: getComputedColor('--vscode-panel', baseTheme.cursorAccent),
+      selectionBackground: getComputedColor('--vscode-selection', baseTheme.selectionBackground),
+    };
+  }, [isDark, isHighContrast, theme]);
 
-  // Theme classes
-  const bgColor = isHighContrast ? 'bg-black' : isDark ? 'bg-[#0f172a]' : 'bg-white';
-  const headerBg = isHighContrast ? 'bg-black' : isDark ? 'bg-[#1e293b]' : 'bg-gray-50';
-  const borderColor = isHighContrast ? 'border-white' : isDark ? 'border-slate-700' : 'border-gray-200';
+  // Theme classes - use CSS variables
+  const bgColor = 'bg-vscode-panel';
+  const headerBg = 'bg-vscode-sidebar';
+  const borderColor = isHighContrast ? 'border-white' : 'border-vscode-border';
   const textColor = isDark ? 'text-gray-200' : 'text-gray-800';
   const textMuted = isDark ? 'text-gray-400' : 'text-gray-500';
   const hoverBg = isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100';

@@ -908,8 +908,25 @@ const App: React.FC = () => {
   const bgHoverClass = isDark ? 'hover:bg-vscode-hover' : 'hover:bg-gray-200';
   const borderClass = isDark ? 'border-vscode-border' : 'border-gray-300';
 
+  // Get theme class for the main container to enable CSS selectors
+  const getThemeClass = () => {
+    switch (themeName) {
+      case 'github-dark': return 'theme-github-dark';
+      case 'dracula': return 'theme-dracula';
+      case 'nord': return 'theme-nord';
+      case 'monokai': return 'theme-monokai';
+      case 'solarized-dark': return 'theme-solarized-dark';
+      case 'one-dark': return 'theme-one-dark';
+      case 'steel': return 'theme-steel';
+      case 'charcoal-aurora': return 'theme-charcoal-aurora';
+      case 'high-contrast': return 'high-contrast';
+      case 'light': return 'light';
+      default: return isDark ? 'dark' : '';
+    }
+  };
+
   return (
-    <div className={`flex h-screen w-full overflow-hidden`}>
+    <div className={`flex h-screen w-full overflow-hidden bg-vscode-bg text-vscode-text ${getThemeClass()}`}>
       {/* ===== LEFT SIDEBAR ===== */}
       <aside className="flex h-full">
         {/* Icon Bar - VS Code Style */}

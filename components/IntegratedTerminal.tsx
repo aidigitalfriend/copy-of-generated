@@ -84,17 +84,19 @@ export const IntegratedTerminal: React.FC<IntegratedTerminalProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   
-  // Theme colors
+  // Theme colors from CSS variables
   const getTerminalTheme = useCallback(() => {
-    const isDark = isDarkTheme(theme) || theme === 'high-contrast';
-    const isHighContrast = theme === 'high-contrast';
+    const getComputedColor = (varName: string, fallback: string) => {
+      const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      return value || fallback;
+    };
     
     return {
-      background: isHighContrast ? '#000000' : isDark ? '#1e1e1e' : '#ffffff',
-      foreground: isHighContrast ? '#ffffff' : isDark ? '#d4d4d4' : '#1e293b',
-      cursor: isHighContrast ? '#ffffff' : isDark ? '#aeafad' : '#3b82f6',
-      cursorAccent: isHighContrast ? '#000000' : isDark ? '#1e1e1e' : '#ffffff',
-      selectionBackground: isHighContrast ? 'rgba(255,255,255,0.3)' : isDark ? '#264f78' : 'rgba(59, 130, 246, 0.3)',
+      background: getComputedColor('--vscode-panel', '#1e1e1e'),
+      foreground: getComputedColor('--vscode-text', '#d4d4d4'),
+      cursor: getComputedColor('--vscode-accent', '#aeafad'),
+      cursorAccent: getComputedColor('--vscode-panel', '#1e1e1e'),
+      selectionBackground: getComputedColor('--vscode-selection', '#264f78'),
       black: '#000000',
       red: '#cd3131',
       green: '#0dbc79',
@@ -552,7 +554,7 @@ export const IntegratedTerminal: React.FC<IntegratedTerminalProps> = ({
   const isDark = isDarkTheme(theme) || theme === 'high-contrast';
   const isHighContrast = theme === 'high-contrast';
   
-  const bgColor = isHighContrast ? 'bg-black' : isDark ? 'bg-[#1e1e1e]' : 'bg-white';
+  const bgColor = 'bg-vscode-panel';
   const borderColor = isHighContrast ? 'border-white' : isDark ? 'border-vscode-border' : 'border-gray-200';
   const textColor = isDark ? 'text-white' : 'text-gray-900';
   const textMuted = isDark ? 'text-gray-400' : 'text-gray-500';

@@ -274,13 +274,19 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
   useEffect(() => {
     if (!terminalRef.current || xtermRef.current) return;
 
-    // VS Code terminal theme - high visibility
+    // Get theme-specific terminal colors from CSS variables
+    const getComputedColor = (varName: string, fallback: string) => {
+      const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      return value || fallback;
+    };
+
+    // Terminal theme that responds to CSS variables
     const terminalTheme = {
-      background: '#1e1e1e',
-      foreground: '#d4d4d4',
-      cursor: '#aeafad',
-      cursorAccent: '#1e1e1e',
-      selectionBackground: '#264f78',
+      background: getComputedColor('--vscode-panel', '#1e1e1e'),
+      foreground: getComputedColor('--vscode-text', '#d4d4d4'),
+      cursor: getComputedColor('--vscode-accent', '#aeafad'),
+      cursorAccent: getComputedColor('--vscode-panel', '#1e1e1e'),
+      selectionBackground: getComputedColor('--vscode-selection', '#264f78'),
       black: '#000000',
       red: '#cd3131',
       green: '#0dbc79',
@@ -414,9 +420,33 @@ export const Terminal: React.FC<TerminalProps> = ({ className = '' }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Update terminal theme when app theme changes
+  useEffect(() => {
+    if (!xtermRef.current) return;
+    
+    const getComputedColor = (varName: string, fallback: string) => {
+      const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      return value || fallback;
+    };
+
+    // Small delay to ensure CSS variables are updated
+    const timer = setTimeout(() => {
+      xtermRef.current?.options.theme && Object.assign(xtermRef.current.options.theme, {
+        background: getComputedColor('--vscode-panel', '#1e1e1e'),
+        foreground: getComputedColor('--vscode-text', '#d4d4d4'),
+        cursor: getComputedColor('--vscode-accent', '#aeafad'),
+        cursorAccent: getComputedColor('--vscode-panel', '#1e1e1e'),
+        selectionBackground: getComputedColor('--vscode-selection', '#264f78'),
+      });
+      xtermRef.current?.refresh(0, xtermRef.current.rows - 1);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [theme]);
+
   return (
     <div 
-      className={`h-full w-full bg-[#1e1e1e] font-mono cursor-text ${className}`}
+      className={`h-full w-full bg-vscode-panel font-mono cursor-text ${className}`}
       onClick={handleTerminalClick}
       style={{ minHeight: '100px' }}
     >

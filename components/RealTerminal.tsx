@@ -28,7 +28,11 @@ export const RealTerminal: React.FC<RealTerminalProps> = ({ className = '' }) =>
     
     hasInitializedRef.current = true;
 
-    const isDark = theme !== 'light' && theme !== 'high-contrast-light';
+    // Get theme colors from CSS variables
+    const getComputedColor = (varName: string, fallback: string) => {
+      const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      return value || fallback;
+    };
     
     const terminal = new XTerminal({
       cursorBlink: true,
@@ -36,11 +40,11 @@ export const RealTerminal: React.FC<RealTerminalProps> = ({ className = '' }) =>
       fontSize: 13,
       lineHeight: 1.4,
       theme: {
-        background: isDark ? '#1e1e1e' : '#ffffff',
-        foreground: isDark ? '#d4d4d4' : '#1e293b',
-        cursor: isDark ? '#aeafad' : '#3b82f6',
-        cursorAccent: isDark ? '#1e1e1e' : '#ffffff',
-        selectionBackground: isDark ? '#264f78' : 'rgba(59, 130, 246, 0.3)',
+        background: getComputedColor('--vscode-panel', '#1e1e1e'),
+        foreground: getComputedColor('--vscode-text', '#d4d4d4'),
+        cursor: getComputedColor('--vscode-accent', '#aeafad'),
+        cursorAccent: getComputedColor('--vscode-panel', '#1e1e1e'),
+        selectionBackground: getComputedColor('--vscode-selection', '#264f78'),
         black: '#000000',
         red: '#cd3131',
         green: '#0dbc79',
@@ -183,21 +187,33 @@ export const RealTerminal: React.FC<RealTerminalProps> = ({ className = '' }) =>
     };
   }, []); // Empty deps - only run once
 
-  // Update theme
+  // Update theme when it changes
   useEffect(() => {
     if (xtermRef.current) {
-      const isDark = theme !== 'light' && theme !== 'high-contrast-light';
-      xtermRef.current.options.theme = {
-        background: isDark ? '#1e1e1e' : '#ffffff',
-        foreground: isDark ? '#d4d4d4' : '#1e293b',
-        cursor: isDark ? '#aeafad' : '#3b82f6',
-        cursorAccent: isDark ? '#1e1e1e' : '#ffffff',
-        selectionBackground: isDark ? '#264f78' : 'rgba(59, 130, 246, 0.3)',
+      const getComputedColor = (varName: string, fallback: string) => {
+        const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+        return value || fallback;
       };
+      
+      // Delay to ensure CSS variables are updated
+      const timer = setTimeout(() => {
+        if (xtermRef.current) {
+          xtermRef.current.options.theme = {
+            background: getComputedColor('--vscode-panel', '#1e1e1e'),
+            foreground: getComputedColor('--vscode-text', '#d4d4d4'),
+            cursor: getComputedColor('--vscode-accent', '#aeafad'),
+            cursorAccent: getComputedColor('--vscode-panel', '#1e1e1e'),
+            selectionBackground: getComputedColor('--vscode-selection', '#264f78'),
+          };
+          xtermRef.current.refresh(0, xtermRef.current.rows - 1);
+        }
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
   }, [theme]);
 
-  const bgColor = theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white';
+  const bgColor = 'bg-vscode-panel';
 
   return (
     <div className={`h-full w-full ${bgColor} ${className}`}>

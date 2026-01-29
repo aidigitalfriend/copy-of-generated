@@ -201,7 +201,7 @@ export const PackagingPanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[#1e1e1e] text-white">
+    <div className="h-full flex flex-col bg-vscode-sidebar text-vscode-text">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 bg-[#252526] border-b border-[#3c3c3c]">
         <div className="flex items-center gap-2">
@@ -221,8 +221,8 @@ export const PackagingPanel: React.FC = () => {
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1 px-3 py-1.5 text-xs font-medium transition-colors ${
               activeTab === tab.id
-                ? 'text-white border-b-2 border-blue-500 bg-[#1e1e1e]'
-                : 'text-gray-400 hover:text-white'
+                ? 'text-vscode-text border-b-2 border-vscode-accent bg-vscode-bg'
+                : 'text-vscode-textMuted hover:text-vscode-text'
             }`}
           >
             <span>{tab.icon}</span>
@@ -416,7 +416,7 @@ export const PackagingPanel: React.FC = () => {
                 </div>
                 <div
                   ref={logRef}
-                  className="flex-1 overflow-auto p-2 font-mono text-xs bg-[#1e1e1e]"
+                  className="flex-1 overflow-auto p-2 font-mono text-xs bg-vscode-bg"
                 >
                   {activeBuild.logs.map((log, i) => (
                     <div
@@ -597,7 +597,7 @@ export const PackagingPanel: React.FC = () => {
               </select>
 
               {config.license.type !== 'custom' && (
-                <div className="bg-[#1e1e1e] rounded p-3 max-h-48 overflow-auto">
+                <div className="bg-vscode-bg rounded p-3 max-h-48 overflow-auto">
                   <pre className="text-xs text-gray-400 whitespace-pre-wrap font-mono">
                     {packagingService.getLicenseTemplate(config.license.type).slice(0, 500)}...
                   </pre>

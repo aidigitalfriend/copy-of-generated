@@ -153,11 +153,11 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ onClose }) => {
 
   // Theme - Updated for charcoal-aurora
   const isDark = theme !== 'light';
-  const bgClass = isDark ? 'bg-[#0a0a0a]' : 'bg-white';
+  const bgClass = isDark ? 'bg-vscode-sidebar' : 'bg-white';
   const borderClass = isDark ? 'border-[#1c1c1c]' : 'border-gray-200';
   const textClass = isDark ? 'text-[#a0a0a0]' : 'text-gray-800';
   const mutedClass = isDark ? 'text-[#606060]' : 'text-gray-500';
-  const inputBg = isDark ? 'bg-[#0d0d0d]' : 'bg-gray-100';
+  const inputBg = isDark ? 'bg-vscode-bg' : 'bg-gray-100';
 
   // Auto-scroll
   useEffect(() => {
@@ -397,12 +397,12 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ onClose }) => {
                     <span className={mutedClass}>{match[1]}</span>
                     <button
                       onClick={() => handleCopy(codeContent, `${messageId}-${match[1]}`)}
-                      className={`opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:${isDark ? 'bg-[#3c3c3c]' : 'bg-gray-300'}`}
+                      className={`opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:${isDark ? 'bg-vscode-hover' : 'bg-gray-300'}`}
                     >
                       {copiedId === `${messageId}-${match[1]}` ? <CheckIcon /> : <CopyIcon />}
                     </button>
                   </div>
-                  <pre className={`${isDark ? 'bg-[#1e1e1e]' : 'bg-gray-100'} p-3 overflow-x-auto rounded-b text-sm`}>
+                  <pre className={`${isDark ? 'bg-vscode-bg' : 'bg-gray-100'} p-3 overflow-x-auto rounded-b text-sm`}>
                     <code className={className} {...props}>
                       {children}
                     </code>
@@ -412,7 +412,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ onClose }) => {
             }
             
             return (
-              <code className={`${isDark ? 'bg-[#3c3c3c]' : 'bg-gray-200'} px-1 py-0.5 rounded text-sm`} {...props}>
+              <code className={`${isDark ? 'bg-vscode-hover' : 'bg-gray-200'} px-1 py-0.5 rounded text-sm`} {...props}>
                 {children}
               </code>
             );
